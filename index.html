@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Report Generator v4</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #3b82f6; --secondary: #64748b; --dark: #1e293b; --light: #f8fafc;
+            --card-bg: white; --border-color: rgba(0, 0, 0, 0.1);
+        }
+        html.dark {
+            --primary: #60a5fa; --secondary: #94a3b8; --dark: #f8fafc; --light: #1e293b;
+            --card-bg: #2d3748; --border-color: rgba(255, 255, 255, 0.1);
+        }
+        body { background-color: var(--light); color: var(--dark); font-family: 'Segoe UI', sans-serif; }
+        #map { height: 400px; border-radius: 0.5rem; background-color: #e5e7eb; }
+        .form-container, .report-container { max-width: 1200px; margin: 2rem auto 0; padding: 1.5rem; background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 0.75rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        .btn { padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem; border: none; transition: background-color 0.2s; }
+        .btn-primary { background-color: var(--primary); color: white; } .btn-primary:hover { background-color: #2563eb; }
+        .btn-secondary { background-color: var(--secondary); color: white; } .btn-secondary:hover { background-color: #475569; }
+        .image-input-group { border: 1px solid var(--border-color); border-radius: 0.5rem; padding: 0.75rem; margin-bottom: 0.75rem; }
+        .share-btn { font-size: 1.5rem; color: var(--secondary); transition: color 0.2s; } .share-btn:hover { color: var(--primary); }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-4xl font-bold text-center text-gray-800 dark:text-white mb-6">Advanced Report Generator</h1>
+        
+        <div class="form-container">
+            <form id="eventForm">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-6">
+                    <!-- Left Column: Event & Image Info -->
+                    <div>
+                        <h3 class="text-xl font-semibold border-b dark:border-gray-600 pb-2 mb-4">Informasi Kejadian</h3>
+                        <div class="mb-4">
+                            <label for="eventName" class="block text-sm font-medium">Nama Kejadian</label>
+                            <input type="text" id="eventName" class="w-full p-2 border rounded-md bg-gray-50 dark:bg-gray-800 dark:border-gray-700" required>
+                        </div>
+                        <div class="mb-4">
+                            <label for="eventDetails" class="block text-sm font-medium">Detail Kejadian</label>
+                            <textarea id="eventDetails" rows="5" class="w-full p-2 border rounded-md bg-gray-50 dark:bg-gray-800 dark:border-gray-700" required></textarea>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label for="eventDate" class="block text-sm font-medium">Tanggal</label>
+                                <input type="date" id="eventDate" class="w-full p-2 border rounded-md bg-gray-50 dark:bg-gray-800 dark:border-gray-700" required>
+                            </div>
+                            <div>
+                                <label for="eventCategory" class="block text-sm font-medium">Kategori</label>
+                                <select id="eventCategory" class="w-full p-2 border rounded-md bg-gray-50 dark:bg-gray-800 dark:border-gray-700"><option>Crime</option><option>Disaster</option></select>
+                            </div>
+                        </div>
+                        <!-- Multiple Image Inputs -->
+                        <h3 class="text-lg font-semibold mt-6 mb-2">Gambar Pendukung (Max 3)</h3>
+                        <div class="mb-4">
+                            <label for="imageSize" class="block text-sm font-medium">Ukuran Gambar (untuk upload)</label>
+                            <select id="imageSize" class="w-full p-2 border rounded-md bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
+                                <option value="320">Kecil (320px)</option><option value="640" selected>Sedang (640px)</option><option value="1024">Besar (1024px)</option>
+                            </select>
+                        </div>
+                        <div id="image-inputs-container"></div>
+                        <!-- Multiple Source Inputs -->
+                        <h3 class="text-lg font-semibold mt-6 mb-2">Sumber Referensi (Max 3)</h3>
+                        <div id="source-inputs-container"></div>
+                    </div>
+
+                    <!-- Right Column: Map -->
+                    <div>
+                        <h3 class="text-xl font-semibold border-b dark:border-gray-600 pb-2 mb-4">Lokasi & Peta</h3>
+                        <div id="map"></div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-4">
+                            <div>
+                                <label for="iconSelect" class="block text-sm font-medium">Ikon Peta</label>
+                                <select id="iconSelect" class="w-full p-2 border rounded-md bg-gray-50 dark:bg-gray-800 dark:border-gray-700"><option value="fa-map-marker-alt" data-color="#ef4444">Default</option></select>
+                            </div>
+                            <div>
+                                <label for="eventRadius" class="block text-sm font-medium">Radius Dampak</label>
+                                <select id="eventRadius" class="w-full p-2 border rounded-md bg-gray-50 dark:bg-gray-800 dark:border-gray-700"><option value="1000" selected>1km</option></select>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label for="eventLocationCoordinates" class="block text-sm font-medium">Koordinat</label>
+                            <input type="text" id="eventLocationCoordinates" class="w-full p-2 border rounded-md bg-gray-200 dark:bg-gray-700" placeholder="Klik di peta atau cari..." readonly required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 pt-6 border-t dark:border-gray-600">
+                    <button type="submit" class="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition flex items-center justify-center gap-2 text-lg font-semibold">
+                        <i class="fas fa-file-alt"></i> Buat Laporan
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Report Display Section -->
+        <div id="reportOutputSection" class="report-container" style="display: none;">
+            <div id="report"></div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- Globals & Initializations ---
+        let map, marker, circle, reportMapInstance;
+        const elements = { form: document.getElementById('eventForm'), /* ... */ };
+        
+        // Populate dynamic fields
+        function populateDynamicFields() {
+            // Image inputs
+            const imageContainer = document.getElementById('image-inputs-container');
+            for (let i = 1; i <= 3; i++) {
+                const group = document.createElement('div');
+                group.className = 'image-input-group';
+                group.innerHTML = `
+                    <label class="block text-sm font-semibold mb-2">Gambar ${i}</label>
+                    <label for="imageUpload${i}" class="block text-xs font-medium">Upload File:</label>
+                    <input type="file" id="imageUpload${i}" data-index="${i}" class="image-upload-input w-full text-sm text-gray-500 file:mr-4 file:py-1 file:px-2 file:rounded-full file:border-0 file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                    <label for="imageLink${i}" class="block text-xs font-medium mt-2">atau Link URL:</label>
+                    <input type="url" id="imageLink${i}" data-index="${i}" placeholder="https://example.com/image.jpg" class="image-link-input w-full p-1 border rounded-md bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
+                `;
+                imageContainer.appendChild(group);
+            }
+            // Source inputs
+            const sourceContainer = document.getElementById('source-inputs-container');
+            for (let i = 1; i <= 3; i++) {
+                const div = document.createElement('div');
+                div.className = 'mb-2';
+                div.innerHTML = `<label for="eventSource${i}" class="block text-sm font-medium">Sumber ${i}</label><input type="text" id="eventSource${i}" class="w-full p-2 border rounded-md bg-gray-50 dark:bg-gray-800 dark:border-gray-700">`;
+                sourceContainer.appendChild(div);
+            }
+        }
+
+        populateDynamicFields();
+
+        // Re-get all elements after dynamic creation
+        const allElements = {
+            form: document.getElementById('eventForm'),
+            reportOutputSection: document.getElementById('reportOutputSection'),
+            reportContainer: document.getElementById('report'),
+            coordsInput: document.getElementById('eventLocationCoordinates'),
+            iconSelect: document.getElementById('iconSelect'),
+            radiusSelect: document.getElementById('eventRadius'),
+            imageSizeSelect: document.getElementById('imageSize'),
+            imageUploads: document.querySelectorAll('.image-upload-input'),
+            imageLinks: document.querySelectorAll('.image-link-input'),
+        };
+
+        // --- Map Initialization ---
+        let satelliteLayer; // Make it globally accessible within this scope
+        function initMap() {
+            const streetLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OSM' });
+            satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: '© Esri' });
+
+            map = L.map('map', { layers: [streetLayer], zoomControl: true }).setView([0, 0], 2);
+            map.zoomControl.setPosition('topright');
+            L.control.layers({ "Street": streetLayer, "Satellite": satelliteLayer }, null, { position: 'topright' }).addTo(map);
+            L.Control.geocoder({ defaultMarkGeocode: false, placeholder: 'Cari alamat...', position: 'topleft' })
+                .on('markgeocode', e => updateMarkerAndCircle(e.geocode.center, 15))
+                .addTo(map);
+            map.on('click', e => updateMarkerAndCircle(e.latlng));
+        }
+        function createIcon(iconClass, color) { /* ... same as before ... */ return L.divIcon({ html: `<i class="fas ${iconClass}" style="color: ${color}; font-size: 24px; text-shadow: 0 0 3px rgba(0,0,0,0.7);"></i>`, className: 'leaflet-div-icon', iconSize: [24, 24], iconAnchor: [12, 24] }); }
+        function updateMarkerAndCircle(latlng, zoomLevel) { /* ... same as before ... */ allElements.coordsInput.value = `${latlng.lat.toFixed(6)}, ${latlng.lng.toFixed(6)}`; if (marker) map.removeLayer(marker); if (circle) map.removeLayer(circle); const selectedOption = allElements.iconSelect.options[allElements.iconSelect.selectedIndex]; marker = L.marker(latlng, { icon: createIcon(selectedOption.value, selectedOption.dataset.color || '#ef4444') }).addTo(map); const radius = parseInt(allElements.radiusSelect.value, 10); circle = L.circle(latlng, { radius: radius, color: '#3b82f6', fillOpacity: 0.15 }).addTo(map); if (zoomLevel) map.setView(latlng, zoomLevel); else map.fitBounds(circle.getBounds(), { padding: [50, 50] }); }
+
+        // --- Image Input Handling ---
+        const uploadedImageData = [null, null, null];
+        allElements.imageUploads.forEach(input => {
+            input.addEventListener('change', async (e) => {
+                const index = e.target.dataset.index - 1;
+                const file = e.target.files[0];
+                if (!file) { uploadedImageData[index] = null; return; }
+                
+                document.getElementById(`imageLink${index + 1}`).value = ''; // Clear corresponding link input
+                const size = parseInt(allElements.imageSizeSelect.value, 10);
+                try {
+                    uploadedImageData[index] = await resizeImage(file, size);
+                    showToast(`Gambar ${index + 1} diproses.`, 'info');
+                } catch { showToast('Gagal memproses gambar.', 'error'); }
+            });
+        });
+        allElements.imageLinks.forEach(input => {
+            input.addEventListener('input', (e) => {
+                const index = e.target.dataset.index - 1;
+                if(e.target.value) {
+                    document.getElementById(`imageUpload${index + 1}`).value = ''; // Clear corresponding file input
+                    uploadedImageData[index] = null;
+                }
+            });
+        });
+        function resizeImage(file, maxWidth) { /* ... same as before ... */ return new Promise((resolve, reject)=>{const reader=new FileReader();reader.readAsDataURL(file);reader.onload=event=>{const img=new Image();img.src=event.target.result;img.onload=()=>{const canvas=document.createElement('canvas');canvas.width=Math.min(img.width,maxWidth);canvas.height=img.height*(canvas.width/img.width);const ctx=canvas.getContext('2d');ctx.drawImage(img,0,0,canvas.width,canvas.height);resolve(canvas.toDataURL(file.type))}}})}
+
+        // --- Form Submission ---
+        allElements.form.addEventListener('submit', e => {
+            e.preventDefault();
+            if (!allElements.coordsInput.value) {
+                showToast('Silakan pilih lokasi di peta.', 'error'); return;
+            }
+            
+            // Collect image data
+            const images = [];
+            for (let i = 0; i < 3; i++) {
+                if (uploadedImageData[i]) {
+                    images.push({ type: 'upload', src: uploadedImageData[i] });
+                } else {
+                    const link = document.getElementById(`imageLink${i + 1}`).value;
+                    if (link) images.push({ type: 'link', src: link });
+                }
+            }
+            // Collect source data
+            const sources = [];
+            for (let i = 1; i <= 3; i++) {
+                const source = document.getElementById(`eventSource${i}`).value;
+                if (source) sources.push(source);
+            }
+            // Collect all data
+            const selectedIconOption = allElements.iconSelect.options[allElements.iconSelect.selectedIndex];
+            const reportData = {
+                name: document.getElementById('eventName').value,
+                details: document.getElementById('eventDetails').value,
+                date: document.getElementById('eventDate').value,
+                category: document.getElementById('eventCategory').value,
+                images: images,
+                sources: sources,
+                coords: allElements.coordsInput.value.split(',').map(Number),
+                zoom: map.getZoom(),
+                radius: parseInt(allElements.radiusSelect.value, 10),
+                iconClass: selectedIconOption.value,
+                iconColor: selectedIconOption.dataset.color,
+            };
+
+            const reportHtml = generateReportHTML(reportData);
+            allElements.reportContainer.innerHTML = reportHtml;
+            allElements.reportOutputSection.style.display = 'block';
+            initReportMap(reportData);
+            setupShareButtons(reportData);
+            showToast('Laporan berhasil dibuat!', 'success');
+            allElements.reportContainer.scrollIntoView({ behavior: 'smooth' });
+        });
+        
+        // --- HTML & Map Generation for Report ---
+        function generateReportHTML(data) {
+            const formattedDate = new Date(data.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+            
+            let imageHtml = '';
+            if (data.images.length > 0) {
+                const imageElements = data.images.map(img => {
+                    const imgTag = `<img src="${img.src}" alt="Event Image" style="max-width: 100%; border-radius: 5px; margin-top: 10px;">`;
+                    if (img.type === 'link') {
+                        return `<a href="${img.src}" target="_blank" rel="noopener noreferrer">${imgTag}</a>`;
+                    }
+                    return imgTag;
+                }).join('');
+                imageHtml = `<div style="margin-bottom: 20px;"><h3 class="report-section-header">Gambar Pendukung</h3>${imageElements}</div>`;
+            }
+
+            let sourceHtml = '';
+            if (data.sources.length > 0) {
+                const sourceElements = data.sources.map(src => `<li><a href="${src}" target="_blank" rel="noopener noreferrer" style="color:blue;">${src}</a></li>`).join('');
+                sourceHtml = `<div style="margin-bottom: 20px;"><h3 class="report-section-header">Sumber Referensi</h3><ul style="list-style:disc; padding-left:20px;">${sourceElements}</ul></div>`;
+            }
+
+            const [lat, lon] = data.coords;
+            const coordinateLinks = `
+                <a href="https://maps.google.com/?q=${lat},${lon}" target="_blank" class="map-link">Google Maps</a> | 
+                <a href="https://www.bing.com/maps?cp=${lat}~${lon}&lvl=16" target="_blank" class="map-link">Bing Maps</a> | 
+                <a href="https://maps.apple.com/?ll=${lat},${lon}&q=Location" target="_blank" class="map-link">Apple Maps</a>
+            `;
+            
+            return `
+                <style>.report-section-header { font-size: 18px; font-weight: bold; border-bottom: 1px solid #eee; padding-bottom: 5px; margin-bottom: 10px; } .map-link { color: #3b82f6; text-decoration: none; } .map-link:hover { text-decoration: underline; }</style>
+                <div id="report-content" class="p-4 rounded-lg bg-white dark:bg-gray-800" style="font-family: Arial, sans-serif;">
+                    <div style="text-align: center; border-bottom: 2px solid #eee; margin-bottom: 20px; padding-bottom:10px;">
+                        <h2 style="font-size: 24px; font-weight: bold; margin: 0 0 10px;">${data.name}</h2>
+                        <p style="font-size: 14px; color: #555;">Kategori: <strong>${data.category}</strong> | Tanggal: <strong>${formattedDate}</strong></p>
+                    </div>
+                    <div style="margin-bottom: 20px;"><h3 class="report-section-header">Detail Kejadian</h3><p style="line-height: 1.6;">${data.details.replace(/\n/g, '<br>')}</p></div>
+                    ${imageHtml}
+                    <div style="margin-bottom: 20px;">
+                        <h3 class="report-section-header">Lokasi</h3>
+                        <p>Koordinat: <strong>${data.coords.join(', ')}</strong></p>
+                        <p style="font-size:14px; margin-top:5px;">${coordinateLinks}</p>
+                        <div id="reportMapContainer" style="width:100%; height:300px; border:1px solid #ccc; border-radius: 5px; margin-top:10px;"></div>
+                    </div>
+                    ${sourceHtml}
+                    <!-- Share Section -->
+                    <div style="margin-top: 30px; padding-top: 15px; border-top: 1px solid #eee; text-align: center;">
+                        <h4 style="font-weight:bold; margin-bottom:10px;">Bagikan Laporan</h4>
+                        <div id="share-buttons-container" class="flex justify-center items-center gap-4"></div>
+                    </div>
+                </div>`;
+        }
+        function initReportMap(data) {
+            if (reportMapInstance) reportMapInstance.remove();
+            const latlng = L.latLng(data.coords[0], data.coords[1]);
+            reportMapInstance = L.map('reportMapContainer', { scrollWheelZoom: false, zoomControl: true }).setView(latlng, data.zoom);
+            satelliteLayer.addTo(reportMapInstance); // Default to satellite view
+            L.marker(latlng, { icon: createIcon(data.iconClass, data.iconColor) }).addTo(reportMapInstance);
+            L.circle(latlng, { radius: data.radius, color: '#3b82f6', fillOpacity: 0.15 }).addTo(reportMapInstance);
+        }
+
+        // --- Social Share ---
+        function setupShareButtons(data) {
+            const container = document.getElementById('share-buttons-container');
+            const shareText = encodeURIComponent(`${data.name}: ${data.details.substring(0, 100)}...`);
+            const shareUrl = encodeURIComponent(window.location.href); // Dummy URL for local file
+
+            const platforms = [
+                { name: 'X', icon: 'fa-brands fa-x-twitter', url: `https://twitter.com/intent/tweet?text=${shareText}` },
+                { name: 'Facebook', icon: 'fa-brands fa-facebook', url: `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}` },
+                { name: 'Reddit', icon: 'fa-brands fa-reddit-alien', url: `https://www.reddit.com/submit?title=${encodeURIComponent(data.name)}&text=${shareText}` },
+                { name: 'Mastodon', icon: 'fa-brands fa-mastodon', action: () => {
+                    const instance = prompt("Masukkan alamat instance Mastodon Anda (e.g., mastodon.social):");
+                    if (instance) window.open(`https://${instance}/share?text=${shareText}`, '_blank');
+                }},
+                { name: 'Threads', icon: 'fa-brands fa-threads', action: () => showToast('Threads tidak mendukung sharing via web. Silakan copy-paste manual.', 'info') },
+                { name: 'Instagram', icon: 'fa-brands fa-instagram', action: () => showToast('Instagram tidak mendukung sharing via web.', 'info') },
+            ];
+            
+            container.innerHTML = platforms.map(p => `
+                <a href="${p.url || '#'}" title="Bagikan ke ${p.name}" class="share-btn" data-action="${p.action ? p.name : ''}">
+                    <i class="${p.icon}"></i>
+                </a>`).join('');
+
+            container.querySelectorAll('a[data-action]').forEach(a => {
+                a.addEventListener('click', e => {
+                    e.preventDefault();
+                    platforms.find(p => p.name === a.dataset.action)?.action();
+                });
+            });
+        }
+        
+        function showToast(message, type = 'info') { /* ... same as before ... */ const colors = { success: 'linear-gradient(to right, #00b09b, #96c93d)', error: 'linear-gradient(to right, #ff5f6d, #ffc371)', info: 'linear-gradient(to right, #3f51b5, #2196f3)' }; Toastify({ text: message, duration: 3000, gravity: "bottom", position: "right", style: { background: colors[type] || colors.info }, }).showToast(); }
+        
+        // Initial call
+        initMap();
+    });
+    </script>
+</body>
+</html>
