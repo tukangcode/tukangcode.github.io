@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Report Generator v1 - </title>
+    <title>Advanced Report Generator v 1.0 Aregan</title>
     <!-- Frameworks & Libraries -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -22,8 +22,8 @@
             --card-bg: #2d3748; --border-color: rgba(255, 255, 255, 0.1);
         }
         body { background-color: var(--light); color: var(--dark); font-family: 'Segoe UI', sans-serif; }
-        #map { height: 400px; border-radius: 0.5rem; background-color: #e5e7eb; }
-        .form-container, .report-container { max-width: 1200px; margin: 1rem auto 0; padding: 1.5rem; background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 0.75rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        #map, #reportMapContainer { min-height: 400px; border-radius: 0.5rem; background-color: #e5e7eb; cursor: crosshair; }
+        .form-container, .report-container, .guide-container { max-width: 1200px; margin: 1rem auto 0; padding: 1.5rem; background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 0.75rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
         .btn { padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem; border: none; transition: all 0.2s; }
         .btn-primary { background-color: var(--primary); color: white; } .btn-primary:hover { background-color: #2563eb; }
         .btn-secondary { background-color: var(--secondary); color: white; } .btn-secondary:hover { background-color: #475569; }
@@ -31,10 +31,172 @@
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); }
         .modal-content { background-color: var(--card-bg); margin: 10% auto; padding: 20px; border: 1px solid var(--border-color); width: 80%; max-width: 700px; border-radius: 0.75rem; }
         .close-btn { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
+        .tab-button { padding: 0.5rem 1rem; border-radius: 0.5rem 0.5rem 0 0; border: 1px solid var(--border-color); border-bottom: none; background-color: var(--light); cursor: pointer; }
+        .tab-button.active { background-color: var(--card-bg); font-weight: 600; border-bottom: 1px solid var(--card-bg); }
         #reportOutputSection.compact-mode #report-content { padding: 0.5rem !important; }
-        #reportOutputSection.compact-mode h2 { font-size: 1.2rem !important; }
-        #reportOutputSection.compact-mode .report-section-header { font-size: 1rem !important; margin-bottom: 5px !important; }
-        #reportOutputSection.compact-mode p, #reportOutputSection.compact-mode li { font-size: 0.8rem !important; line-height: 1.3 !important; }
+        .guide-step { margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color); }
+        .guide-step:last-child { border-bottom: none; }
+        .step-number { display: inline-block; width: 28px; height: 28px; background-color: var(--primary); color: white; border-radius: 50%; text-align: center; line-height: 28px; margin-right: 10px; font-weight: bold; }
+        .qr-container { text-align: center; margin-top: 1rem; padding: 1rem; background-color: rgba(0,0,0,0.03); border-radius: 0.5rem; }
+        .qr-code { display: inline-block; width: 150px; height: 150px; background-color: white; padding: 10px; border-radius: 0.5rem; }
+        .qr-label { margin-top: 0.5rem; font-size: 0.9rem; color: var(--secondary); }
+        .credits-box { background-color: rgba(0,0,0,0.05); padding: 1rem; border-radius: 0.5rem; margin-top: 1.5rem; }
+        
+        /* --- CSS untuk layout gambar horizontal --- */
+        .report-images .image-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+        .report-images .image-grid a, 
+        .report-images .image-grid img {
+            display: block;
+        }
+        
+        /* IG Mode Styles */
+        .ig-mode {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 1rem;
+            background: linear-gradient(135deg, #f5f7fa, #e4edf9);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .ig-mode .report-header {
+            background: linear-gradient(90deg, #3b82f6, #60a5fa);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 16px 16px 0 0;
+            margin: -1rem -1rem 1rem -1rem;
+            text-align: center;
+        }
+        .ig-mode .report-section {
+            background: white;
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        .ig-mode .report-section-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        .ig-mode .report-section-header i {
+            color: #3b82f6;
+            background: #dbeafe;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .ig-mode .map-size-controls {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+            flex-wrap: wrap;
+        }
+        .ig-mode .map-size-btn {
+            flex: 1;
+            min-width: 80px;
+            padding: 0.5rem;
+            background: #f1f5f9;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .ig-mode .map-size-btn.active {
+            background: #3b82f6;
+            color: white;
+            font-weight: 600;
+        }
+        .ig-mode .map-size-btn:hover {
+            background: #dbeafe;
+        }
+        .ig-mode #reportMapContainer {
+            height: 300px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+            border: 1px solid #e2e8f0;
+        }
+        .ig-mode .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .ig-mode .info-card {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
+        }
+        .ig-mode .info-card i {
+            font-size: 1.5rem;
+            color: #3b82f6;
+            margin-bottom: 0.5rem;
+        }
+        .ig-mode .info-card .label {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-bottom: 0.25rem;
+        }
+        .ig-mode .info-card .value {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        .ig-mode .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 0.75rem;
+            margin-top: 0.5rem;
+        }
+        .ig-mode .image-grid img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        .ig-mode .qr-container {
+            background: white;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+        .ig-mode .social-footer {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px dashed #cbd5e1;
+        }
+        .ig-mode .social-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+        .ig-mode .ig-btn { background: linear-gradient(45deg, #833ab4, #fd1d1d, #fcb045); }
+        .ig-mode .fb-btn { background: #3b5998; }
+        .ig-mode .twitter-btn { background: #1da1f2; }
+        
         @media print {
             body * { visibility: hidden; }
             #reportOutputSection, #reportOutputSection * { visibility: visible; }
@@ -45,15 +207,21 @@
 </head>
 <body class="bg-gray-100 dark:bg-gray-900">
     <!-- Header -->
-    <div class="container mx-auto px-4 py-6 flex justify-between items-center">
-        <h1 class="text-3xl lg:text-4xl font-bold text-gray-800 dark:text-white">Advanced Report Generator</h1>
+    <header class="container mx-auto px-4 py-6 flex justify-between items-center">
+        <h1 class="text-3xl lg:text-4xl font-bold text-gray-800 dark:text-white">Advanced Report Generator (AREGAN) </h1>
         <div class="flex items-center gap-4">
             <button id="historyBtn" class="btn btn-secondary"><i class="fas fa-history"></i> Riwayat</button>
-            <!-- Dark Mode Toggle will be added via JS -->
         </div>
-    </div>
+    </header>
 
-    <div class="container mx-auto px-4 pb-8">
+    <main class="container mx-auto px-4 pb-8">
+        <!-- Tabs -->
+        <div class="flex border-b dark:border-gray-600 mb-[-1px]">
+            <button id="singleModeTab" class="tab-button active">Laporan Tunggal</button>
+            <button id="multiModeTab" class="tab-button">Laporan Multi-Lokasi</button>
+            <button id="guideTab" class="tab-button">Panduan</button>
+        </div>
+
         <div class="form-container">
             <form id="eventForm">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-6">
@@ -74,24 +242,13 @@
                                 <input type="date" id="eventDate" class="w-full p-2 border rounded-md bg-gray-50 dark:bg-gray-800 dark:border-gray-700" required>
                             </div>
                            <div>
-    <label for="eventCategory" class="block text-sm font-medium">Kategori</label>
-    <select id="eventCategory" class="w-full p-2 border rounded-md bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
-        <optgroup label="Insiden & Bencana">
-            <option>Kriminal</option>
-            <option>Bencana</option>
-            <option>Konflik</option>
-            <option>Lingkungan</option>
-        </optgroup>
-        <optgroup label="Entitas & Acara">
-            <option>Pemerintah</option>
-            <option>LSM</option>
-            <option>Perusahaan</option>
-            <option>Event</option>
-            <option>Festival</option>
-        </optgroup>
-    </select>
-</div>                      
-                      </div>
+                                <label for="eventCategory" class="block text-sm font-medium">Kategori</label>
+                                <select id="eventCategory" class="w-full p-2 border rounded-md bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
+                                    <optgroup label="Insiden & Bencana"><option>Kriminal</option><option>Bencana</option><option>Konflik</option><option>Lingkungan</option></optgroup>
+                                    <optgroup label="Entitas & Acara"><option>Pemerintah</option><option>LSM</option><option>Perusahaan</option><option>Event</option><option>Festival</option></optgroup>
+                                </select>
+                            </div>                      
+                        </div>
                         <h3 class="text-lg font-semibold mt-6 mb-2">Gambar & Sumber</h3>
                         <div id="image-inputs-container"></div>
                         <div id="source-inputs-container"></div>
@@ -101,44 +258,51 @@
                     <div>
                         <h3 class="text-xl font-semibold border-b dark:border-gray-600 pb-2 mb-4">Lokasi & Peta</h3>
                         <div id="map"></div>
-                        <div class="mb-4 mt-4">
+                        
+                        <!-- Single Location Mode Controls -->
+                        <div id="single-mode-controls" class="mt-4">
                             <label for="eventLocationCoordinates" class="block text-sm font-medium">Koordinat (klik peta atau cari)</label>
                             <input type="text" id="eventLocationCoordinates" class="w-full p-2 border rounded-md bg-gray-200 dark:bg-gray-700" readonly required>
                             <div id="form-map-links" class="text-xs mt-1" style="display: none;"></div>
                         </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+                        <!-- Multi Location Mode Controls -->
+                        <div id="multi-mode-controls" class="mt-4" style="display:none;">
+                             <div class="p-3 border rounded-md bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
+                                <p class="text-sm text-gray-600 dark:text-gray-300 mb-2">Klik peta, atur ikon/radius, beri nama, lalu klik 'Tambah Lokasi'.</p>
+                                <div class="flex gap-2 mb-2">
+                                    <input type="text" id="multiLocationName" placeholder="Nama Area/Lokasi" class="w-full p-2 border rounded-md">
+                                    <button type="button" id="addMultiLocationBtn" class="btn btn-primary whitespace-nowrap"><i class="fas fa-plus-circle"></i> Tambah</button>
+                                </div>
+                             </div>
+                             <div class="mt-4">
+                                <label class="block text-sm font-medium">Daftar Koordinat Tersimpan</label>
+                                <textarea id="multiCoordinatesText" readonly class="w-full h-24 p-2 border rounded-md bg-gray-200 dark:bg-gray-700 font-mono text-sm"></textarea>
+                             </div>
+                        </div>
+                        
+                        <!-- Shared Location Controls (Icon and Radius) -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
                             <div>
                                 <label for="iconSelect" class="block text-sm font-medium">Ikon Peta</label>
                                 <select id="iconSelect" class="w-full p-2 border rounded-md bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
-                                    <optgroup label="Darurat & Kriminal">
-                                        <option value="fa-car-burst" data-color="#ef4444">Kecelakaan</option>
-                                        <option value="fa-fire-flame-curved" data-color="#f97316">Kebakaran</option>
-                                        <option value="fa-skull-crossbones" data-color="#a855f7">Baku Tembak</option>
-                                        <option value="fa-handcuffs" data-color="#3b82f6">Polisi</option>
-                                        <option value="fa-users-slash" data-color="#78716c">Geng</option>
+                                    <optgroup label="Darurat & Kriminal"><option value="fa-car-burst" data-color="#ef4444">Kecelakaan</option><option value="fa-fire-flame-curved" data-color="#f97316">Kebakaran</option><option value="fa-skull-crossbones" data-color="#a855f7">Baku Tembak</option><option value="fa-handcuffs" data-color="#3b82f6">Polisi</option><option value="fa-users-slash" data-color="#78716c">Geng</option></optgroup>
+                                    <optgroup label="Militer & Konflik"><option value="fa-helicopter" data-color="#14b8a6">Tentara</option><option value="fa-person-rifle" data-color="#ef4444">Tentara Musuh</option><option value="fa-flag" data-color="#f59e0b">Pemberontak</option><option value="fa-users" data-color="#84cc16">Perusuh</option></optgroup>
+                                    <optgroup label="Bencana Alam"><option value="fa-house-flood-water" data-color="#0ea5e9">Banjir</option><option value="fa-hill-rockslide" data-color="#a16207">Longsor</option></optgroup>
+                                    <!-- PERUBAHAN DIMULAI: Penambahan ikon baru -->
+                                    <optgroup label="Acara & Komunitas">
+                                        <option value="fa-house-crack" data-color="#f97316">KDRT</option>
+                                        <option value="fa-tag" data-color="#22c55e">Event / Diskon</option>
+                                        <option value="fa-store" data-color="#f59e0b">Pasar Malam / Tumpah</option>
                                     </optgroup>
-                                    <optgroup label="Militer & Konflik">
-                                        <option value="fa-helicopter" data-color="#14b8a6">Tentara</option>
-                                        <option value="fa-person-rifle" data-color="#ef4444">Tentara Musuh</option>
-                                        <option value="fa-flag" data-color="#f59e0b">Pemberontak</option>
-                                        <option value="fa-users" data-color="#84cc16">Perusuh</option>
-                                    </optgroup>
-                                    <optgroup label="Bencana Alam">
-                                        <option value="fa-house-flood-water" data-color="#0ea5e9">Banjir</option>
-                                        <option value="fa-hill-rockslide" data-color="#a16207">Longsor</option>
-                                    </optgroup>
-                                    <optgroup label="Lainnya">
-                                        <option value="fa-person-digging" data-color="#eab308">Perbaikan</option>
-                                        <option value="fa-map-marker-alt" data-color="#64748b" selected>Default</option>
-                                    </optgroup>
+                                    <!-- PERUBAHAN SELESAI -->
+                                    <optgroup label="Lainnya"><option value="fa-person-digging" data-color="#eab308">Perbaikan</option><option value="fa-map-marker-alt" data-color="#64748b" selected>Default</option></optgroup>
                                 </select>
                             </div>
                             <div>
                                 <label for="eventRadius" class="block text-sm font-medium">Radius Dampak</label>
                                 <select id="eventRadius" class="w-full p-2 border rounded-md bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
-                                    <option value="50">50m</option><option value="100">100m</option><option value="250">250m</option><option value="500">500m</option>
-                                    <option value="1000" selected>1km</option><option value="2000">2km</option><option value="3000">3km</option><option value="5000">5km</option>
-                                    <option value="7500">7.5km</option><option value="10000">10km</option>
+                                    <option value="50">50m</option><option value="100">100m</option><option value="250">250m</option><option value="500">500m</option><option value="1000" selected>1km</option><option value="2000">2km</option><option value="3000">3km</option><option value="5000">5km</option><option value="7500">7.5km</option><option value="10000">10km</option>
                                 </select>
                             </div>
                         </div>
@@ -153,333 +317,600 @@
             </form>
         </div>
         
+        <!-- Guide Container -->
+        <div id="guideContainer" class="guide-container" style="display: none;">
+            <h2 class="text-2xl font-bold mb-4">Panduan Penggunaan</h2>
+            
+            <div class="guide-step">
+                <h3 class="text-xl font-semibold mb-2"><span class="step-number">1</span> Mode Tunggal</h3>
+                <p class="mb-3">Untuk membuat laporan dengan satu lokasi:</p>
+                <ul class="list-disc pl-6 mb-3">
+                    <li>Isi semua informasi kejadian di kolom kiri</li>
+                    <li>Klik pada peta untuk menentukan lokasi atau gunakan pencarian alamat</li>
+                    <li>Pilih ikon dan radius yang sesuai</li>
+                    <li>Klik "Buat Laporan" untuk menghasilkan laporan</li>
+                </ul>
+            </div>
+            
+            <div class="guide-step">
+                <h3 class="text-xl font-semibold mb-2"><span class="step-number">2</span> Mode Multi-Lokasi</h3>
+                <p class="mb-3">Untuk laporan dengan beberapa lokasi:</p>
+                <ul class="list-disc pl-6 mb-3">
+                    <li>Beralih ke tab "Laporan Multi-Lokasi"</li>
+                    <li>Klik pada peta untuk memilih lokasi pertama</li>
+                    <li>Beri nama lokasi dan klik "Tambah"</li>
+                    <li>Ulangi untuk semua lokasi yang diperlukan</li>
+                    <li>Isi informasi kejadian dan klik "Buat Laporan"</li>
+                </ul>
+            </div>
+            
+            <div class="guide-step">
+                <h3 class="text-xl font-semibold mb-2"><span class="step-number">3</span> Mode Infografis (IG)</h3>
+                <p class="mb-3">Untuk laporan yang cocok untuk screenshot dan media sosial:</p>
+                <ul class="list-disc pl-6 mb-3">
+                    <li>Setelah membuat laporan, klik tombol "Mode IG"</li>
+                    <li>Layout akan berubah menjadi vertikal dan mobile-friendly</li>
+                    <li>Gunakan kontrol ukuran peta untuk menyesuaikan tampilan</li>
+                    <li>Scroll ke bawah untuk screenshot seluruh laporan</li>
+                    <li>Gunakan tombol sosial media untuk berbagi</li>
+                </ul>
+            </div>
+            
+            <div class="credits-box">
+    <h3 class="text-xl font-semibold mb-2">Kredit</h3>
+    <p class="mb-2">Aplikasi ini dikembangkan oleh:</p>
+    <div class="flex items-center">
+        <!-- PERUBAHAN DIMULAI: Mengganti div placeholder dengan gambar profil -->
+        <img src="https://tukangcode.github.io/images/homepage.png" alt="Foto Profil Ryu Sena" class="w-16 h-16 rounded-xl mr-3 object-cover border-2 border-gray-200 dark:border-gray-600">
+        <!-- PERUBAHAN SELESAI -->
+        <div>
+            <p class="font-bold">Ryu Sena (tukangcode)</p>
+            <p><i class="fab fa-github mr-1"></i> GitHub: 
+                <a href="https://github.com/tukangcode" target="_blank" class="text-blue-500 hover:underline">github.com/tukangcode</a>
+            </p>
+            <p class="mt-1">Terima kasih kepada Ryu Sena atas kontribusi dan ide dalam pengembangan aplikasi ini.</p>
+        </div>
+    </div>
+</div>
+            </div>
+        
         <!-- Report Display Section -->
         <div id="reportOutputSection" class="report-container" style="display: none;">
             <div id="report-action-buttons" class="mb-4 flex flex-wrap gap-2"></div>
             <div id="report"></div>
         </div>
-    </div>
+    </main>
 
     <!-- Modals -->
-    <div id="historyModal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" data-modal="historyModal">×</span>
-            <h2 class="text-2xl font-bold mb-4">Riwayat Laporan</h2>
-            <div id="historyList" class="max-h-96 overflow-y-auto"></div>
-            <button id="clearHistoryBtn" class="btn btn-secondary mt-4"><i class="fas fa-trash"></i> Bersihkan Riwayat</button>
-        </div>
-    </div>
-    <div id="rawCodeModal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" data-modal="rawCodeModal">×</span>
-            <h2 class="text-2xl font-bold mb-4">Kode Mentah Laporan (HTML)</h2>
-            <textarea id="rawCodeTextarea" readonly class="w-full h-64 p-2 border rounded-md bg-gray-100 dark:bg-gray-800 dark:border-gray-700 font-mono text-sm"></textarea>
-            <button id="copyRawCodeBtn" class="btn btn-primary mt-4"><i class="fas fa-copy"></i> Salin Kode</button>
-        </div>
-    </div>
+    <div id="historyModal" class="modal"><div class="modal-content"><span class="close-btn" data-modal="historyModal">×</span><h2 class="text-2xl font-bold mb-4">Riwayat Laporan</h2><div id="historyList" class="max-h-96 overflow-y-auto"></div><button id="clearHistoryBtn" class="btn btn-secondary mt-4"><i class="fas fa-trash"></i> Bersihkan Riwayat</button></div></div>
+    <div id="rawCodeModal" class="modal"><div class="modal-content"><span class="close-btn" data-modal="rawCodeModal">×</span><h2 class="text-2xl font-bold mb-4">Kode Mentah Laporan (HTML)</h2><textarea id="rawCodeTextarea" readonly class="w-full h-64 p-2 border rounded-md bg-gray-100 dark:bg-gray-800 dark:border-gray-700 font-mono text-sm"></textarea><button id="copyRawCodeBtn" class="btn btn-primary mt-4"><i class="fas fa-copy"></i> Salin Kode</button></div></div>
 
     <!-- Scripts -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol/dist/L.Control.Locate.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         // --- Globals & Element References ---
-        let map, marker, circle, reportMapInstance;
+        let map, reportMapInstance;
+        let singleModeMarker, singleModeCircle;
+        let multiModeLocations = []; 
+        let tempMultiMarker;
+        let currentMultiCoords;
+        let currentMode = 'single';
         const reportHistory = JSON.parse(localStorage.getItem('reportHistory')) || [];
+        let currentReportData = null;
+        let currentIgMode = false;
+        let currentMapSize = '640'; // Default map size
         
         const ELS = {
-            form: document.getElementById('eventForm'),
-            reportOutputSection: document.getElementById('reportOutputSection'),
-            reportContainer: document.getElementById('report'),
-            coordsInput: document.getElementById('eventLocationCoordinates'),
-            iconSelect: document.getElementById('iconSelect'),
-            radiusSelect: document.getElementById('eventRadius'),
-            formMapLinks: document.getElementById('form-map-links'),
-            reportActionButtons: document.getElementById('report-action-buttons'),
-            historyBtn: document.getElementById('historyBtn'),
-            historyModal: document.getElementById('historyModal'),
-            historyList: document.getElementById('historyList'),
-            clearHistoryBtn: document.getElementById('clearHistoryBtn'),
-            rawCodeModal: document.getElementById('rawCodeModal'),
-            rawCodeTextarea: document.getElementById('rawCodeTextarea'),
-            copyRawCodeBtn: document.getElementById('copyRawCodeBtn'),
+            form: document.getElementById('eventForm'), reportOutputSection: document.getElementById('reportOutputSection'), reportContainer: document.getElementById('report'),
+            singleModeTab: document.getElementById('singleModeTab'), multiModeTab: document.getElementById('multiModeTab'), guideTab: document.getElementById('guideTab'),
+            singleModeControls: document.getElementById('single-mode-controls'), coordsInput: document.getElementById('eventLocationCoordinates'), formMapLinks: document.getElementById('form-map-links'),
+            multiModeControls: document.getElementById('multi-mode-controls'), multiLocationName: document.getElementById('multiLocationName'),
+            addMultiLocationBtn: document.getElementById('addMultiLocationBtn'), multiCoordinatesText: document.getElementById('multiCoordinatesText'),
+            iconSelect: document.getElementById('iconSelect'), radiusSelect: document.getElementById('eventRadius'),
+            reportActionButtons: document.getElementById('report-action-buttons'), historyBtn: document.getElementById('historyBtn'), historyModal: document.getElementById('historyModal'),
+            historyList: document.getElementById('historyList'), clearHistoryBtn: document.getElementById('clearHistoryBtn'), rawCodeModal: document.getElementById('rawCodeModal'),
+            rawCodeTextarea: document.getElementById('rawCodeTextarea'), copyRawCodeBtn: document.getElementById('copyRawCodeBtn'),
+            guideContainer: document.getElementById('guideContainer')
         };
 
         // --- Initial Setup ---
-        function populateDynamicFields() {
-            const imageContainer = document.getElementById('image-inputs-container');
-            for (let i = 1; i <= 2; i++) {
-                imageContainer.innerHTML += `
-                    <div class="border dark:border-gray-700 p-2 rounded-md mb-2">
-                        <label for="imageLink${i}" class="block text-xs font-medium">Link Gambar ${i}:</label>
-                        <input type="url" id="imageLink${i}" placeholder="https://example.com/image.jpg" class="w-full p-1 border rounded-md bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
-                    </div>`;
-            }
-            const sourceContainer = document.getElementById('source-inputs-container');
-            for (let i = 1; i <= 2; i++) {
-                sourceContainer.innerHTML += `
-                    <div class="mb-2">
-                        <label for="eventSource${i}" class="block text-xs font-medium">Sumber ${i}:</label>
-                        <input type="text" id="eventSource${i}" class="w-full p-1 border rounded-md bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
-                    </div>`;
-            }
-        }
-
         function initMap() {
             const streetLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OSM' });
             const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: '© Esri' });
-
-            map = L.map('map', { layers: [streetLayer], zoomControl: true }).setView([-2.5489, 118.0149], 5); // Center on Indonesia
+            map = L.map('map', { layers: [streetLayer], zoomControl: true }).setView([-2.5489, 118.0149], 5);
             map.zoomControl.setPosition('topright');
             L.control.layers({ "Jalan": streetLayer, "Satelit": satelliteLayer }, null, { position: 'topright' }).addTo(map);
-
-            L.Control.geocoder({ defaultMarkGeocode: false, placeholder: 'Cari alamat...', position: 'topleft' })
-                .on('markgeocode', e => updateMarkerAndCircle(e.geocode.center, 15))
-                .addTo(map);
-            
-            // NEW: Locate Control
-            L.control.locate({
-                position: 'topleft',
-                strings: { title: "Lacak lokasi saya" },
-                flyTo: true,
-                returnToPrevBounds: true
-            }).addTo(map);
-
-            map.on('click', e => updateMarkerAndCircle(e.latlng));
-            ELS.iconSelect.addEventListener('change', () => updateMarkerAndCircle(marker ? marker.getLatLng() : null));
-            ELS.radiusSelect.addEventListener('change', () => updateMarkerAndCircle(marker ? marker.getLatLng() : null));
+            L.Control.geocoder({ defaultMarkGeocode: false, placeholder: 'Cari alamat...', position: 'topleft' }).on('markgeocode', e => handleGeocode(e.geocode.center)).addTo(map);
+            L.control.locate({ position: 'topleft', strings: { title: "Lacak lokasi saya" }, flyTo: true, returnToPrevBounds: true }).addTo(map);
+            map.on('click', handleMapClick);
+            ELS.iconSelect.addEventListener('change', () => updateForMode(singleModeMarker ? singleModeMarker.getLatLng() : null));
+            ELS.radiusSelect.addEventListener('change', () => updateForMode(singleModeMarker ? singleModeMarker.getLatLng() : null));
         }
+
+        // --- Mode Switching ---
+        function switchMode(mode) {
+            currentMode = mode;
+            clearAllMapLayers();
+            if (mode === 'single') {
+                ELS.singleModeTab.classList.add('active'); 
+                ELS.multiModeTab.classList.remove('active');
+                ELS.guideTab.classList.remove('active');
+                ELS.singleModeControls.style.display = 'block'; 
+                ELS.multiModeControls.style.display = 'none';
+                ELS.guideContainer.style.display = 'none';
+                document.querySelector('.form-container').style.display = 'block';
+            } else if (mode === 'multi') {
+                ELS.singleModeTab.classList.remove('active'); 
+                ELS.multiModeTab.classList.add('active');
+                ELS.guideTab.classList.remove('active');
+                ELS.singleModeControls.style.display = 'none'; 
+                ELS.multiModeControls.style.display = 'block';
+                ELS.guideContainer.style.display = 'none';
+                document.querySelector('.form-container').style.display = 'block';
+                multiModeLocations = [];
+                currentMultiCoords = null;
+                ELS.multiCoordinatesText.value = ''; 
+                ELS.multiLocationName.value = '';
+            } else if (mode === 'guide') {
+                ELS.singleModeTab.classList.remove('active'); 
+                ELS.multiModeTab.classList.remove('active');
+                ELS.guideTab.classList.add('active');
+                ELS.singleModeControls.style.display = 'none'; 
+                ELS.multiModeControls.style.display = 'none';
+                document.querySelector('.form-container').style.display = 'none';
+                ELS.guideContainer.style.display = 'block';
+            }
+        }
+        ELS.singleModeTab.onclick = () => switchMode('single');
+        ELS.multiModeTab.onclick = () => switchMode('multi');
+        ELS.guideTab.onclick = () => switchMode('guide');
 
         // --- Map & Marker Logic ---
-        function createIcon(iconClass, color) {
-            return L.divIcon({
-                html: `<i class="fas ${iconClass}" style="color: ${color}; font-size: 24px; text-shadow: 0 0 3px rgba(0,0,0,0.7);"></i>`,
-                className: 'leaflet-div-icon',
-                iconSize: [24, 24],
-                iconAnchor: [12, 24]
+        function clearAllMapLayers() {
+            if (singleModeMarker) map.removeLayer(singleModeMarker);
+            if (singleModeCircle) map.removeLayer(singleModeCircle);
+            if (tempMultiMarker) map.removeLayer(tempMultiMarker);
+            multiModeLocations.forEach(loc => {
+                map.removeLayer(loc.markerLayer);
+                map.removeLayer(loc.circleLayer);
             });
+            singleModeMarker = singleModeCircle = tempMultiMarker = null;
+            multiModeLocations = [];
+            ELS.coordsInput.value = '';
+            ELS.formMapLinks.style.display = 'none';
         }
 
-        function updateMarkerAndCircle(latlng, zoomLevel) {
+        function createIcon(iconClass, color, number = null) {
+            const numberBadge = number ? `<span style="position: absolute; top: -5px; right: -8px; background: #dc2626; color: white; border-radius: 50%; width: 16px; height: 16px; font-size: 10px; text-align: center; line-height: 16px; font-weight: bold; border: 1px solid white;">${number}</span>` : '';
+            return L.divIcon({ html: `<div style="position:relative;"><i class="fas ${iconClass}" style="color: ${color}; font-size: 24px; text-shadow: 0 0 3px rgba(0,0,0,0.7);"></i>${numberBadge}</div>`, className: 'leaflet-div-icon', iconSize: [24, 24], iconAnchor: [12, 24] });
+        }
+        
+        function handleMapClick(e) { updateForMode(e.latlng); }
+        function handleGeocode(latlng) { updateForMode(latlng, 15); }
+        
+        function updateForMode(latlng, zoom) {
+             if (currentMode === 'single') updateSingleMarker(latlng, zoom);
+             else handleMultiMapClick(latlng, zoom);
+        }
+
+        function updateSingleMarker(latlng, zoomLevel) {
             if (!latlng) return;
             ELS.coordsInput.value = `${latlng.lat.toFixed(6)}, ${latlng.lng.toFixed(6)}`;
-            if (marker) map.removeLayer(marker);
-            if (circle) map.removeLayer(circle);
-
+            if (singleModeMarker) map.removeLayer(singleModeMarker);
+            if (singleModeCircle) map.removeLayer(singleModeCircle);
             const selectedOption = ELS.iconSelect.options[ELS.iconSelect.selectedIndex];
-            marker = L.marker(latlng, { icon: createIcon(selectedOption.value, selectedOption.dataset.color) }).addTo(map);
-
+            singleModeMarker = L.marker(latlng, { icon: createIcon(selectedOption.value, selectedOption.dataset.color) }).addTo(map);
             const radius = parseInt(ELS.radiusSelect.value, 10);
-            circle = L.circle(latlng, { radius: radius, color: '#3b82f6', fillOpacity: 0.15 }).addTo(map);
-
-            if (zoomLevel) {
-                map.setView(latlng, zoomLevel);
-            } else {
-                map.fitBounds(circle.getBounds(), { padding: [50, 50] });
-            }
+            singleModeCircle = L.circle(latlng, { radius: radius, color: '#3b82f6', fillOpacity: 0.15 }).addTo(map);
+            if (zoomLevel) map.setView(latlng, zoomLevel);
+            else map.fitBounds(singleModeCircle.getBounds(), { padding: [50, 50] });
             updateFormMapLinks(latlng.lat, latlng.lng);
         }
 
-        // NEW: Update map links on the form
-        function updateFormMapLinks(lat, lon) {
-            ELS.formMapLinks.innerHTML = `
-                Cek di: 
-                <a href="https://maps.google.com/?q=${lat},${lon}" target="_blank" class="text-blue-500 hover:underline">Google</a> |
-                <a href="https://www.bing.com/maps?cp=${lat}~${lon}&lvl=16" target="_blank" class="text-blue-500 hover:underline">Bing</a> |
-                <a href="https://maps.apple.com/?ll=${lat},${lon}" target="_blank" class="text-blue-500 hover:underline">Apple</a>
-            `;
-            ELS.formMapLinks.style.display = 'block';
+        function handleMultiMapClick(latlng, zoomLevel) {
+            if (!latlng) return;
+            if (tempMultiMarker) map.removeLayer(tempMultiMarker);
+            tempMultiMarker = L.marker(latlng, { icon: createIcon('fa-map-pin', '#f59e0b') }).addTo(map);
+            currentMultiCoords = latlng;
+            if (zoomLevel) map.setView(latlng, zoomLevel);
+            ELS.multiLocationName.focus();
+            showToast('Lokasi dipilih. Beri nama lalu klik "Tambah".', 'info');
         }
 
-        // --- Form Submission ---
-        ELS.form.addEventListener('submit', e => {
-            e.preventDefault();
-            if (!ELS.coordsInput.value) {
-                showToast('Silakan pilih lokasi di peta.', 'error'); return;
-            }
+        ELS.addMultiLocationBtn.addEventListener('click', () => {
+            const name = ELS.multiLocationName.value.trim();
+            if (!name) { showToast('Silakan beri nama untuk lokasi.', 'error'); return; }
+            if (!currentMultiCoords) { showToast('Silakan klik peta untuk memilih lokasi terlebih dahulu.', 'error'); return; }
             
             const selectedIconOption = ELS.iconSelect.options[ELS.iconSelect.selectedIndex];
+            const iconClass = selectedIconOption.value;
+            const iconColor = selectedIconOption.dataset.color;
+            const radius = parseInt(ELS.radiusSelect.value, 10);
+            
+            if (tempMultiMarker) map.removeLayer(tempMultiMarker);
+            tempMultiMarker = null;
+
+            const markerNumber = multiModeLocations.length + 1;
+            const markerLayer = L.marker(currentMultiCoords, { 
+                icon: createIcon(iconClass, iconColor, markerNumber) 
+            }).addTo(map).bindPopup(`<b>${markerNumber}. ${name}</b>`);
+            const circleLayer = L.circle(currentMultiCoords, { radius, color: iconColor, fillOpacity: 0.15 }).addTo(map);
+
+            multiModeLocations.push({ name, coords: [currentMultiCoords.lat, currentMultiCoords.lng], iconClass, iconColor, radius, markerLayer, circleLayer });
+            
+            updateMultiCoordinatesText();
+            ELS.multiLocationName.value = '';
+            currentMultiCoords = null;
+        });
+
+        function updateMultiCoordinatesText() {
+            ELS.multiCoordinatesText.value = multiModeLocations.map((m, i) => `${i+1}. ${m.name}: ${m.coords[0].toFixed(6)}, ${m.coords[1].toFixed(6)} (Radius: ${m.radius}m)`).join('\n');
+        }
+
+        // --- Form Submission & Report Generation ---
+        ELS.form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const eventName = document.getElementById('eventName').value;
+            const eventDetails = document.getElementById('eventDetails').value;
+            const eventDate = document.getElementById('eventDate').value;
+            const eventCategory = document.getElementById('eventCategory').value;
+            
+            if (!eventName || !eventDetails || !eventDate) {
+                showToast('Silakan isi semua field yang wajib diisi.', 'error');
+                return;
+            }
+            
+            let images = [];
+            for (let i = 1; i <= 2; i++) {
+                const urlInput = document.getElementById(`imageLink${i}`).value;
+                if (urlInput) {
+                    images.push({
+                        src: urlInput,
+                        size: document.getElementById(`imageSize${i}`).value,
+                        hyperlink: document.getElementById(`imageHyperlink${i}`).value
+                    });
+                }
+            }
+            
+            let sources = [];
+            for (let i = 1; i <= 2; i++) {
+                const source = document.getElementById(`eventSource${i}`).value;
+                if (source) sources.push(source);
+            }
+            
             const reportData = {
                 id: Date.now(),
-                name: document.getElementById('eventName').value,
-                details: document.getElementById('eventDetails').value,
-                date: document.getElementById('eventDate').value,
-                category: document.getElementById('eventCategory').value,
-                images: [document.getElementById('imageLink1').value, document.getElementById('imageLink2').value].filter(Boolean),
-                sources: [document.getElementById('eventSource1').value, document.getElementById('eventSource2').value].filter(Boolean),
-                coords: ELS.coordsInput.value.split(',').map(Number),
-                zoom: map.getZoom(),
-                radius: parseInt(ELS.radiusSelect.value, 10),
-                iconClass: selectedIconOption.value,
-                iconColor: selectedIconOption.dataset.color,
+                name: eventName,
+                details: eventDetails,
+                date: eventDate,
+                category: eventCategory,
+                images: images,
+                sources: sources,
+                mode: currentMode
             };
-
+            
+            if (currentMode === 'single') {
+                if (!ELS.coordsInput.value) {
+                    showToast('Silakan pilih lokasi di peta.', 'error');
+                    return;
+                }
+                const [lat, lng] = ELS.coordsInput.value.split(',').map(coord => parseFloat(coord.trim()));
+                const selectedIconOption = ELS.iconSelect.options[ELS.iconSelect.selectedIndex];
+                reportData.coords = [lat, lng];
+                reportData.zoom = map.getZoom();
+                reportData.radius = parseInt(ELS.radiusSelect.value, 10);
+                reportData.iconClass = selectedIconOption.value;
+                reportData.iconColor = selectedIconOption.dataset.color;
+            } else {
+                if (multiModeLocations.length === 0) {
+                    showToast('Silakan tambahkan minimal satu lokasi.', 'error');
+                    return;
+                }
+                reportData.locations = multiModeLocations.map(({ markerLayer, circleLayer, ...rest }) => rest);
+            }
+            
+            currentReportData = reportData;
             generateReport(reportData);
             saveReportToHistory(reportData);
             showToast('Laporan berhasil dibuat!', 'success');
             ELS.reportOutputSection.scrollIntoView({ behavior: 'smooth' });
         });
 
-        // --- Report Generation ---
         function generateReport(data) {
-            const reportHtml = generateReportHTML(data);
+            currentIgMode = false;
+            const reportHtml = data.mode === 'single' 
+                ? generateSingleReportHTML(data) 
+                : generateMultiReportHTML(data);
             ELS.reportContainer.innerHTML = reportHtml;
             setupActionButtons(data);
             ELS.reportOutputSection.style.display = 'block';
-            initReportMap(data);
+            if (data.mode === 'single') initReportMap(data);
+            else initMultiReportMap(data);
+            generateQRCode(data);
         }
-
-        function generateReportHTML(data) {
-            const formattedDate = new Date(data.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+        
+        function generateCommonHTMLSections(data) {
+            const formattedDate = new Date(data.date + 'T00:00:00').toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
             const imageHtml = data.images.length > 0 ? `
-                <div class="mb-5"><h3 class="report-section-header">Gambar Pendukung</h3>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
-                        ${data.images.map(src => `<a href="${src}" target="_blank" rel="noopener noreferrer"><img src="${src}" alt="Gambar Kejadian" class="w-full h-auto rounded-md border dark:border-gray-600"></a>`).join('')}
+                <div class="report-images mb-5">
+                    <h3 class="report-section-header"><i class="fas fa-images"></i> Gambar Terkait</h3>
+                    <div class="image-grid mt-2">
+                        ${data.images.map(img => {
+                            const imgTag = `<img src="${img.src}" alt="Gambar kejadian" style="max-width:${img.size}px; border-radius: 0.5rem;">`;
+                            return img.hyperlink ? `<a href="${img.hyperlink}" target="_blank">${imgTag}</a>` : imgTag;
+                        }).join('')}
                     </div>
                 </div>` : '';
             const sourceHtml = data.sources.length > 0 ? `
-                <div class="mb-5"><h3 class="report-section-header">Sumber Referensi</h3>
-                    <ul class="list-disc pl-5 mt-2 space-y-1">
-                        ${data.sources.map(src => `<li><a href="${src}" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline break-all">${src}</a></li>`).join('')}
+                <div class="report-sources">
+                    <h3 class="report-section-header"><i class="fas fa-link"></i> Sumber</h3>
+                    <ul class="list-disc pl-5 mt-2 text-sm">
+                        ${data.sources.map(src => `<li>${src}</li>`).join('')}
                     </ul>
                 </div>` : '';
+            const creditsHtml = `
+                <div class="flex items-center justify-center gap-2 mt-2 mb-4 text-xs text-gray-500 dark:text-gray-400">
+                    <img src="https://tukangcode.github.io/images/aregan.png" alt="AREGAN Logo" style="width: 64px; height: 64px;">
+                    <span>Dibuat dengan ARGES by Ryu-sena</span>
+                </div>`;
+            return { formattedDate, imageHtml, sourceHtml, creditsHtml };
+        }
+
+        function generateSingleReportHTML(data) {
+            const { formattedDate, imageHtml, sourceHtml, creditsHtml } = generateCommonHTMLSections(data);
             const [lat, lon] = data.coords;
-            const coordinateLinks = `
-                <a href="https://maps.google.com/?q=${lat},${lon}" target="_blank" class="text-blue-500 hover:underline">Google Maps</a> | 
-                <a href="https://www.bing.com/maps?cp=${lat}~${lon}&lvl=16" target="_blank" class="text-blue-500 hover:underline">Bing Maps</a> | 
-                <a href="https://maps.apple.com/?ll=${lat},${lon}&q=Lokasi" target="_blank" class="text-blue-500 hover:underline">Apple Maps</a>`;
+            const coordinateLinks = `<a href="https://maps.google.com/?q=${lat},${lon}" target="_blank" class="text-blue-500 hover:underline">Google</a> | <a href="https://www.bing.com/maps?cp=${lat}~${lon}&lvl=16" target="_blank" class="text-blue-500 hover:underline">Bing</a>`;
+
+            if (currentIgMode) {
+                return generateIgModeHTML(data, formattedDate);
+            } else {
+                return `<style>.report-section-header { font-size: 1.125rem; font-weight: bold; border-bottom: 1px solid var(--border-color); padding-bottom: 5px; margin-bottom: 10px; }</style>
+                    <div id="report-content" class="p-4 rounded-lg bg-white dark:bg-gray-800 text-black dark:text-white">
+                        <div class="text-center border-b-2 dark:border-gray-600 pb-3 mb-5">
+                            <h2 class="text-2xl font-bold mb-1">${data.name}</h2>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Kategori: <strong>${data.category}</strong> | Tanggal: <strong>${formattedDate}</strong></p>
+                        </div>
+                        ${creditsHtml}
+                        <div class="report-details mb-5"><h3 class="report-section-header">Detail Kejadian</h3><p class="leading-relaxed whitespace-pre-wrap">${data.details}</p></div>
+                        ${imageHtml}
+                        <div class="report-map mb-5">
+                            <h3 class="report-section-header">Informasi Lokasi</h3>
+                            <div id="reportMapContainer" class="w-full h-80 border border-gray-300 rounded-md"></div>
+                            <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <p>Koordinat: <strong>${data.coords.join(', ')}</strong> <span class="text-xs ml-2">(${coordinateLinks})</span></p>
+                                    <p>Radius Terdampak: <strong>${data.radius} meter</strong></p>
+                                </div>
+                                <div id="qrcode" class="qr-container">
+                                    <div class="qr-code" id="qr-code-container"></div>
+                                    <p class="qr-label">Scan untuk melihat di Google Maps</p>
+                                </div>
+                            </div>
+                        </div>
+                        ${sourceHtml}
+                    </div>`;
+            }
+        }
+        
+        function generateIgModeHTML(data, formattedDate) {
+            const { imageHtml, sourceHtml } = generateCommonHTMLSections(data);
+            const [lat, lon] = data.coords;
+            const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${lat},${lon}`;
+            
+            const igImageHtml = data.images.length > 0 ? `
+                <div class="report-section">
+                     <div class="report-section-header"><i class="fas fa-images"></i><span>Gambar Terkait</span></div>
+                    <div class="image-grid">
+                        ${data.images.map(img => `<img src="${img.src}" alt="Gambar kejadian">`).join('')}
+                    </div>
+                </div>` : '';
+            
+            const igSourceHtml = data.sources.length > 0 ? `
+                <div class="report-section">
+                     <div class="report-section-header"><i class="fas fa-link"></i><span>Sumber</span></div>
+                    <ul class="list-disc pl-5 mt-2 text-sm text-gray-700">
+                        ${data.sources.map(src => `<li>${src}</li>`).join('')}
+                    </ul>
+                </div>` : '';
+            
+            const igCreditsHtml = `
+                <div class="flex items-center justify-center gap-2 mt-3 text-xs text-white opacity-80">
+                    <img src="https://tukangcode.github.io/images/homepage.png" alt="ARGES Logo" style="width: 20px; height: 20px; filter: brightness(0) invert(1);">
+                    <span>Dibuat dengan ARGES by Ryu-sena</span>
+                </div>`;
 
             return `
-                <style>.report-section-header { font-size: 1.125rem; font-weight: bold; border-bottom: 1px solid var(--border-color); padding-bottom: 5px; margin-bottom: 10px; }</style>
+            <div id="report-content" class="ig-mode">
+                <div class="report-header">
+                    <h2 class="text-2xl font-bold">${data.name}</h2>
+                    <p class="text-sm opacity-90 mt-1">${formattedDate} | ${data.category}</p>
+                    ${igCreditsHtml}
+                </div>
+                
+                <div class="report-section"><div class="report-section-header"><i class="fas fa-info-circle"></i><span>Detail Kejadian</span></div><p class="text-gray-700">${data.details}</p></div>
+                <div class="report-section">
+                    <div class="report-section-header"><i class="fas fa-map-marker-alt"></i><span>Lokasi Kejadian</span></div>
+                    <div id="reportMapContainer"></div>
+                    <div class="map-size-controls">
+                        <div class="map-size-btn ${currentMapSize === '320' ? 'active' : ''}" data-size="320">Kecil (320px)</div>
+                        <div class="map-size-btn ${currentMapSize === '640' ? 'active' : ''}" data-size="640">Sedang (640px)</div>
+                        <div class="map-size-btn ${currentMapSize === '720' ? 'active' : ''}" data-size="720">Besar (720px)</div>
+                        <div class="map-size-btn ${currentMapSize === '1024' ? 'active' : ''}" data-size="1024">Sangat Besar (1024px)</div>
+                    </div>
+                    <div class="info-grid">
+                        <div class="info-card"><i class="fas fa-map-pin"></i><div class="label">Koordinat</div><div class="value">${lat.toFixed(6)}, ${lon.toFixed(6)}</div></div>
+                        <div class="info-card"><i class="fas fa-ruler"></i><div class="label">Radius Dampak</div><div class="value">${data.radius} meter</div></div>
+                        <div class="info-card"><i class="fas fa-${data.iconClass}"></i><div class="label">Kategori</div><div class="value">${data.category}</div></div>
+                    </div>
+                </div>
+                ${igImageHtml}
+                ${igSourceHtml}
+                <div class="qr-container"><div class="report-section-header"><i class="fas fa-qrcode"></i><span>Scan untuk Google Maps</span></div><div class="qr-code" id="qr-code-container"></div><p class="qr-label">Scan QR code untuk melihat lokasi</p></div>
+                <div class="social-footer"><div class="social-btn ig-btn"><i class="fab fa-instagram"></i></div><div class="social-btn fb-btn"><i class="fab fa-facebook-f"></i></div><div class="social-btn twitter-btn"><i class="fab fa-twitter"></i></div></div>
+            </div>`;
+        }
+        
+        function generateMultiReportHTML(data) {
+            const { formattedDate, imageHtml, sourceHtml, creditsHtml } = generateCommonHTMLSections(data);
+            
+            return `<style>.report-section-header { font-size: 1.125rem; font-weight: bold; border-bottom: 1px solid var(--border-color); padding-bottom: 5px; margin-bottom: 10px; }</style>
                 <div id="report-content" class="p-4 rounded-lg bg-white dark:bg-gray-800 text-black dark:text-white">
                     <div class="text-center border-b-2 dark:border-gray-600 pb-3 mb-5">
                         <h2 class="text-2xl font-bold mb-1">${data.name}</h2>
                         <p class="text-sm text-gray-600 dark:text-gray-400">Kategori: <strong>${data.category}</strong> | Tanggal: <strong>${formattedDate}</strong></p>
                     </div>
-                    <div class="mb-5"><h3 class="report-section-header">Detail Kejadian</h3><p class="leading-relaxed whitespace-pre-wrap">${data.details}</p></div>
+                    ${creditsHtml}
+                    <div class="report-details mb-5"><h3 class="report-section-header">Detail Kejadian</h3><p class="leading-relaxed whitespace-pre-wrap">${data.details}</p></div>
                     ${imageHtml}
-                    <div class="mb-5">
-                        <h3 class="report-section-header">Lokasi</h3>
-                        <p>Koordinat: <strong>${data.coords.join(', ')}</strong></p>
-                        <p class="text-sm mt-1">${coordinateLinks}</p>
-                        <div id="reportMapContainer" class="w-full h-64 border border-gray-300 rounded-md mt-2"></div>
+                    <div class="report-map mb-5">
+                        <h3 class="report-section-header">Lokasi-lokasi Kejadian</h3>
+                        <div id="reportMapContainer" class="w-full h-80 border border-gray-300 rounded-md"></div>
+                        <div class="mt-4">
+                            <h4 class="font-semibold mb-2">Daftar Lokasi:</h4>
+                            <ul class="list-disc pl-5">
+                                ${data.locations.map((loc, i) => 
+                                    `<li>${i+1}. ${loc.name}: ${loc.coords[0].toFixed(6)}, ${loc.coords[1].toFixed(6)} (Radius: ${loc.radius}m)</li>`
+                                ).join('')}
+                            </ul>
+                        </div>
                     </div>
                     ${sourceHtml}
                 </div>`;
         }
-
+        
         function initReportMap(data) {
             if (reportMapInstance) reportMapInstance.remove();
-            const latlng = L.latLng(data.coords[0], data.coords[1]);
-            reportMapInstance = L.map('reportMapContainer', { scrollWheelZoom: false, zoomControl: true }).setView(latlng, data.zoom);
+            const mapContainer = document.getElementById('reportMapContainer');
+            if (currentIgMode) mapContainer.style.height = currentMapSize + 'px';
+            reportMapInstance = L.map(mapContainer, { scrollWheelZoom: false, zoomControl: true }).setView(data.coords, data.zoom > 13 ? data.zoom : 13);
             L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}').addTo(reportMapInstance);
-            L.marker(latlng, { icon: createIcon(data.iconClass, data.iconColor) }).addTo(reportMapInstance);
-            L.circle(latlng, { radius: data.radius, color: '#3b82f6', fillOpacity: 0.15 }).addTo(reportMapInstance);
-        }
-
-        // NEW: Action Buttons (PDF, Compact, Raw Code)
-        function setupActionButtons(data) {
-            ELS.reportActionButtons.innerHTML = `
-                <button id="pdfBtn" class="btn btn-sm btn-primary"><i class="fas fa-file-pdf"></i> Jadikan PDF</button>
-                <button id="compactBtn" class="btn btn-sm btn-secondary"><i class="fas fa-compress-alt"></i> Mode Ringkas</button>
-                <button id="rawCodeBtn" class="btn btn-sm btn-secondary"><i class="fas fa-code"></i> Kode Mentah</button>
-            `;
-            document.getElementById('pdfBtn').onclick = () => window.print();
-            document.getElementById('compactBtn').onclick = () => ELS.reportOutputSection.classList.toggle('compact-mode');
-            document.getElementById('rawCodeBtn').onclick = () => {
-                const reportContent = document.getElementById('report-content').innerHTML;
-                const prettyHtml = '<div>\n' + reportContent.split('><').join('>\n<') + '\n</div>';
-                ELS.rawCodeTextarea.value = prettyHtml;
-                ELS.rawCodeModal.style.display = 'block';
-            };
-        }
-
-        // NEW: History Logic
-        function saveReportToHistory(data) {
-            reportHistory.unshift(data);
-            if (reportHistory.length > 50) reportHistory.pop(); // Limit history size
-            localStorage.setItem('reportHistory', JSON.stringify(reportHistory));
-            renderHistoryList();
-        }
-
-        function renderHistoryList() {
-            if (reportHistory.length === 0) {
-                ELS.historyList.innerHTML = '<p class="text-gray-500">Tidak ada riwayat.</p>';
-                return;
-            }
-            ELS.historyList.innerHTML = reportHistory.map(item => {
-                const date = new Date(item.date).toLocaleDateString('id-ID');
-                return `<div class="p-2 border-b dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer" data-id="${item.id}">
-                    <p class="font-semibold">${item.name}</p>
-                    <p class="text-sm text-gray-500">${date} - ${item.coords.join(', ')}</p>
-                </div>`;
-            }).join('');
+            L.marker(data.coords, { icon: createIcon(data.iconClass, data.iconColor) }).addTo(reportMapInstance);
+            L.circle(data.coords, { radius: data.radius, color: '#3b82f6', fillOpacity: 0.2 }).addTo(reportMapInstance);
         }
         
-        ELS.historyList.addEventListener('click', e => {
-            const itemEl = e.target.closest('[data-id]');
-            if (itemEl) {
-                const reportId = parseInt(itemEl.dataset.id, 10);
-                const reportData = reportHistory.find(r => r.id === reportId);
-                if (reportData) {
-                    generateReport(reportData);
-                    ELS.historyModal.style.display = 'none';
-                    showToast('Laporan dari riwayat dimuat.', 'info');
-                    ELS.reportOutputSection.scrollIntoView({ behavior: 'smooth' });
-                }
-            }
-        });
-
-        ELS.clearHistoryBtn.addEventListener('click', () => {
-            if (confirm('Apakah Anda yakin ingin menghapus semua riwayat laporan?')) {
-                reportHistory.length = 0;
-                localStorage.removeItem('reportHistory');
-                renderHistoryList();
-                showToast('Riwayat berhasil dihapus.', 'success');
-            }
-        });
-        
-        // --- Modal & Utility Logic ---
-        ELS.historyBtn.addEventListener('click', () => {
-            renderHistoryList();
-            ELS.historyModal.style.display = 'block';
-        });
-        
-        ELS.copyRawCodeBtn.addEventListener('click', () => {
-            ELS.rawCodeTextarea.select();
-            document.execCommand('copy');
-            showToast('Kode berhasil disalin ke clipboard!', 'success');
-        });
-
-        document.querySelectorAll('.close-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.getElementById(btn.dataset.modal).style.display = 'none';
+        function initMultiReportMap(data) {
+            if (reportMapInstance) reportMapInstance.remove();
+            const mapContainer = document.getElementById('reportMapContainer');
+            reportMapInstance = L.map(mapContainer, { scrollWheelZoom: false, zoomControl: true });
+            L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}').addTo(reportMapInstance);
+            const bounds = L.latLngBounds();
+            data.locations.forEach((loc, i) => {
+                const marker = L.marker(loc.coords, { icon: createIcon(loc.iconClass, loc.iconColor, i+1) }).addTo(reportMapInstance).bindPopup(`<b>${i+1}. ${loc.name}</b><br>${loc.coords[0].toFixed(6)}, ${loc.coords[1].toFixed(6)}<br>Radius: ${loc.radius}m`);
+                L.circle(loc.coords, { radius: loc.radius, color: loc.iconColor, fillOpacity: 0.15 }).addTo(reportMapInstance);
+                bounds.extend(loc.coords);
             });
-        });
-
-        window.addEventListener('click', e => {
-            if (e.target.classList.contains('modal')) {
-                e.target.style.display = 'none';
-            }
-        });
-        
-        function showToast(message, type = 'info') {
-            const colors = {
-                success: 'linear-gradient(to right, #00b09b, #96c93d)',
-                error: 'linear-gradient(to right, #ff5f6d, #ffc371)',
-                info: 'linear-gradient(to right, #3f51b5, #2196f3)'
-            };
-            Toastify({
-                text: message, duration: 3000, gravity: "bottom", position: "right",
-                style: { background: colors[type] || colors.info }
-            }).showToast();
+            reportMapInstance.fitBounds(bounds.pad(0.1));
         }
+
+        function setupActionButtons(data) { 
+            ELS.reportActionButtons.innerHTML = `<button id="pdfBtn" class="btn btn-sm btn-primary"><i class="fas fa-file-pdf"></i> Jadikan PDF</button><button id="compactBtn" class="btn btn-sm btn-secondary"><i class="fas fa-compress-alt"></i> Mode Ringkas</button><button id="igModeBtn" class="btn btn-sm btn-secondary"><i class="fab fa-instagram"></i> Mode IG</button><button id="rawCodeBtn" class="btn btn-sm btn-secondary"><i class="fas fa-code"></i> Kode Mentah</button>`; 
+            document.getElementById('pdfBtn').onclick = () => {
+                const originalTitle = document.title;
+                const cleanEventName = data.name.replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '_');
+                const cleanDate = data.date.replace(/-/g, '');
+                const cleanCategory = data.category.replace(/\s+/g, '_');
+                document.title = `${cleanEventName}_${cleanDate}_${cleanCategory}`;
+                window.print();
+                setTimeout(() => { document.title = originalTitle; }, 1000);
+            }; 
+            document.getElementById('compactBtn').onclick = () => ELS.reportOutputSection.classList.toggle('compact-mode'); 
+            document.getElementById('igModeBtn').onclick = () => {
+                if (data.mode !== 'single') { showToast('Mode IG hanya tersedia untuk laporan tunggal.', 'error'); return; }
+                currentIgMode = !currentIgMode;
+                if (currentIgMode) {
+                    document.getElementById('igModeBtn').innerHTML = '<i class="fas fa-file-alt"></i> Mode Standar';
+                    generateReport(currentReportData); // Regenerate with IG flag on
+                    showToast('Tips: Ubah ukuran window browser seperti layar HP (misal: 320x640) untuk screenshot terbaik.', 'info');
+                    document.querySelectorAll('.map-size-btn').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            currentMapSize = this.dataset.size;
+                            document.querySelectorAll('.map-size-btn').forEach(b => b.classList.remove('active'));
+                            this.classList.add('active');
+                            document.getElementById('reportMapContainer').style.height = currentMapSize + 'px';
+                            if (reportMapInstance) reportMapInstance.invalidateSize();
+                        });
+                    });
+                } else {
+                    document.getElementById('igModeBtn').innerHTML = '<i class="fab fa-instagram"></i> Mode IG';
+                    generateReport(currentReportData); // Regenerate with IG flag off
+                }
+            };
+            document.getElementById('rawCodeBtn').onclick = () => { 
+                const reportContent = document.getElementById('report-content').cloneNode(true);
+                const mapDiv = reportContent.querySelector('#reportMapContainer');
+                if(mapDiv) mapDiv.innerHTML = '<!-- Peta akan di-generate oleh JavaScript -->';
+                const prettyHtml = reportContent.innerHTML;
+                ELS.rawCodeTextarea.value = prettyHtml; 
+                ELS.rawCodeModal.style.display = 'block'; 
+            }; 
+        }
+
+        function generateQRCode(data) {
+            let coords;
+            if (data.mode === 'single') coords = data.coords;
+            else if (data.mode === 'multi' && data.locations.length > 0) coords = data.locations[0].coords;
+            else { const qrContainer = document.getElementById('qrcode'); if(qrContainer) qrContainer.style.display = 'none'; return; }
+            
+            const [lat, lng] = coords;
+            const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+            const container = document.getElementById('qr-code-container');
+            if (container) {
+                container.innerHTML = '';
+                new QRCode(container, { text: googleMapsUrl, width: 128, height: 128, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H });
+            }
+        }
+
+        function saveReportToHistory(data) { reportHistory.unshift(data); if (reportHistory.length > 50) reportHistory.pop(); localStorage.setItem('reportHistory', JSON.stringify(reportHistory)); }
         
-        // --- Final Initialization Calls ---
-        populateDynamicFields();
+        function renderHistoryList() { 
+            if (reportHistory.length === 0) { ELS.historyList.innerHTML = '<p class="text-gray-500">Tidak ada riwayat.</p>'; return; } 
+            ELS.historyList.innerHTML = reportHistory.map(item => { 
+                const date = new Date(item.date + 'T00:00:00').toLocaleDateString('id-ID'); 
+                const locationInfo = item.mode === 'single' ? (item.coords ? item.coords.join(', ') : 'N/A') : `${item.locations.length} Lokasi`; 
+                return `<div class="p-2 border-b dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer" data-id="${item.id}"><p class="font-semibold">${item.name}</p><p class="text-sm text-gray-500">${date} - ${locationInfo}</p></div>`; 
+            }).join(''); 
+        }
+
+        function updateFormMapLinks(lat, lon) { ELS.formMapLinks.innerHTML = `Cek di: <a href="https://maps.google.com/?q=${lat},${lon}" target="_blank" class="text-blue-500 hover:underline">Google</a> | <a href="https://www.bing.com/maps?cp=${lat}~${lon}&lvl=16" target="_blank" class="text-blue-500 hover:underline">Bing</a> | <a href="https://maps.apple.com/?ll=${lat},${lon}" target="_blank" class="text-blue-500 hover:underline">Apple</a>`; ELS.formMapLinks.style.display = 'block'; }
+        
+        ELS.historyList.addEventListener('click', e => { 
+            const itemEl = e.target.closest('[data-id]'); 
+            if (itemEl) { 
+                const reportId = parseInt(itemEl.dataset.id, 10); 
+                const reportData = reportHistory.find(r => r.id === reportId); 
+                if (reportData) { currentReportData = reportData; generateReport(reportData); ELS.historyModal.style.display = 'none'; showToast('Laporan dari riwayat dimuat.', 'info'); ELS.reportOutputSection.scrollIntoView({ behavior: 'smooth' }); } 
+            } 
+        });
+        
+        ELS.clearHistoryBtn.addEventListener('click', () => { if (confirm('Apakah Anda yakin ingin menghapus semua riwayat laporan?')) { reportHistory.length = 0; localStorage.removeItem('reportHistory'); renderHistoryList(); showToast('Riwayat berhasil dihapus.', 'success'); } });
+        ELS.historyBtn.addEventListener('click', () => { renderHistoryList(); ELS.historyModal.style.display = 'block'; });
+        ELS.copyRawCodeBtn.addEventListener('click', () => { ELS.rawCodeTextarea.select(); document.execCommand('copy'); showToast('Kode berhasil disalin!', 'success'); });
+        document.querySelectorAll('.close-btn').forEach(btn => btn.addEventListener('click', () => document.getElementById(btn.dataset.modal).style.display = 'none'));
+        window.addEventListener('click', e => { if (e.target.classList.contains('modal')) e.target.style.display = 'none'; });
+        function showToast(message, type = 'info') { const colors = { success: 'linear-gradient(to right, #00b09b, #96c93d)', error: 'linear-gradient(to right, #ff5f6d, #ffc371)', info: 'linear-gradient(to right, #3f51b5, #2196f3)' }; Toastify({ text: message, duration: 5000, gravity: "bottom", position: "right", style: { background: colors[type] || colors.info } }).showToast(); }
+        
+        (function() {
+            const imageContainer = document.getElementById('image-inputs-container');
+            for (let i = 1; i <= 2; i++) {
+                imageContainer.innerHTML += `<div class="border dark:border-gray-700 p-3 rounded-md mb-3 space-y-2"><p class="font-semibold text-sm">Gambar ${i}</p><div><label class="block text-xs font-medium">Upload File Lokal</label><input type="file" id="imageFile${i}" accept="image/*" class="w-full text-sm"></div><div><label for="imageLink${i}" class="block text-xs font-medium">atau Link Gambar</label><input type="url" id="imageLink${i}" placeholder="https://..." class="w-full p-1 border rounded-md bg-gray-50 dark:bg-gray-800 dark:border-gray-700 text-sm"></div><div class="grid grid-cols-2 gap-2"><div><label for="imageSize${i}" class="block text-xs font-medium">Ukuran di Laporan</label><select id="imageSize${i}" class="w-full p-1 border rounded-md bg-gray-50 dark:bg-gray-800 dark:border-gray-700 text-sm"><option value="320">Kecil (320px)</option><option value="640" selected>Sedang (640px)</option><option value="720">Besar (720px)</option><option value="1024">Sangat Besar (1024px)</option></select></div><div><label for="imageHyperlink${i}" class="block text-xs font-medium">Link Tautan (opsional)</label><input type="url" id="imageHyperlink${i}" placeholder="https://..." class="w-full p-1 border rounded-md bg-gray-50 dark:bg-gray-800 dark:border-gray-700 text-sm"></div></div></div>`;
+            }
+            const sourceContainer = document.getElementById('source-inputs-container');
+            for (let i = 1; i <= 2; i++) {
+                sourceContainer.innerHTML += `<div class="mb-2"><label for="eventSource${i}" class="block text-xs font-medium">Sumber ${i}:</label><input type="text" id="eventSource${i}" class="w-full p-1 border rounded-md bg-gray-50 dark:bg-gray-800 dark:border-gray-700"></div>`;
+            }
+        })();
+
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('eventDate').value = today;
+
         initMap();
+        switchMode('single');
     });
     </script>
 </body>
