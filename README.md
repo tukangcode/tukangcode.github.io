@@ -1,2 +1,2 @@
 # tukangcode.github.io
-Host Tolol dan publikasi script saya
+Host Tool  dan publikasi script saya
