@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tutorial: Armbian + Hermes di STB | Home Server Murah</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- HEADER / HERO -->
+    <header class="hero">
+        <div class="hero-img-container">
+            <!-- GANTI: images/waifu-header.jpg -->
+            <img src="images/waifu-header.jpg" alt="Header Waifu" class="hero-img">
+            <div class="hero-overlay"></div>
+        </div>
+        <div class="hero-content">
+            <a href="index.html" class="back-to-blog">← Kembali ke Blog</a>
+            <h1>Home Server dari STB Bekas</h1>
+            <p class="hero-sub">Tutorial lengkap instalasi Armbian + Hermes di Set-Top Box — murah, ringan, jalan.</p>
+            <div class="hero-tags">
+                <span class="tag">Armbian</span>
+                <span class="tag">Linux</span>
+                <span class="tag">STB</span>
+                <span class="tag">Hermes</span>
+                <span class="tag">Home Server</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- NAV -->
+    <nav class="toc" id="toc">
+        <div class="toc-inner">
+            <span class="toc-label">Daftar Isi</span>
+            <div class="toc-links">
+                <a href="#biaya">Biaya</a>
+                <a href="#armbian">Armbian</a>
+                <a href="#stb">STB Support</a>
+                <a href="#flash">Flash Image</a>
+                <a href="#boot">Boot & Setup</a>
+                <a href="#ssh">SSH & Hermes</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+
+        <!-- INTRO -->
+        <section class="intro">
+            <h2>Mau punya home server sendiri?</h2>
+            <p>Yup, bisa. Tapi terbatas biaya? <strong>Ok, bisa juga.</strong> Tutorial ini nunjukin gimana caranya bikin home server dari STB bekas yang di-root, jalanin Armbian (Linux buat chip ARM), terus install Hermes AI agent di atasnya. Total biaya? Jauh lebih murah dari VPS bulanan.</p>
+        </section>
+
+        <!-- BIAYA -->
+        <section id="biaya" class="card">
+            <h2><span class="step">💰</span> Rincian Biaya</h2>
+            <div class="img-placeholder">
+                <!-- GANTI: images/orang-ngitung-uang.jpg -->
+                <img src="images/orang-ngitung-uang.jpg" alt="Budget planning">
+                <span class="img-note">gambar orang ngitung uang</span>
+            </div>
+            <div class="cost-table">
+                <div class="cost-row">
+                    <span class="cost-item">STB Set (sudah di-root)</span>
+                    <span class="cost-price">~Rp 200.000</span>
+                </div>
+                <div class="cost-detail">Spek: 2GB RAM, CPU ARM. Detail chip per model ada di bawah.</div>
+
+                <div class="cost-row">
+                    <span class="cost-item">SD Card (16-32 GB)</span>
+                    <span class="cost-price">~Rp 200.000-an</span>
+                </div>
+                <div class="cost-detail">Minimal 16GB, saran 32GB. Flashdisk belum tested — SD card lebih stabil.</div>
+
+                <div class="cost-row">
+                    <span class="cost-item">Keyboard + Mouse</span>
+                    <span class="cost-price">~Rp 100.000</span>
+                </div>
+                <div class="cost-detail">Buat navigasi di STB. USB wireless combo lebih praktis.</div>
+
+                <div class="cost-row">
+                    <span class="cost-item">Layar (TV/Monitor/Proyektor)</span>
+                    <span class="cost-price">??? (punya sendiri)</span>
+                </div>
+                <div class="cost-detail">Yang support HDMI. Bisa pakai TV yang udah ada.</div>
+
+                <div class="cost-row cost-total">
+                    <span class="cost-item">TOTAL ESTIMASI</span>
+                    <span class="cost-price">~Rp 600.000+</span>
+                </div>
+            </div>
+            <p class="note-box">Well, that's a lot — tapi ya memang segitu biayanya untuk spek 2GB RAM dan CPU ARM. Mau worth atau tidak, tergantung kebutuhan Anda. Yang jelas, ini <strong>jauh lebih murah</strong> dari sewa VPS bulanan kalau dihitung jangka panjang.</p>
+        </section>
+
+        <!-- DISCLAIMER -->
+        <section class="card disclaimer-card">
+            <div class="disclaimer-icon">⚠️</div>
+            <h2>Disclaimer</h2>
+            <p>Tutorial ini berdasarkan <strong>eksperimen pribadi</strong>. Segala risiko kesalahan, brick, kerugian, atau kerusakan yang terjadi saat mengikuti tutorial ini adalah <strong>tanggung jawab Anda sendiri</strong>. Penulis tidak bertanggung jawab atas apapun yang terjadi pada perangkat Anda.</p>
+            <p><em>Do it at your own risk.</em></p>
+        </section>
+
+        <!-- ARMBIAN -->
+        <section id="armbian" class="card">
+            <h2><span class="step">0</span> Armbian — Apa Itu?</h2>
+            <div class="img-placeholder">
+                <!-- GANTI: images/armbian-github.jpg -->
+                <img src="images/armbian-github.jpg" alt="Armbian Community GitHub">
+                <span class="img-note">screenshot GitHub page Armbian community</span>
+            </div>
+            <p><strong>Short story:</strong> Armbian itu Linux yang bisa jalan di chip ARM yang dipakai di STB. Namun... <strong>tidak semua STB bisa</strong>. Community support ada di GitHub page mereka yang melist device apa saja yang compatible.</p>
+            <a href="https://github.com/ophub/amlogic-s9xxx-armbian" target="_blank" class="btn-link">
+                → Cek daftar STB support di GitHub Armbian
+            </a>
+        </section>
+
+        <!-- STB SUPPORT -->
+        <section id="stb" class="card">
+            <h2><span class="step">1</span> STB yang Support</h2>
+            <p>Saya tidak tau segmen pasar dan stok STB apa yang mayoritas tersedia di Indonesia, namun berdasarkan cek di Shopee dan master root STB lokal setempat yang support <strong>dual boot</strong> (ingat, ini dual boot):</p>
+
+            <div class="img-placeholder">
+                <!-- GANTI: images/shopee-stb.jpg -->
+                <img src="images/shopee-stb.jpg" alt="Screenshot Shopee STB">
+                <span class="img-note">screenshot Shopee — STB yang dijual</span>
+            </div>
+
+            <div class="stb-list">
+                <div class="stb-item stb-active">
+                    <div class="stb-badge">✓ TESTED</div>
+                    <h3>HG680-P</h3>
+                    <p>Yang saya gunakan dan test berhasil. Chip: <strong>Amlogic S905X</strong>.</p>
+                </div>
+                <div class="stb-item">
+                    <div class="stb-badge info">INFO</div>
+                    <h3>B860H</h3>
+                    <p>Menurut tukang root setempat, support dual boot.</p>
+                </div>
+                <div class="stb-item">
+                    <div class="stb-badge info">INFO</div>
+                    <h3>HG680V (V1, V2, V5)</h3>
+                    <p>OS Android 9 menurut tukang root setempat.</p>
+                </div>
+            </div>
+
+            <div class="img-placeholder">
+                <!-- GANTI: images/stb-belakang.jpg -->
+                <img src="images/stb-belakang.jpg" alt="Foto belakang STB">
+                <span class="img-note">foto belakang STB (info chip/serial)</span>
+            </div>
+
+            <div class="tip-box">
+                <strong>💡 Tips:</strong> Foto bagian belakang STB Anda, tunjukkan ke Claude (ya, Claude — yang lain payah baca seri/chip-nya), lalu cek apakah chip ARM-nya ada di list GitHub Armbian.
+            </div>
+
+            <div class="warning-box">
+                <strong>⚠️ Penting:</strong> STB <strong>harus sudah di-root</strong>. Setidaknya karena punya saya sudah di-root, jadi saya kurang tau dan tidak berani jamin akan sukses kalau belum.
+            </div>
+        </section>
+
+        <!-- FLASH IMAGE -->
+        <section id="flash" class="card">
+            <h2><span class="step">2</span> Download Image & Flash ke SD Card</h2>
+            <p>Ok, STB sudah aman (kasus saya: HG680-P pakai chip S905X). Next, soal ISO/image untuk flash-nya — jujur saya pakai Claude untuk bantu carikan room/image dan hasilnya payah... Saya harus cari dan sesuaikan sendiri.</p>
+
+            <p>Dalam kasus saya (HG680-P / S905X), saya pakai <strong>Bookworm latest release</strong>:</p>
+
+            <div class="code-block">
+                <code>Armbian_26.11.0_amlogic_s905x-b860h_bookworm_6.12.107_server_2026.09.01.img</code>
+            </div>
+
+            <div class="img-placeholder">
+                <!-- GANTI: images/armbian-releases.jpg -->
+                <img src="images/armbian-releases.jpg" alt="Armbian Release List">
+                <span class="img-note">screenshot list release Armbian</span>
+            </div>
+
+            <p>Jadi kembali lagi — <strong>manual job</strong> mencocokkan model STB dengan image-nya. Jangan asal pilih, pastikan chip-nya match.</p>
+
+            <h3>Flash pakai Rufus ke SD Card</h3>
+
+            <div class="video-link-box">
+                <a href="https://www.youtube.com/watch?v=NNCa1MO9IwE" target="_blank" class="btn-link">
+                    ▶ Tonton: Cara Flash Image ke SD Card pakai Rufus (YouTube)
+                </a>
+            </div>
+
+            <div class="steps-list">
+                <div class="step-item">
+                    <span class="step-num">1</span>
+                    <p>Download image Armbian yang sesuai chip STB Anda.</p>
+                </div>
+                <div class="step-item">
+                    <span class="step-num">2</span>
+                    <p>Download & buka <strong>Rufus</strong> di PC/laptop.</p>
+                </div>
+                <div class="step-item">
+                    <span class="step-num">3</span>
+                    <p>Masukkan SD Card ke card reader USB, colok ke PC.</p>
+                </div>
+                <div class="step-item">
+                    <span class="step-num">4</span>
+                    <p>Di Rufus, pilih SD Card sebagai target, pilih file image Armbian.</p>
+                </div>
+                <div class="step-item">
+                    <span class="step-num">5</span>
+                    <p>Klik <strong>Start</strong>, tunggu sampai selesai.</p>
+                </div>
+                <div class="step-item">
+                    <span class="step-num">6</span>
+                    <p><strong>JANGAN dulu</strong> pasang SD Card ke slot STB. Nanti setelah step terminal.</p>
+                </div>
+            </div>
+
+            <div class="tip-box">
+                <strong>💡 Storage:</strong> SD card lebih stabil daripada flashdisk. Saran: 32GB, minimal 16GB.
+            </div>
+        </section>
+
+        <!-- BOOT & SETUP -->
+        <section id="boot" class="card">
+            <h2><span class="step">3</span> Boot ke Armbian</h2>
+
+            <h3>Persiapan di STB</h3>
+            <p>Cari aplikasi terminal di STB Anda. Kalau tidak ada, coba <strong>Termux</strong> (cari cara install-nya kalau tidak ada — biasanya harusnya ada).</p>
+
+            <p>Di terminal, ketik:</p>
+            <div class="code-block">
+                <code>su</code>
+            </div>
+            <p>Grant super user ke terminal — izinkan, ya,bolehkan bila pop-up muncul.</p>
+
+            <p>Lalu ketik (tapi <strong>jangan enter dulu</strong>):</p>
+            <div class="code-block">
+                <code>reboot update</code>
+            </div>
+
+            <div class="warning-box">
+                <strong>⚠️ Urutan penting:</strong> Masukkan SD Card ke slot STB <strong>dulu</strong>, baru tekan Enter di terminal. STB akan restart dan boot dari SD Card.
+            </div>
+
+            <div class="img-placeholder">
+                <!-- GANTI: images/boot-loading.jpg -->
+                <img src="images/boot-loading.jpg" alt="Boot loading screen">
+                <span class="img-note">gambar loading booting berjalan</span>
+            </div>
+
+            <p>STB akan restart. Jika berhasil, akan masuk ke boot screen seperti di gambar atas. 🎉</p>
+
+            <h3>First-Time Setup</h3>
+            <div class="steps-list">
+                <div class="step-item">
+                    <span class="step-num">1</span>
+                    <p><strong>Buat password root</strong> — catat! Pilih yang mudah diketik tapi kuat dan aman.</p>
+                </div>
+                <div class="step-item">
+                    <span class="step-num">2</span>
+                    <p><strong>Buat nama user</strong> — bisa apa saja. Saya pakai <code>root</code>.</p>
+                </div>
+                <div class="step-item">
+                    <span class="step-num">3</span>
+                    <p><strong>Masukkan password user</strong> — dua kali konfirmasi.</p>
+                </div>
+                <div class="step-item">
+                    <span class="step-num">4</span>
+                    <p><strong>Nama device</strong> — beri nama STB Anda. Saya kasih <code>root</code>.</p>
+                </div>
+                <div class="step-item">
+                    <span class="step-num">5</span>
+                    <p><strong>Locale/bahasa</strong> — pilih sesuai angka di list. Untuk default English, pilih <code>Skip generating locale</code> (set ke English). Double-check ya, kurang lebih angka 330 atau skip.</p>
+                </div>
+            </div>
+
+            <div class="img-placeholder">
+                <!-- GANTI: images/armbian-success.jpg -->
+                <img src="images/armbian-success.jpg" alt="Armbian sukses install">
+                <span class="img-note">gambar Armbian sukses terinstall</span>
+            </div>
+
+            <p>Sudah muncul terminal prompt seperti di atas? <strong>Berarti sukses!</strong> Tinggal config WiFi/SSH dan install Hermes.</p>
+        </section>
+
+        <!-- SSH & HERMES -->
+        <section id="ssh" class="card">
+            <h2><span class="step">4</span> Koneksi Internet & SSH</h2>
+
+            <h3>Internet</h3>
+            <div class="tip-box">
+                <strong>💡 Saran:</strong> Pakai <strong>LAN cable</strong> — plug and play, nggak perlu ribet setting WiFi manual.
+            </div>
+
+            <h3>Install & Koneksi SSH</h3>
+            <p>Kalau mau enak kerjanya, install SSH dulu. Dengan SSH, Anda bisa kontrol STB dari PC/laptop/HP tanpa perlu colok keyboard-mouse ke STB terus.</p>
+
+            <p>Koneksi SSH dari device lain:</p>
+
+            <div class="ssh-grid">
+                <div class="ssh-card">
+                    <h4>🪟 Windows</h4>
+                    <div class="code-block"><code>ssh user@ip-stb</code></div>
+                    <small>Via PowerShell atau Terminal</small>
+                </div>
+                <div class="ssh-card">
+                    <h4>🐧 Linux</h4>
+                    <div class="code-block"><code>ssh user@ip-stb</code></div>
+                    <small>Via Terminal</small>
+                </div>
+                <div class="ssh-card">
+                    <h4>📱 Android</h4>
+                    <div class="code-block"><code>ssh user@ip-stb</code></div>
+                    <small>Via Termux</small>
+                </div>
+            </div>
+
+            <div class="tip-box">
+                <strong>💡 Tips buat HP:</strong> Kalau Anda konek SSH dari HP Android, install <strong>Codeboard</strong> — keyboard khusus coding yang punya arrow keys, Tab, Ctrl, dan tombol navigasi terminal. Jauh lebih enak daripada keyboard bawaan yang nggak support arrow up/down buat navigasi cmd.
+            </div>
+
+            <h2 class="section-divider"><span class="step">5</span> Install Hermes</h2>
+            <p>Ok, sisanya — install Hermes sebagaimana biasanya, normalnya:</p>
+            <ul class="check-list">
+                <li>Config yang diperlukan</li>
+                <li>Setup gateway</li>
+                <li>Selesai ✓</li>
+            </ul>
+
+            <div class="img-placeholder">
+                <!-- GANTI: images/hermes-chat.jpg -->
+                <img src="images/hermes-chat.jpg" alt="Hermes Chat Interface">
+                <span class="img-note">screenshot Hermes chat yang sudah jalan di STB</span>
+            </div>
+
+            <p class="final-note">Selamat! Jika Anda berhasil sampai di akhir tutorial ini dan STB Anda tidak brick :-) Semoga bermanfaat!</p>
+            <div class="support-box">
+                <p>Support saya jika tutorial ini bermanfaat — biar ada research fund untuk membeli alat dan resource untuk penelitian.</p>
+                <a href="https://trakteer.id/tukangcode" target="_blank" class="btn-link support-btn">☕ Trakter di Trakteer.id</a>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-inner">
+            <p class="footer-credit">Code by Sena</p>
+            <p class="footer-year">2026</p>
+        </div>
+    </footer>
+
+    <!-- SCROLL TO TOP -->
+    <button class="scroll-top" id="scrollTop" aria-label="Scroll to top">↑</button>
+
+    <script src="script.js"></script>
+</body>
+</html>
