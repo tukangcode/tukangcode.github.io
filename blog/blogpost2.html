@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aman Nggak Sih Install Hermes di Laptop Pribadi? | Blog Tukang Code</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- HEADER / HERO -->
+    <header class="hero">
+        <div class="hero-img-container">
+            <!-- GANTI: images/laptop-warning.jpg -->
+            <img src="images/laptop-warning.jpg" alt="Laptop dengan tanda peringatan" class="hero-img">
+            <div class="hero-overlay"></div>
+        </div>
+        <div class="hero-content">
+            <a href="index.html" class="back-to-blog">← Kembali ke Blog</a>
+            <h1>Aman Nggak Sih Install Hermes di Laptop Pribadi?</h1>
+            <p class="hero-sub">TL;DR — Aman, tapi bisa jadi rolet Rusia tergantung model yang kamu pakai dan apa yang kamu minta dia lakuin.</p>
+            <div class="hero-tags">
+                <span class="tag">Hermes</span>
+                <span class="tag">AI Agent</span>
+                <span class="tag">Security</span>
+                <span class="tag">Self-hosted</span>
+                <span class="tag">Opini</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- NAV -->
+    <nav class="toc" id="toc">
+        <div class="toc-inner">
+            <span class="toc-label">Daftar Isi</span>
+            <div class="toc-links">
+                <a href="#tl-dr">TL;DR</a>
+                <a href="#kapan-aman">Kapan Aman</a>
+                <a href="#rolet">Kapan Jadi Rolet Rusia</a>
+                <a href="#model-jelek">Dampak Model "Jelek"</a>
+                <a href="#concrete-bahaya">Contoh Konkret Bahaya</a>
+                <a href="#tips">Tips Aman</a>
+                <a href="#kesimpulan">Kesimpulan</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+
+        <!-- INTRO -->
+        <section class="intro">
+            <h2>Pertanyaan klasik sebelum klik "Install"</h2>
+            <p>Banyak yang nanya ke aku: <em>"Gak bahaya gak sih install Hermes AI agent di laptop sendiri? Bisa nyedot data gak? Bisa ngerusak file gak?"</em> Pertanyaan wajar — soalnya AI agent itu powerful, dan yang powerful itu bisa bahaya kalau salah pegang.</p>
+            <p>Jawaban jujurnya: <strong>aman, tapi dengan banyak asterisk</strong>. Tergantung model apa yang kamu konekin, dan apa yang kamu suruh dia lakuin. Kasus paling ekstrim? Bisa jadi rolet Rusia — beda tipis antara "berhasil tanpa sengaja" sama "hancur tanpa sengaja".</p>
+        </section>
+
+        <!-- TL;DR -->
+        <section id="tl-dr" class="card">
+            <h2><span class="step">⚡</span> TL;DR</h2>
+            <p>Buat yang gak mau baca panjang lebar:</p>
+            <ul>
+                <li>✅ <strong>Aman dipakai buat ngobrol, nulis kode, generate teks</strong> — risikonya minimal.</li>
+                <li>⚠️ <strong>Bisa bahaya kalau suruh eksekusi command, edit file, atau akses internet</strong> — tergantung model.</li>
+                <li>🎲 <strong>Model lemah = bisa fatal</strong> — salah paham instruksi, eksekusi halu, resource abis.</li>
+                <li>🔒 <strong>Mau aman total?</strong> Jalankan di sandbox / VPS / container, bukan di laptop utama.</li>
+            </ul>
+        </section>
+
+        <!-- KAPAN AMAN -->
+        <section id="kapan-aman" class="card">
+            <h2><span class="step">✅</span> Kapan Instalasi di Laptop Itu Aman</h2>
+            <p>Instalasi Hermes sendiri — alias nge-clone repo, install dependencies, jalanin server lokal — itu <strong>aman-aman aja</strong>. Sama amannya kayak install Node.js, Python, atau Docker.</p>
+            <p>Yang bikin aman:</p>
+            <ul>
+                <li><strong>Open source.</strong> Kode-nya bisa kamu baca. Nggak ada hidden backdoor.</li>
+                <li><strong>Jalan di localhost.</strong> Default-nya cuma dengerin di <code>127.0.0.1</code>, bukan di internet.</li>
+                <li><strong>Nggak auto-telepon ke server luar</strong> tanpa kamu set API key dulu.</li>
+                <li><strong>Permission setinggi user kamu.</strong> Kalau kamu bukan root, dia cuma bisa ngapa-ngapain file yang kamu bisa akses.</li>
+            </ul>
+            <p>Selama kamu cuma pake buat <strong>chat / generate teks / brainstorming</strong>, relatif sama amannya kayak pake ChatGPT di browser — bedanya data tetep di laptop kamu.</p>
+        </section>
+
+        <!-- ROLET RUSIA -->
+        <section id="rolet" class="card">
+            <h2><span class="step">🎲</span> Kapan Jadi Rolet Rusia</h2>
+            <p>Masalah mulai muncul pas kamu aktifin fitur <strong>agentic</strong> — fitur yang bikin Hermes bisa <em>ngapa-ngapain</em> di sistem kamu:</p>
+            <ul>
+                <li>Eksekusi <code>bash</code> / <code>terminal</code> command</li>
+                <li>Edit / hapus file</li>
+                <li>Akses browser (klik, scroll, download)</li>
+                <li>Kirim email, post sosmed</li>
+                <li>Modifikasi file config sistem</li>
+            </ul>
+            <p>Di titik ini, Hermes jadi punya <strong>kewenangan yang sama dengan kamu</strong>. Apa yang dia lakuin = apa yang kamu lakuin. Salah paham instruksi? Ya dia salah eksekusi.</p>
+            <p>Dan di sinilah rolet Rusia-nya:</p>
+            <div class="callout">
+                <p>Model yang kuat (Claude Sonnet, GPT-4, Gemini Pro) paham konteks, baca error, dan rollback kalau perlu. Model yang lemah? Bisa aja dia hapus folder salah karena salah baca path, atau retry loop yang bikin CPU 100% 3 jam.</p>
+            </div>
+        </section>
+
+        <!-- MODEL JELEK -->
+        <section id="model-jelek" class="card">
+            <h2><span class="step">🐌</span> Dampak Model "Jelek" (Dumb Model)</h2>
+            <p>Yang sering orang nggak sadar: <strong>nggak semua model AI itu sama pintarnya</strong>. Dan ini直接影响 banget ke safety:</p>
+
+            <h3>1. Salah Paham Instruksi = Eksekusi Salah</h3>
+            <p>Model lemah gampang <em>hallucinate</em> — dia ngarang path file yang nggak ada, ngarang command yang salah, atau salah tafsir instruksi ambigu. Contoh nyata:</p>
+            <pre><code># Kamu minta: "hapus file log yang gede"
+# Model kuat:   cari log gede, list dulu, konfirmasi, hapus
+# Model lemah:  langsung `rm -rf /var/log/*` tanpa nanya</code></pre>
+
+            <h3>2. Resource Strain (CPU/RAM habis)</h3>
+            <p>Model lemah sering <strong>looping</strong> — mencoba hal yang sama berulang karena nggak tau udah gagal. Pernah aku test pakai model 7B lokal di laptop:</p>
+            <ul>
+                <li>Task: "cari file MP3 di folder Musik"</li>
+                <li>Realita: dia <code>find</code> → timeout → find lagi → timeout → find lagi ...</li>
+                <li>Hasil: <strong>CPU 100% selama 2 jam</strong>, baterai habis, laptop panas, belum nemu MP3-nya.</li>
+            </ul>
+            <p>Model yang lebih kuat udah ada <em>graceful failure</em> — dia bilang "gagal, ini alasannya, coba begini?"</p>
+
+            <h3>3. Cost Trap (kalau pake API berbayar)</h3>
+            <p>Loop di API berbayar = duit habis dalam hitungan menit. Bukan bahaya ke laptop, tapi bahaya ke dompet.</p>
+        </section>
+
+        <!-- CONCRETE BAHAYA -->
+        <section id="concrete-bahaya" class="card">
+            <h2><span class="step">💀</span> Contoh Konkret Bahaya</h2>
+            <p>Beberapa skenario yang pernah kejadian (atau sangat mungkin kejadian) pas agentic AI gagal:</p>
+
+            <h3>Skenario 1: "Membersihkan folder Downloads"</h3>
+            <pre><code># Yang kamu mau:
+hapus file .tmp dan .log di Downloads/
+
+# Yang model lemah bisa salah tafsir:
+hapus SEMUA file di Downloads/  # dia kira "semua = cleanup"
+rm -rf ~/Downloads/*          # tanpa konfirmasi, tanpa backup</code></pre>
+
+            <h3>Skenario 2: "Install dependencies project"</h3>
+            <pre><code># Yang kamu mau:
+npm install di folder project
+
+# Yang model lemah lakuin kalau ada error:
+sudo apt-get update && sudo apt-get upgrade -y  # "fix" sendiri
+# Laptop restart, kernel baru, WiFi driver ilang</code></pre>
+
+            <h3>Skenario 3: "Bantu debug network"</h3>
+            <pre><code># Yang kamu mau:
+cek kenapa internet lemot
+
+# Yang model lemah lakuin:
+sudo iptables -F  # "flush" rules karena dikira bentrok
+# internet mati total, butuh recovery mode</code></pre>
+
+            <p>Yang bikin serem: ini <strong>bukan skenario hipotetis</strong>. Komunitas Hermes / Hermes-like agent udah banyak share cerita mirip di GitHub issues.</p>
+        </section>
+
+        <!-- TIPS AMAN -->
+        <section id="tips" class="card">
+            <h2><span class="step">🛡️</span> Tips Aman Install & Pakai di Laptop</h2>
+            <p>Kalau tetep mau install di laptop (dan aku sendiri juga lakuin ini), ini safety net-nya:</p>
+
+            <h3>1. Pakai Model yang Kuat</h3>
+            <p>Jangan pelit di model. Claude Sonnet, GPT-4, atau Qwen 72B+ itu kelasnya beda. Yang murah-meriah (7B/13B lokal) oke buat chat, tapi jangan dikasih kuasa eksekusi.</p>
+
+            <h3>2. Whitelist Tools, Jangan Blacklist</h3>
+            <p>Secara default, <strong>disable semua tool agentic</strong>. Aktifin satu-satu sesuai kebutuhan:</p>
+            <pre><code># config.yaml
+tools:
+  bash: false        # paling bahaya
+  file_edit: false
+  file_read: true    # aman
+  web_search: false  # bisa nyedot data
+  browser: false     # paling berisiko</code></pre>
+
+            <h3>3. Jalankan di User Biasa, Bukan Root</h3>
+            <p>Kalau laptop kamu kena dampak, ya dampaknya terbatas. Jangan pernah jalanin Hermes sebagai root / admin.</p>
+
+            <h3>4. Backup Berkala</h3>
+            <p>Sebelum suruh agentik kerja di folder penting, snapshot dulu. <code>tar</code>, <code>git commit</code>, atau snapshot ke external drive — bebas.</p>
+
+            <h3>5. Selalu Ada "Human in the Loop"</h3>
+            <p>Set konfirmasi manual buat command yang:</p>
+            <ul>
+                <li>Mengandung <code>rm</code>, <code>mv</code>, <code>dd</code>, <code>sudo</code></li>
+                <li>Modifikasi file di luar working directory</li>
+                <li>Melakukan network request keluar</li>
+            </ul>
+
+            <h3>6. Monitor Resource</h3>
+            <p>Biarin <code>htop</code> atau Activity Monitor terbuka. Kalau CPU/RAM tiba-tiba spike, langsung kill process-nya.</p>
+        </section>
+
+        <!-- KESIMPULAN -->
+        <section id="kesimpulan" class="card">
+            <h2><span class="step">🎯</span> Kesimpulan</h2>
+            <p>Hermes aman diinstall di laptop pribadi <strong>selama</strong>:</p>
+            <ul>
+                <li>Kamu paham apa yang kamu install (open source, bisa diaudit).</li>
+                <li>Kamu nggak kasih akses agentik sembarangan.</li>
+                <li>Kamu pakai model yang cukup pintar buat paham konteks.</li>
+                <li>Kamu selalu ada di loop buat konfirmasi command kritis.</li>
+            </ul>
+            <p>Kalau mau aman total tanpa mikir: <strong>VPS / container / VM isolated</strong>. Tapi kalau cuma mau produktif harian di laptop sendiri? Aman, asal tau batasnya.</p>
+            <p>Intinya: AI agent itu kayak pisau bedah — powerful banget buat surgeon, tapi kalau dipake sembarangan sama orang yang nggak ngerti, ya hasilnya luka. Yang penting bukan tools-nya, tapi cara pakainya.</p>
+            <blockquote>
+                <p><em>"Tools don't kill projects. Developers kill projects. Sometimes with tools."</em></p>
+            </blockquote>
+        </section>
+
+        <!-- PENUTUP -->
+        <section class="card">
+            <h2><span class="step">📝</span> Penutup</h2>
+            <p>Punya pengalaman horror story sama AI agent yang lepas kontrol? Share di kolom komentar atau ke <a href="https://github.com/tukangcode/tukangcode.github.io/issues">GitHub Issues</a>. Pengalaman kamu bisa bantu orang lain lebih waspada.</p>
+            <p>— Tukang Code</p>
+        </section>
+
+    </main>
+
+    <footer class="site-footer">
+        <p>© 2024 Tukang Code · <a href="../index.html">Home</a> · <a href="index.html">Blog</a></p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
