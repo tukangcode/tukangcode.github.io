@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "io.github.tukangcode.twa",
+        "sha256_cert_fingerprints": ["07:EC:CE:81:D0:08:D3:BF:A5:4C:92:57:8E:00:B2:A5:E4:27:EC:F9:E1:F8:D4:4C:7E:09:D9:38:D0:A4:11:47"]
+      }
+    }]
