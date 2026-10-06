@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Self-Host API Reseller — Versi Indonesia | Blog Tukang Code</title>
+    <meta name="description" content="Bongkar isi perut bisnis jual API: cara kerja rantainya, bedah 10 backend (One API, New API, TokenPanel, GPT-Load, Kong, dst), soal keran dan bansos, sampai kenapa payment gateway itu neraka. Kasar, jujur, apa adanya.">
+    <meta name="color-scheme" content="dark">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+/* ===== HERO (no photo: use a gradient mesh instead) ===== */
+.hero {
+    height: auto;
+    min-height: 0;
+    padding: 4rem 0 1rem;
+    display: block;
+    background:
+        radial-gradient(circle at 12% 20%, rgba(124,92,255,0.18), transparent 45%),
+        radial-gradient(circle at 85% 15%, rgba(255,107,157,0.12), transparent 45%),
+        var(--bg-primary);
+    position: relative;
+}
+.hero-overlay {
+    display: none;
+}
+.hero-content {
+    padding: 0 2rem 1rem;
+}
+
+/* ===== TABLES (not in upstream style.css) ===== */
+.table-wrap {
+    overflow-x: auto;
+    margin: 1.5rem 0;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+}
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+}
+.data-table th,
+.data-table td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    vertical-align: top;
+    border-bottom: 1px solid var(--border);
+}
+.data-table th {
+    background: var(--bg-code);
+    color: var(--text-primary);
+    font-weight: 700;
+    white-space: nowrap;
+}
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tr:hover td { background: var(--bg-card-hover); }
+.data-table code { white-space: nowrap; }
+
+/* ===== CODE BLOCKS (multi-line) ===== */
+.code-block pre {
+    margin: 0;
+    overflow-x: auto;
+}
+.code-block pre code {
+    white-space: pre;
+    color: var(--text-primary);
+    font-size: 0.82rem;
+    line-height: 1.65;
+    display: block;
+}
+p code, li code, td code {
+    font-family: var(--font-mono);
+    font-size: 0.86em;
+    color: var(--accent-secondary);
+    background: var(--bg-code);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.1em 0.4em;
+}
+
+/* ===== INLINE HEADINGS INSIDE CARDS ===== */
+.card h3 { color: var(--text-primary); }
+.card h3:first-of-type { margin-top: 0.5rem; }
+
+/* ===== TAG VARIANTS (risk levels) ===== */
+.tag.tag-hot { border-color: rgba(248,113,113,0.45); color: var(--danger); background: rgba(248,113,113,0.12); }
+.tag.tag-warn { border-color: rgba(251,191,36,0.45); color: var(--warning); background: rgba(251,191,36,0.12); }
+.tag.tag-ok { border-color: rgba(74,222,128,0.45); color: var(--success); background: rgba(74,222,128,0.12); }
+
+hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 2.5rem 0;
+}
+</style>
+</head>
+<body>
+
+    <!-- HERO -->
+    <header class="hero">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <a href="index.html" class="back-to-blog">← Kembali ke Blog</a>
+            <h1>Self-Host API Reseller — Versi Indonesia</h1>
+            <p class="hero-sub">Panduan jual API yang bukan punya lo, ke orang yang nggak ngerti, di atas infra yang bisa mati besok pagi.</p>
+            <div class="hero-tags">
+                <span class="tag">API Reseller</span>
+                <span class="tag">Self-Hosted</span>
+                <span class="tag">TokenPanel</span>
+                <span class="tag">AI Gateway</span>
+                <span class="tag">Security</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- TOC -->
+    <nav class="toc" id="toc">
+        <div class="toc-inner">
+            <span class="toc-label">Daftar Isi</span>
+            <div class="toc-links">
+                <a href="#part-0-baca-dulu">PART 0 — BACA DULU</a>
+                <a href="#part-1-how-the-hell-this-work">PART 1 — HOW THE HELL THIS WORK</a>
+                <a href="#part-2-bedah-backend-mana-yang-layak-dipakai">PART 2 — BEDAH BACKEND: MANA YANG LAYAK DIPAKAI</a>
+                <a href="#part-3-keran-saus-rahasia-dan-bansos">PART 3 — KERAN, SAUS RAHASIA, DAN BANSOS</a>
+                <a href="#part-4-praktik-cara-mulai-checklist-kasar">PART 4 — PRAKTIK: CARA MULAI (CHECKLIST KASAR)</a>
+                <a href="#part-5-realita-yang-bakal-bikin-lo-nangis">PART 5 — REALITA YANG BAKAL BIKIN LO NANGIS</a>
+                <a href="#part-6-yang-wajib-lo-simpan-jangan-dihapus">PART 6 — YANG WAJIB LO SIMPAN (JANGAN DIHAPUS)</a>
+                <a href="#part-7-checklist-sebelum-lo-bilang-siap-jualan">PART 7 — CHECKLIST SEBELUM LO BILANG "SIAP JUALAN"</a>
+                <a href="#part-8-penutup">PART 8 — PENUTUP</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- CONTENT -->
+    <main class="container">
+
+        <section class="intro">
+            <p>Bongkar isi perut bisnis jual API: cara kerja rantainya, bedah 10 backend (One API, New API, TokenPanel, GPT-Load, Kong, dst), soal keran dan bansos, sampai kenapa payment gateway itu neraka. Kasar, jujur, apa adanya.</p>
+        </section>
+
+<section class="card disclaimer-card">
+        <div class="disclaimer-icon">⚠️</div>
+        <h2 style="justify-content:center">PART 0 — BACA DULU</h2>
+
+<p>Gue bukan pengacara, gue bukan vendor, gue bukan orang yang lo harus percaya. Gue cuma
+orang yang udah ngejalanin dan nulis apa yang terjadi.</p>
+<p>Beberapa hal yang lo bakal baca di sini <strong>melanggar ToS pihak lain</strong>. Gue nggak ngajarin
+cara ngelesnya — gue jelasin <strong>bagaimana bentuknya</strong>, dan <strong>kenapa itu berisiko</strong>. Kalau
+abis baca ini lo tetep mau jalan, itu keputusan lo, dan lo yang tanggung jawabnya.</p>
+<p>Yang gue tekankan dari awal, dan ini bukan basa-basi:</p>
+<div class="warning-box"><p><strong>Bisnis model ini bukan dibunuh oleh kompetitor. Dibunuh oleh supply.</strong>
+Vendor bisa matiin akun lo malam ini tanpa email peringatan, dan katalog lo
+jadi kosong. Kalau lo nggak siap dengan itu, jangan mulai.</p></div>
+<p>Oke. Lanjut.</p>
+<hr />
+
+    </section>
+
+    <section id="part-1-how-the-hell-this-work" class="card">
+        <h2><span class="step">1</span>PART 1 — HOW THE HELL THIS WORK</h2>
+
+<p><strong>Disclaimer:</strong> sampai sekarang gue juga nggak sepenuhnya paham. Yang gue tulis di bawah
+ini adalah hasil ngulik dan ngobrol dengan Hermes selama berhari-hari. Anggap ini peta
+sketsa dari orang yang pernah kesasar, bukan peta resmi dari dinas.</p>
+<h3 id="11-rantai-pasoknya">1.1 Rantai pasoknya</h3>
+<div class="code-block"><pre><code>[BUYER] → [FRONTEND] → [BACKEND] → [SUMBER ROUTER/PROXY] → [ORIGIN: vendor asli]
+              │             │                │                      │
+         gampang       neraka          pool kunci            yang punya GPU
+</code></pre></div>
+<p>Satu per satu:</p>
+<div class="table-wrap"><table class="data-table">
+<thead>
+<tr>
+<th>Hop</th>
+<th>Isi</th>
+<th>Tingkat kesusahan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>BUYER</strong></td>
+<td>Manusia yang mau bayar. Sayangnya jumlahnya selalu lebih sedikit dari yang lo kira</td>
+<td>Gampang cari kalau lo udah punya nama. Susah kalau belum</td>
+</tr>
+<tr>
+<td><strong>FRONTEND</strong></td>
+<td>Landing page, dashboard, halaman top-up, tombol yang bikin orang merasa lo ini perusahaan serius</td>
+<td><strong>Gampang banget.</strong> Minta AI bikin, 10 menit jadi, bagus lagi</td>
+</tr>
+<tr>
+<td><strong>BACKEND</strong></td>
+<td>Yang ngitung token, validasi kunci, potong saldo, terusin request</td>
+<td><strong>Ini neraka.</strong> Ini tempat mimpi lo ketemu kenyataan</td>
+</tr>
+<tr>
+<td><strong>SUMBER</strong></td>
+<td>Kunci pool, router, proxy. Tempat lo numpuk hasil "panen"</td>
+<td>Sedang. Kelihatan gampang sampai kunci pertama mati</td>
+</tr>
+<tr>
+<td><strong>ORIGIN</strong></td>
+<td>Vendor yang beneran punya modelnya dan beneran punya GPU</td>
+<td>Nggak bisa lo sentuh. Cuma bisa lo beli</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="12-kenapa-frontend-gampang-dan-backend-nggak">1.2 Kenapa frontend gampang dan backend nggak</h3>
+<p><strong>Frontend</strong> itu muka. AI bisa bikin muka. Nggak ada uang di situ — cuma kesan.</p>
+<p><strong>Backend</strong> itu yang ngitung uang. Dan yang ngitung uang nggak bisa dikarang-karang.
+Satu bug satuan, saldo user lo hilang atau saldo lo bocor. Ini bukan masalah estetika,
+ini masalah aritmatika.</p>
+<div class="warning-box"><p><strong>Aturan besi:</strong> frontend, serahin ke AI. Backend, <strong>jangan bangun dari nol.</strong>
+Ambil yang udah ada, modif dikit, dan hormati kode orang.
+Lo nggak akan ngehabisin bug yang belum pernah ditulis orang lain — tapi lo akan
+ngehabisin bug yang lo tulis sendiri jam 3 pagi karena lo terlalu gengsi.</p></div>
+<h3 id="13-dari-mana-uangnya-datang-dan-dari-mana-hilangnya">1.3 Dari mana uangnya datang (dan dari mana hilangnya)</h3>
+<div class="code-block"><pre><code>uang masuk  = harga jual lo × token terjual
+uang keluar = harga supply   × token terjual     ← INI YANG SERING DILUPAKAN
+              + VPS
+              + kunci mati yang tetap lo bayar
+              + refund &amp; chargeback
+              + nyawa lo
+</code></pre></div>
+<p>Margin di atas kertas ≠ margin di dompet. Nanti gue balik ke sini di PART 5.</p>
+<hr />
+
+    </section>
+
+    <section id="part-2-bedah-backend-mana-yang-layak-dipakai" class="card">
+        <h2><span class="step">2</span>PART 2 — BEDAH BACKEND: MANA YANG LAYAK DIPAKAI</h2>
+
+<p>Ini daftar yang orang kira "semuanya backend API gateway". Kenyataannya cuma <strong>sebagian</strong>
+yang ngerti artinya duit.</p>
+<h3 id="21-ada-dua-kategori-dan-orang-selalu-ketuker">2.1 Ada dua kategori, dan orang selalu ketuker</h3>
+<div class="table-wrap"><table class="data-table">
+<thead>
+<tr>
+<th>Kategori</th>
+<th>Isi</th>
+<th>Ngerti "saldo user"?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>A · LLM gateway + billing</strong></td>
+<td>One API, New API, TokenPanel, gpt-load</td>
+<td>✅ Iya. Ada kuota, harga, potong saldo</td>
+</tr>
+<tr>
+<td><strong>B · API gateway umum</strong></td>
+<td>Kong, Apache ShenYu, Lura/KrakenD, Membrane, APIPark</td>
+<td>❌ Nggak. Cuma numpang lewat</td>
+</tr>
+<tr>
+<td><strong>C · Beda kamar</strong></td>
+<td>OpenConnector</td>
+<td>❌ Ngurusin hal lain total</td>
+</tr>
+</tbody>
+</table></div>
+<div class="note-box"><p><strong>Kalau lo mau jual API per token, lo butuh Kategori A.</strong>
+Kategori B itu lapisan yang lo tambahin <strong>di depannya</strong> — setelah lo gede dan mulai
+repot urusan traffic, rate limit, observability. Bukan pondasi.</p></div>
+<h3 id="22-kategori-a-bahan-baku-reseller">2.2 Kategori A — bahan baku reseller</h3>
+<h4 id="one-api">🟢 ONE API</h4>
+<p>Kakek dari semuanya. Go, ringan, SQLite/MySQL, jalan di VPS receh.</p>
+<p>Punya: kuota per user, grup, channel, <strong>voucher</strong> (kode isi ulang — ini MVP top-up
+manual yang sebenernya udah jadi), log pemakaian, retry otomatis, pembatasan per token.</p>
+<p><strong>Yang bikin nangis:</strong> pembayaran nggak ada. Built-in-nya cuma tombol "recharge" yang
+nembak ke URL luar, plus endpoint <code>POST /api/topup</code> yang <strong>lo sendiri</strong> yang harus
+panggil. Jadi lo beli mobil, tapi gasnya lo harus tandem.</p>
+<div class="warning-box"><p>Analogi: One API itu warung dengan rak lengkap dan stok rapi — <strong>cuma nggak ada kasir.</strong>
+Pelanggan mau bayar, dia harus teriak dulu.</p></div>
+<h4 id="new-api">🟢🟢 NEW API</h4>
+<p>Fork One API yang dikasih makan dan disuruh olahraga. Ini yang paling siap-pakai.</p>
+<p>Tambahan yang bikin hidup gampang:
+- <strong>EPay</strong> (protokol agregator gaya 易支付 — MD5 sign, callback otomatis)
+- <strong>Stripe</strong>, Creem, Waffo — pilih sesuai neraka lo
+- Minimum top-up per metode
+- <strong>Diskon per nominal</strong> (user top-up 100rb, dapat potongan — bikin orang top-up lebih gede)
+- Nominal preset yang bisa diklik
+- Sistem ratio tiga lapis (model ratio × completion ratio × group ratio)
+- Pra-konsumsi + pasca-konsumsi: potong di depan pakai estimasi, koreksi di belakang pakai token asli</p>
+<div class="note-box"><p>Analogi: ini One API yang dirukiah. Kalau lo males ngoding billing dari nol dan
+lo oke dengan panel orang, ini titik mulai paling waras.</p></div>
+<h4 id="tokenpanel">🟡 TOKENPANEL</h4>
+<p>Yang gue pakai. Bukan yang paling ramah, tapi yang paling "engine".</p>
+<p>Punya: plans, credits, rate limits per dimensi, admin API lengkap, harga per-entry
+provider, <code>cost</code> vs <code>price</code> terpisah (jadi lo bisa liat margin asli), usage records,
+balance adjustments.</p>
+<p><strong>Yang bikin nangis:</strong> semuanya micros.</p>
+<div class="code-block"><pre><code>1 Rupiah = 1.000.000 micros
+Harga Rp 7.500 / 1 juta token  →  yang lo tulis: 7500000
+Harga Rp 7.500        →  tulis 7500  →  harga lo jadi Rp 0,0075/1jt  →  lo jual rugi 1.000.000×
+</code></pre></div>
+<p>Gue salah ini <strong>dua kali</strong>. Dua kali. Dan gejalanya menipu: semua request tetep sukses,
+saldo user kelihatan <strong>nggak bergerak</strong>, dan lo mulai nuduh billing-nya rusak padahal
+lo sendiri yang salah nulis angka.</p>
+<div class="warning-box"><p>Analogi: micros itu kayak ngisi bensin pakai satuan mililiter. Secara teknis bener.
+Secara manusia: lo bakal salah, berkali-kali, dan nggak sadar sampai ada yang komplain.</p></div>
+<h4 id="gpt-load-tbphp">⭐ GPT-LOAD (tbphp)</h4>
+<p>Ini yang paling menarik, dan sengaja gue taruh di sini.</p>
+<p>Self-hosted AI gateway, Go, MIT, <strong>mendukung dua jenis kredensial sekaligus: kunci API
+DAN akun langganan.</strong> Ada channel bawaan untuk OpenAI, Anthropic, Gemini, xAI, Bedrock,
+Vertex, DeepSeek, OpenRouter, Groq, dll — <strong>plus channel <code>Subscription</code>: Codex, Claude,
+Antigravity, Grok.</strong></p>
+<p>Dan fitur yang bikin orang "panen" sayang sekali ada semua di sini:
+multi-kredensial dengan <strong>bobot</strong>, retry, <strong>cooldown</strong>, <strong>blacklist otomatis</strong>,
+session affinity, health check, log, estimasi biaya.</p>
+<div class="warning-box"><p>Kalau lo penasaran "kok bisa ada orang jual Claude per-token murah banget" —
+<strong>ini alatnya.</strong> Bukan gue yang nyuruh. Gue cuma nggak mau lo pura-pura nggak tau.</p></div>
+<p><strong>Catatan penting:</strong> GPT-Load 2.0 itu <strong>rewrite total</strong>, nggak bisa impor data 1.x.
+Kalau lo migrasi, deploy instance baru dengan database sendiri, dan jangan langsung
+cutover.</p>
+<h4 id="apipark">🟡 APIPARK</h4>
+<p>Kategori hybrid: API gateway <strong>plus</strong> LLM gateway <strong>plus</strong> developer portal. Apache 2.0.
+Lebih "enterprise", lebih banyak konsep yang harus lo pahami sebelum jalan.</p>
+<p>Bagus kalau lo serius dan mau semua di satu tempat. Jelek kalau lo cuma mau jual API
+minggu depan.</p>
+<h3 id="23-kategori-b-jangan-salah-kamar">2.3 Kategori B — jangan salah kamar</h3>
+<div class="table-wrap"><table class="data-table">
+<thead>
+<tr>
+<th>Tool</th>
+<th>Sebenernya buat apa</th>
+<th>Verdict untuk reseller</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>KONG</strong></td>
+<td>Gateway kelas perusahaan. Plugin hub, AI Gateway multi-LLM, MCP, semantic routing, observability. Jalan di Kubernetes</td>
+<td><strong>Nggak ada konsep saldo.</strong> Lo bayar tenaga belajar buat fitur yang nggak lo pakai. Pakai Kong buat jual API per-token itu kayak pakai forklift buat jualan gorengan — bisa, tapi nggak ada yang ngelakuin</td>
+</tr>
+<tr>
+<td><strong>APACHE SHENYU</strong></td>
+<td>Gateway Java, plugin, proxy Dubbo/gRPC/Spring Cloud/MQTT. WAF plugin, OAuth2, JWT</td>
+<td>Nggak ada billing. Punya kurva belajar Java + konfigurasi XML. <strong>Kalau lo nggak benci diri sendiri, skip</strong></td>
+</tr>
+<tr>
+<td><strong>LURA (KrakenD)</strong></td>
+<td>Framework gateway Go, super cepat, fokus <strong>agregasi</strong> banyak sumber jadi satu endpoint</td>
+<td>Nggak ada billing. Ini alat optimasi latency, bukan alat jualan</td>
+</tr>
+<tr>
+<td><strong>MEMBRANE</strong></td>
+<td>API gateway Java/Lua, transformasi &amp; routing</td>
+<td>Nggak ada billing. Sama-sama salah kamar</td>
+</tr>
+<tr>
+<td><strong>OPENCONNECTOR</strong></td>
+<td>Nyambungin 1.000+ SaaS (GitHub, Gmail, Notion, BigQuery) ke <strong>AI agent</strong>. Alternatif Pipedream/Composio, kelola OAuth kredensial</td>
+<td><strong>Beda kamar total.</strong> Ini bukan alat jual LLM. Kalau lo pakai ini buat reseller API, lo bukan salah pilih — lo salah proyek</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="24-kesimpulan-bagian-ini">2.4 Kesimpulan bagian ini</h3>
+<div class="code-block"><pre><code>Mau jual API per-token minggu depan          → One API / New API / TokenPanel
+Mau alat panen kredensial (banyak akun)      → GPT-Load
+Mau serius, satu atap, siap enterprise       → APIPark
+Mau gateway umum di depan yang udah jalan    → Kong / ShenYu / Lura (setelah gede)
+Nggak jelas mau ngapain                      → OpenConnector (eh, itu bukan buat lo)
+</code></pre></div>
+<p>Kalau harus pilih satu dan lo tanya gue jujur: <strong>New API</strong> kalau lo males ngoding
+billing, <strong>TokenPanel</strong> kalau lo mau kontrol penuh dan nggak takut micros.</p>
+<hr />
+
+    </section>
+
+    <section id="part-3-keran-saus-rahasia-dan-bansos" class="card">
+        <h2><span class="step">3</span>PART 3 — KERAN, SAUS RAHASIA, DAN BANSOS</h2>
+
+<p>Ini bagian yang bikin bisnisnya jalan, dan bagian yang bikin bisnisnya mati.</p>
+<h3 id="31-bahasa-kasar-dulu-biar-sama-frekuensi">3.1 Bahasa kasar dulu, biar sama frekuensi</h3>
+<div class="table-wrap"><table class="data-table">
+<thead>
+<tr>
+<th>Istilah lapangan</th>
+<th>Artinya</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Keran</strong></td>
+<td>Sumber API. Tempat lo nyedot</td>
+</tr>
+<tr>
+<td><strong>Saus / bumbu</strong></td>
+<td>Kredensial yang bikin kerannya ngalir</td>
+</tr>
+<tr>
+<td><strong>Panen / harvest</strong></td>
+<td>Ngumpulin kunci dan akun sebanyak mungkin</td>
+</tr>
+<tr>
+<td><strong>Gasak</strong></td>
+<td>Pakai semua sumber murah/gratis yang bisa dijangkau</td>
+</tr>
+<tr>
+<td><strong>Bansos</strong></td>
+<td>Free tier, kredit subsidi, program gratisan vendor</td>
+</tr>
+<tr>
+<td><strong>Abuse</strong></td>
+<td>Nganggar ToS pakai bansos buat jualan</td>
+</tr>
+<tr>
+<td><strong>Nganggur</strong></td>
+<td>Sumber yang udah mati / kena ban, tapi tetep lo bayar (kalau self-host)</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="32-peta-tier-dari-yang-bikin-tidur-nyenyak-sampai-yang-bikin-jantungan">3.2 Peta tier — dari yang bikin tidur nyenyak sampai yang bikin jantungan</h3>
+<div class="table-wrap"><table class="data-table">
+<thead>
+<tr>
+<th>Tier</th>
+<th>Sumber</th>
+<th>Biaya</th>
+<th>Umur</th>
+<th>Risiko</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>A</strong></td>
+<td>Provider resmi (OpenAI, Anthropic, DeepSeek direct)</td>
+<td>100% harga list</td>
+<td>Panjang</td>
+<td>✅ Aman. ToS umumnya boleh jual lagi asal jujur soal model</td>
+</tr>
+<tr>
+<td><strong>A</strong></td>
+<td>Cloud AI (Bedrock, Vertex, Azure)</td>
+<td>~100%</td>
+<td>Panjang</td>
+<td>✅ Aman. Onboarding lama, tidur nyenyak</td>
+</tr>
+<tr>
+<td><strong>B</strong></td>
+<td>Agregator (OpenRouter, Together, Groq)</td>
+<td>95–105%</td>
+<td>Sedang</td>
+<td>✅ Aman. <strong>Resale itu memang model bisnis mereka.</strong> Margin tipis, jual ke yang nggak ngerti</td>
+</tr>
+<tr>
+<td><strong>B</strong></td>
+<td>GPU sewa sendiri (RunPod, Vast) + vLLM</td>
+<td>20–40% untuk model open-weight</td>
+<td>Tergantung lo</td>
+<td>🟡 GPU <strong>nganggur tetep nagih</strong>. Kayak mantan</td>
+</tr>
+<tr>
+<td><strong>B</strong></td>
+<td>Reseller regional (kredit Claude/GPT markup 5–15%)</td>
+<td>105–115%</td>
+<td>Sedang</td>
+<td>🟡 Lo jadi lapis kedua. Margin makin tipis. Kalau dia mati, lo mati</td>
+</tr>
+<tr>
+<td><strong>C</strong></td>
+<td><strong>BANSOS</strong> — kredit program, startup grant, free tier, trial enterprise</td>
+<td><strong>~0%</strong></td>
+<td>🔥 <strong>Sampai vendor bangun tidur</strong></td>
+<td>🔴 <strong>Tinggi.</strong> Hampir semua ToS ngelarang dipakai buat layanan berbayar</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="33-soal-bansos-versi-panjang-karena-ini-inti-masalahnya">3.3 Soal bansos — versi panjang, karena ini inti masalahnya</h3>
+<p>Bansos itu <strong>murah banget</strong> dan itu sebabnya semua orang mulai dari situ. Angka per
+token jadi nol. Lo jual Rp 500/1jt aja masih untung 100%.</p>
+<p>Dan secara matematika, ini indah. Secara operasional, ini <strong>membangun katalog di atas pasir</strong>:</p>
+<div class="code-block"><pre><code>Hari 1:   panen 40 kunci bansos. Katalog jalan. Margin 100%. Lo ngerasa jenius.
+Hari 12:  6 kunci mati. Lo masih tenang.
+Hari 30:  18 kunci mati. Lo mulai jual pakai harga naik.
+Hari 45:  vendor ganti kebijakan. 20 kunci mati dalam sehari.
+          Katalog lo kosong. Customer lo nge-chat. Lo nggak bisa jawab apa pun.
+Hari 46:  lo nge-refund atau lo ilang. Dua-duanya bikin reputasi lo sampah.
+</code></pre></div>
+<p>Yang bikin makin pahit: <strong>yang mati bukan cuma bansos-nya — reputasi lo yang kena.</strong>
+Customer nggak tau lo numpang kredit gratisan. Dia tau lo judulnya "platform API".
+Pas API-nya error, dia nyalahin lo. Dan dia bener.</p>
+<div class="warning-box"><p><strong>Aturan yang gue pelajari dengan mahal:</strong>
+jangan bangun <strong>seluruh</strong> katalog di atas satu sumber Tier C.
+Minimal <strong>dua sumber independen</strong> untuk tiap model yang lo jual.
+Bukan karena lo moralis — tapi karena lo nggak mau mati hari Kamis sore.</p></div>
+<h3 id="34-pola-langganan-jadi-api">3.4 Pola "langganan jadi API"</h3>
+<p>Ini trik yang paling terkenal dan paling sering bikin orang kaget:</p>
+<div class="code-block"><pre><code>Langganan flat $20/bulan, kuota gede
+        │
+        ▼
+   Proxy/bridge — menerjemahkan format langganan jadi /v1/chat/completions
+        │
+        ▼
+   Endpoint OpenAI-compatible → dijual per-token ke user
+</code></pre></div>
+<p><strong>Secara ekonomi:</strong> jenius. Biaya per token mendekati nol.
+<strong>Secara ToS:</strong> duh.</p>
+<p>Yang perlu lo tau sebelum lo jalan:</p>
+<ul>
+<li>Hampir semua ToS langganan <strong>nglarang akses programatik non-resmi</strong> dan <strong>nglarang
+  mindahin kuota ke pihak ketiga.</strong> Ini bukan zona abu-abu kecil — ini pelanggaran jelas.</li>
+<li>Kapasitasnya <strong>kuota pribadi</strong>, bukan kuota komersial. Rate limit-nya bisa datang
+  kapan saja tanpa alasan.</li>
+<li><strong>Nggak ada SLA.</strong> Kalau vendor ganti format, limit, atau model, jembatan lo mati.
+  Lo nggak punya tiket support. Lo cuma punya harapan.</li>
+<li>Volume tinggi = pola yang gampang keliatan. Ini bukan paranoia, ini cuma statistik.</li>
+</ul>
+<p>GPT-Load yang gue sebut di PART 2 punya channel langganan <strong>karena alatnya netral</strong> —
+dia juga dukung provider resmi. Alatnya bisa dipakai dua-duanya. Yang bikin lo
+kecelakaan atau nggak adalah keputusan lo, bukan alatnya.</p>
+<h3 id="35-yang-lebih-tahan-lama-tiering">3.5 Yang lebih tahan lama: tiering</h3>
+<div class="code-block"><pre><code>   Jual tinggi ──▶ [Tier 1 · RESMI]       margin tipis, stabil, ada garansi
+                    provider resmi / cloud AI
+   Jual sedang ──▶ [Tier 2 · OPEN-WEIGHT]  margin tebal
+                    GPU sewa + vLLM
+   Jual murah  ──▶ [Tier 3 · AGREGATOR]    fallback cepat buat model eksotis
+                    OpenRouter dkk
+   Jual paling murah ──▶ [Tier 4 · BANSOS]  dipakai buat akuisisi, BUKAN tulang punggung
+                             ↑ kalau ini jadi pondasi, lo bukan bisnis, lo perjudian
+</code></pre></div>
+<p>Aturan mainnya:
+- <strong>Harga jual ikut tier termahal yang lo siap sediakan.</strong> Kalau lo punya Tier 2 murah,
+  jangan turunin harga sampai lo yakin pasokannya awet.
+- <strong>Deduksi saldo seragam</strong> — user nggak perlu tau lo lagi numpang tier mana.
+- <strong>Tier bansos cuma buat akuisisi.</strong> Buat bikin orang nyoba. Begitu dia bayar,
+  dia harus dilayani dari tier yang lo berani janjiin.</p>
+<h3 id="36-pola-router-satu-pintu-banyak-keran">3.6 Pola router: satu pintu, banyak keran</h3>
+<p>Kalau kunci lo udah puluhan, <strong>jangan tempel satu-satu ke billing engine.</strong> Taruh
+lapisan router di antaranya:</p>
+<div class="code-block"><pre><code>Billing Engine ──▶ [ROUTER: pool kunci + scheduling]
+                       ├─ Sumber A · kunci ×20
+                       ├─ Sumber B · akun ×8
+                       └─ Combo (fallback otomatis)
+</code></pre></div>
+<p>Yang lo dapat:
+- <strong>Satu endpoint stabil</strong> buat billing engine, walau isi kerannya gonta-ganti tiap minggu.
+- <strong>Rotasi &amp; fallback otomatis</strong> — kunci mati langsung dialihkan, user nggak ngeh.
+- <strong>Katalog bisa lo bersihin</strong> — satu model publik, banyak sumber di belakangnya.
+- <strong>Kunci nggak nyebar</strong> ke banyak config.</p>
+<p><strong>Harga yang lo bayar:</strong> kalau router-nya pindah (IP/URL berubah), <strong>semua model yang
+nunjuk ke sana mati serentak.</strong> Gue pernah kejadian: satu chat client error "tidak
+melayani chat completions API", panik, ternyata cuma perlu liat <code>baseUrl</code> provider-nya.</p>
+<div class="note-box"><p><strong>Refleks yang harus lo punya:</strong> sebelum nuduh vendor, <strong>baca dulu <code>baseUrl</code> provider
+lo.</strong> Kalau dia nunjuk ke router, masalahnya router — bukan vendor. Berhemat 3 jam
+tiap kali kejadian.</p></div>
+<h3 id="37-aturan-yang-berlaku-di-semua-tier">3.7 Aturan yang berlaku di semua tier</h3>
+<ol>
+<li><strong>Verifikasi katalog sebelum tempel kunci.</strong> <code>GET &lt;baseUrl&gt;/models</code> harus balas
+   katalog nyata. Kalau lo tempel 20 kunci ke URL yang salah, lo punya 20 kegagalan
+   yang <strong>nggak keliatan</strong>.</li>
+<li><strong>Batasi radius ledakan.</strong> Satu sumber sering dipakai beberapa model. Tandai
+   model mana yang ikut mati <strong>sebelum</strong> kejadiannya, bukan sesudahnya.</li>
+<li><strong>Catat biaya upstream per model</strong>, bukan cuma harga jual. Model tanpa data <code>cost</code>
+   bakal nampil margin 100% — itu bug data, bukan rezeki.</li>
+<li><strong>Atribusi model jujur.</strong> Jual "GPT-4" padahal model open-weight bukan cuma
+   soal ToS — itu penipuan konsumen. Bedanya lo dengan penipu cuma satu: lo nulis
+   nama model yang bener.</li>
+<li><strong>Punya satu jalur resmi.</strong> Sekalipun lo jalan di tier murah, satu sumber resmi
+   bikin lo bisa jawab: <em>"kalau layanan mati, apa jaminannya?"</em></li>
+</ol>
+<hr />
+
+    </section>
+
+    <section id="part-4-praktik-cara-mulai-checklist-kasar" class="card">
+        <h2><span class="step">4</span>PART 4 — PRAKTIK: CARA MULAI (CHECKLIST KASAR)</h2>
+
+<p>Ini yang gue dan Hermes lakuin. Urutannya, bukan teorinya.</p>
+<h3 id="41-vps">4.1 VPS</h3>
+<p><strong>Ambil VPS biasa. Jangan NAT. Jangan RDP.</strong></p>
+<ul>
+<li>
+<p><strong>VPS NAT</strong> itu kayak ngekos di rumah orang. Bisa, tapi tiap mau ke toilet harus izin,
+  dan port-nya berebutan sama tetangga. Lo bakal ngehabisin malam buat masalah yang
+  bukan masalah lo.</p>
+</li>
+<li>
+<p><strong>RDP</strong> — kalau lo suka lag, silakan. Kalau lo mau kerja, SSH.</p>
+</li>
+</ul>
+<p>Murah juga nggak apa-apa. Yang penting: <strong>IPv4 publik, root akses, dan lo nggak
+berbagi IP sama 200 orang lain.</strong></p>
+<h3 id="42-domain">4.2 Domain</h3>
+<p><code>.my.id</code> atau <code>.web.id</code> kalau lagi hemat. <code>.id</code> kalau lagi cuan.</p>
+<p>Yang sering dilupakan: <strong>DNS dulu, nginx belakangan.</strong> Arahkan subdomain sebelum pasang
+TLS, kalau nggak sertifikat lo bakal ngambek.</p>
+<h3 id="43-dirty-job-nya-serahin-ke-hermes">4.3 Dirty job-nya serahin ke Hermes</h3>
+<p>Ini bagian yang lo tulis sendiri dan gue setuju 100%.</p>
+<p>Sisa-sisa kerjaan yang bikin kepala pecah — install Docker, patch compose, nginx,
+TLS, hardening, debug log, hitung micros, bikin endpoint admin — <strong>itu bukan kerjaan
+manusia.</strong> Itu kerjaan agent yang nggak capek dan nggak ngeluh.</p>
+<p><strong>Dan ini yang paling penting, yang bikin beda antara 2 jam dan 2 minggu:</strong></p>
+<div class="warning-box"><p><strong>Pakai model SOTA untuk kerjaan ini. Jangan yang murah.</strong></p>
+<p>Debugging satu masalah quoting di dalam SSH heredoc bisa makan setengah hari pakai
+model kacangan, dan 5 menit pakai model bagus. Gue pernah kebakar token banyak
+banget di satu sesi karena terlalu hemat di model — hemat di tempat yang salah
+itu namanya rugi, bukan hemat.</p></div>
+<p>Jadi: beli kopi americano yang mahal, kasih ke model yang bener, dan tidur.
+Pagi-pagi kerjaan udah kelar.</p>
+<h3 id="44-frontend-vs-backend-sekali-lagi">4.4 Frontend vs Backend, sekali lagi</h3>
+<div class="table-wrap"><table class="data-table">
+<thead>
+<tr>
+<th>Bagian</th>
+<th>Cara</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Landing page, dashboard, halaman top-up</td>
+<td><strong>Bikin dengan AI.</strong> Cepat, bagus, nggak ada uang di situ</td>
+</tr>
+<tr>
+<td>Billing, validasi kunci, potong saldo, ledger</td>
+<td><strong>Jangan bikin dari nol.</strong> Ambil One API / New API / TokenPanel / GPT-Load, modif dikit</td>
+</tr>
+<tr>
+<td>Admin panel</td>
+<td>Bangun tipis di atas API admin yang udah ada. Jangan pakai engine baru</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Alasan psikologis kenapa orang ngeyel bangun sendiri:</strong> karena bikin dari nol rasanya
+lebih "punya". Itu egosentris dan mahal. Lo nggak punya karena lo nulis barisnya —
+lo punya karena lo ngerti <strong>kenapa</strong> baris itu ada.</p>
+<hr />
+
+    </section>
+
+    <section id="part-5-realita-yang-bakal-bikin-lo-nangis" class="card">
+        <h2><span class="step">5</span>PART 5 — REALITA YANG BAKAL BIKIN LO NANGIS</h2>
+
+<p>Bagian yang nggak ada di thread Twitter orang.</p>
+<h3 id="51-pembayaran-itu-neraka-dan-lo-akan-salah-di-sini">5.1 Pembayaran itu neraka, dan lo akan salah di sini</h3>
+<p>Contoh nyata dari platform gue sendiri: <strong>fitur payment gateway belum jadi</strong>, dan itu
+bukan karena gue males.</p>
+<p>Kategori usaha lo — "jasa digital prabayar" + "reseller akses pihak ketiga" —
+itu kombinasi yang <strong>hampir semua gateway benci</strong>. Chargeback lo tinggi, bukti serah
+terima susah, dan lo bukan pemilik produknya.</p>
+<p>Yang bakal kejadian:
+- Dana lo <strong>ditahan</strong> sebagian sebagai jaminan chargeback, tanpa pemberitahuan.
+- Rasio dispute naik → kanal kartu dimatikan sepihak.
+- Ada program denda jaringan kartu buat merchant dengan chargeback di atas ambang.
+  Denda. Bukan teguran. <strong>Denda.</strong></p>
+<p><strong>Dan ini bagian yang paling ngeri:</strong></p>
+<div class="warning-box"><p>Kalau lo kredit saldo user berdasarkan webhook yang <strong>nggak lo verifikasi signature-nya</strong>,
+lo baru saja bikin mesin cetak uang gratis. Siapa pun yang tau URL webhook lo bisa
+kirim "pembayaran sukses" palsu. Satu request = satu saldo gratis.</p></div>
+<p>Yang wajib ada, <strong>tanpa pengecualian</strong>:
+1. Verifikasi signature sebelum nyentuh database
+2. <strong>Idempotensi</strong> — webhook yang sama datang dua kali = saldo naik <strong>sekali</strong>
+3. Ledger terpisah: uang masuk vs saldo user
+4. <strong>Rekonsiliasi berkala</strong> buat nangkep webhook yang ilang</p>
+<p><strong>Dan mulai dari yang paling nggak berisiko:</strong> transfer bank manual + tombol approve
+di admin panel. Lo udah punya tombolnya. Itu MVP-nya. Gateway otomatis dipasang
+<strong>setelah</strong> lo punya volume dan bukti kategorinya diterima.</p>
+<h3 id="52-uang-lewat-tapi-bukan-punya-lo">5.2 Uang lewat, tapi bukan punya lo</h3>
+<p>Saldo user itu <strong>utang</strong>, bukan pendapatan. Uang yang lo pegang adalah kewajiban
+ngasih layanan. Kalau layanan lo mati dan lo nggak bisa lanjut, itu bukan "bisnis gagal",
+itu <strong>utang yang harus lo balikin.</strong></p>
+<h3 id="53-vendor-mati-dan-customer-nyalahin-lo">5.3 Vendor mati, dan customer nyalahin lo</h3>
+<p>Lo nggak punya kendali atas vendor. Vendor bisa ganti harga, rate limit, atau matiin akun.
+Satu sumber mati = semua model lo mati. Dan di mata customer, itu <strong>kesalahan lo.</strong></p>
+<h3 id="54-mikros-dan-angka-nol-yang-nggak-keliatan">5.4 Mikros dan angka nol yang nggak keliatan</h3>
+<p>Ingat jebakan satuan di PART 2. Sekarang tambahin satu lagi: <strong>pembayaran</strong>.
+Rupiah → micros, di tempat kedua, dengan uang nyata.</p>
+<div class="code-block"><pre><code>Rp 50.000  →  50.000.000.000 micros
+</code></pre></div>
+<p><strong>Cara ngetes yang bener: jangan pakai angka bulat.</strong> Angka bulat nyembunyiin bug.
+Rp 50.000 bisa jadi bener kebetulan. Tes pakai <strong>Rp 137</strong> — jumlah aneh yang nggak
+mungkin bener secara nggak sengaja.</p>
+<h3 id="55-berapa-lama-lo-bakal-ngurus-sampah">5.5 Berapa lama lo bakal ngurus sampah</h3>
+<p>Kira-kira:
+- 10% bikin platform
+- 20% mikir harga
+- <strong>70% ngurus supply yang mati, kunci yang kena ban, dan customer yang nanya
+  "kok error?"</strong></p>
+<p>Kalau lo nggak siap dengan 70% itu, model bisnis ini bukan buat lo. Bukan masalah
+skill — masalah selera.</p>
+<hr />
+
+    </section>
+
+    <section id="part-6-yang-wajib-lo-simpan-jangan-dihapus" class="card">
+        <h2><span class="step">6</span>PART 6 — YANG WAJIB LO SIMPAN (JANGAN DIHAPUS)</h2>
+
+<p>Ini bukan fitur. Ini asuransi.</p>
+<p><strong>Log usage dan log akses adalah bukti hukum saat chargeback.</strong></p>
+<p>Di jaringan kartu, bukti yang diakui buat barang digital adalah: bukti produknya
+dipakai — <strong>log pemakaian, timestamp login, IP</strong> — plus riwayat transaksi yang nggak
+pernah dipersengketakan dari akun yang sama.</p>
+<p>Artinya tabel <code>usage_records</code> yang lo bangun buat billing ternyata <strong>fungsi ganda</strong>
+sebagai pertahanan hukum. Simpan lebih lama dari yang lo kira perlu. Jangan pernah
+"bersihin database biar ringan".</p>
+<hr />
+
+    </section>
+
+    <section id="part-7-checklist-sebelum-lo-bilang-siap-jualan" class="card">
+        <h2><span class="step">7</span>PART 7 — CHECKLIST SEBELUM LO BILANG "SIAP JUALAN"</h2>
+
+<div class="code-block"><pre><code>SUPPLY
+[ ] Minimal 2 sumber independen buat tiap model yang dijual
+[ ] Biaya upstream per model tercatat (bukan cuma harga jual)
+[ ] Tau model mana yang mati kalau sumber X mati
+[ ] Verifikasi katalog tiap kunci sebelum dipakai
+
+BACKEND
+[ ] Pakai engine yang ada, bukan bikin dari nol
+[ ] Harga diuji baca-ulang: angka tersimpan ≈ Rp × 1000
+[ ] Saldo diuji: potongan == catatan usage == rumus dari token asli
+[ ] Request gagal TIDAK motong saldo
+
+PEMBAYARAN
+[ ] Mulai dari transfer manual + approve admin
+[ ] Signature webhook diverifikasi
+[ ] Webhook dikirim 2× → saldo naik 1× (INI GERBANG RILIS)
+[ ] Rekonsiliasi berkala + alert
+[ ] ToS: refund, kadaluarsa saldo, batas tanggung jawab
+
+OPERASIONAL
+[ ] Log usage disimpan jangka panjang
+[ ] Backup rutin + DIVERIFIKASI (bukan cuma ada filenya)
+[ ] Tau siapa yang harus dihubungi kalau supply mati jam 2 pagi
+</code></pre></div>
+<hr />
+
+    </section>
+
+    <section id="part-8-penutup" class="card">
+        <h2><span class="step">8</span>PART 8 — PENUTUP</h2>
+
+<p>Model bisnis ini menarik karena <strong>bisa dijalanin satu orang</strong> dan <strong>marginnya bisa gila</strong>
+— kelihatan gila, sampai lo hitung tier bansos-nya.</p>
+<p>Yang bikin orang bertahan bukan skill teknis. Bukan juga backup atau hardening.
+Tapi <strong>sabar ngurus supply yang mati terus</strong>, dan <strong>jujur soal apa yang lo jual</strong>.</p>
+<p>Bisnis ini bukan scam. Tapi gampang banget <strong>jadi</strong> scam kalau lo males mikir —
+jual model yang bukan model, hutang saldo yang nggak bisa lo layani, dan ilang
+pas orang komplain.</p>
+<p>Selisih antara "reseller" dan "penipu" itu dua hal: <strong>atribusi yang jujur</strong>, dan
+<strong>layanan yang dihormati.</strong></p>
+<p>Kalau lo punya dua itu, lo bisa jalan di tier murah dan tetep tidur nyenyak.
+Kalau nggak punya dua itu, tier resmi pun nggak bakal nyelametin lo.</p>
+<hr />
+<p><em>Ditulis dari pengalaman nyata. Semua identitas — IP, domain internal, email,
+kredensial, ID customer, prefix API key — sudah dihapus. Bebas dibagikan.</em></p>
+<p><strong>Code by Sena</strong></p>
+    </section>
+
+    </main>
+
+    <!-- SCROLL TOP -->
+    <button class="scroll-top" id="scrollTop" aria-label="Kembali ke atas">↑</button>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-inner">
+            <p class="footer-credit">Code by Sena</p>
+            <p class="footer-year">2026</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
