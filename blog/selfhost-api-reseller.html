@@ -169,6 +169,11 @@ sketsa dari orang yang pernah kesasar, bukan peta resmi dari dinas.</p>
               │             │                │                      │
          gampang       neraka          pool kunci            yang punya GPU
 </code></pre></div>
+<p>Dan yang di luar rantai tapi bikin lo nggak bisa tidur:</p>
+<div class="code-block"><pre><code>[BAYAR] ──▶ QRIS (nominal unik / listener HP)  ·  kripto (rate + konfirmasi)
+              ↓
+        [LEDGER] → [SALDO USER] → baru boleh dipakai
+</code></pre></div>
 <p>Satu per satu:</p>
 <div class="table-wrap"><table class="data-table">
 <thead>
@@ -220,7 +225,7 @@ ngehabisin bug yang lo tulis sendiri jam 3 pagi karena lo terlalu gengsi.</p></d
 uang keluar = harga supply   × token terjual     ← INI YANG SERING DILUPAKAN
               + VPS
               + kunci mati yang tetap lo bayar
-              + refund &amp; chargeback
+              + refund &amp; pembayaran nyangkut
               + nyawa lo
 </code></pre></div>
 <p>Margin di atas kertas ≠ margin di dompet. Nanti gue balik ke sini di PART 5.</p>
@@ -634,29 +639,162 @@ lo punya karena lo ngerti <strong>kenapa</strong> baris itu ada.</p>
         <h2><span class="step">5</span>PART 5 — REALITA YANG BAKAL BIKIN LO NANGIS</h2>
 
 <p>Bagian yang nggak ada di thread Twitter orang.</p>
-<h3 id="51-pembayaran-itu-neraka-dan-lo-akan-salah-di-sini">5.1 Pembayaran itu neraka, dan lo akan salah di sini</h3>
-<p>Contoh nyata dari platform gue sendiri: <strong>fitur payment gateway belum jadi</strong>, dan itu
-bukan karena gue males.</p>
-<p>Kategori usaha lo — "jasa digital prabayar" + "reseller akses pihak ketiga" —
-itu kombinasi yang <strong>hampir semua gateway benci</strong>. Chargeback lo tinggi, bukti serah
-terima susah, dan lo bukan pemilik produknya.</p>
-<p>Yang bakal kejadian:
-- Dana lo <strong>ditahan</strong> sebagian sebagai jaminan chargeback, tanpa pemberitahuan.
-- Rasio dispute naik → kanal kartu dimatikan sepihak.
-- Ada program denda jaringan kartu buat merchant dengan chargeback di atas ambang.
-  Denda. Bukan teguran. <strong>Denda.</strong></p>
-<p><strong>Dan ini bagian yang paling ngeri:</strong></p>
-<div class="warning-box"><p>Kalau lo kredit saldo user berdasarkan webhook yang <strong>nggak lo verifikasi signature-nya</strong>,
+<h3 id="51-pembayaran-itu-neraka-tapi-bukan-neraka-yang-lo-kira">5.1 Pembayaran itu neraka — tapi bukan neraka yang lo kira</h3>
+<p>Nih kabar bagusnya dulu, biar lo nggak salah siapin mental:</p>
+<div class="warning-box"><p><strong>Kalau lo main di QRIS + kripto, lo udah otomatis lewat dari mimpi buruk terbesar
+payment gateway: chargeback.</strong> Dua-duanya <strong>push payment</strong> — pelanggan lo yang
+inisiatif bayar, bukan lo yang narik dari kartu dia.</p>
+<p>Nggak ada kartu berarti nggak ada "card not present". Nggak ada chargeback berarti
+nggak ada program denda Visa/Mastercard, nggak ada rolling reserve, dan nggak ada
+rasio dispute yang bisa matiin akun lo. Pendekatan lo <strong>lebih tepat</strong> dari 90% orang
+yang nulis thread soal payment.</p></div>
+<p>Jadi soal itu beres. Yang tersisa adalah <strong>lima neraka yang lain</strong>, dan semuanya khas
+QRIS + kripto. Nggak ada satu pun yang bisa lo selesaikan dengan "pilih gateway yang bagus".</p>
+<h3 id="511-anatomi-masalah-qris-tiga-model-tiga-jenis-sakit">5.1.1 Anatomi masalah QRIS: tiga model, tiga jenis sakit</h3>
+<p>QRIS punya <strong>tiga cara</strong> dipasang ke platform lo, dan orang keder milih karena
+nggak ada yang bilang konsekuensinya:</p>
+<div class="table-wrap"><table class="data-table">
+<thead>
+<tr>
+<th>Model</th>
+<th>Cara kerja</th>
+<th>Sakit di mana</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>A · PG resmi</strong> (Midtrans, Xendit, DOKU, iPaymu, Winpay)</td>
+<td>API bikin QR dinamis per order → callback</td>
+<td>Butuh legalitas (KTP/NPWP, atau akta+NIB kalau PT). Kategori usaha lo <strong>bakal disaring</strong>, dan "reseller akses pihak ketiga" itu red flag buat mereka. KYC bisa lama, dan bisa ditolak</td>
+</tr>
+<tr>
+<td><strong>B · PG pinggiran / QRIS-as-a-service</strong> (banyak, kualitas campur)</td>
+<td>Lo daftar, dapet QRIS atas nama merchant orang lain, API topup sederhana</td>
+<td>Syarat enteng, jalan dalam hitungan menit. <strong>Tapi lo nitip duit di orang yang lo nggak kenal.</strong> Kalau mereka tutup/ilang, uang lo di situ. Dana juga bukan atas nama lo</td>
+</tr>
+<tr>
+<td><strong>C · QRIS statis punya sendiri + listener</strong></td>
+<td>Lo pakai QRIS merchant yang lo punya, bikin QR dinamis sendiri, dan deteksi uang masuk</td>
+<td>Nggak butuh approval siapa pun. <strong>Tapi uang masuk lewat HP lo, bukan lewat server.</strong> Bergantung pada HP, sinyal, dan notifikasi yang nggak boleh mati</td>
+</tr>
+</tbody>
+</table></div>
+<div class="note-box"><p>💸 <strong>Kenyataan pahit model A:</strong> makin gede dan makin resmi PG-nya, makin pinter dia
+nyaring merchant. Bukan karena lo haram — tapi karena kategori lo (digital prabayar +
+reseller pihak ketiga) memang di daftar merah mereka. Jadi ada paradoks: orang yang
+<strong>paling butuh</strong> PG resmi justru yang <strong>paling susah</strong> dapat.</p></div>
+<h3 id="512-kalau-lo-jalan-pakai-listener-model-c-bagian-teknis-yang-bikin-orang-gila">5.1.2 Kalau lo jalan pakai listener (model C) — bagian teknis yang bikin orang gila</h3>
+<p>Ini pola paling umum, dan ada <strong>empat jebakan</strong> yang nggak ada di tutorial mana pun:</p>
+<p><strong>1. Nominal unik itu wajib, bukan pilihan.</strong>
+Kalau QRIS lo statis, dua orang top-up Rp 50.000 di menit yang sama = lo nggak bisa
+bedain duit siapa. Solusinya: tiap order dapat nominal <strong>base + kode unik</strong> (misal
+50.000 jadi 50.217). Pelanggan harus bayar <strong>pas</strong> nominal itu.</p>
+<div class="code-block"><pre><code>Order #A1 → Rp 50.217 → cocok HANYA ke order A1
+Order #B2 → Rp 50.318 → cocok HANYA ke order B2
+</code></pre></div>
+<p>Masalahnya: kode unik cuma punya <strong>ruang terbatas</strong> (biasanya 1–999). Kalau lo punya
+ratusan order pending bersamaan, tabrakan itu nyata. <strong>Lo butuh pengecekan collision</strong>,
+bukan <code>random()</code> lalu berdoa.</p>
+<p><strong>2. Uang masuk bisa dari siapa saja, dan bisa bukan untuk lo.</strong>
+Notifikasi mutasi itu <strong>nggak ada identitas pengirimnya</strong>. Lo cuma tau nominal dan waktu.
+Artinya:
+- Orang iseng bisa nembak nominal kode unik orang lain → order orang itu ke-credit
+  padahal dia nggak bayar.
+- Duit dari transaksi lain (bukan top-up API lo) bisa kebetulan pas nominalnya.
+- Nominal yang sama bisa muncul dua kali.</p>
+<p>Mitigasi yang realistis: <strong>cocokkan nominal + jendela waktu + status order</strong>, jamak
+nominal yang sama → tandai untuk review manual, <strong>jangan auto-credit dua-duanya</strong>.
+Kedengarannya ribet, tapi ini beda antara lo punya uang dan lo punya cerita.</p>
+<p><strong>3. Signature dari listener itu lemah, dan webhook-nya telanjang.</strong>
+Listener notifikasi Android umumnya cuma kirim hash sederhana (misal MD5 dari nominal +
+secret). Itu:
+- <strong>Lemah secara kriptografi</strong> — nggak ada timestamp, nggak ada nonce, rawan replay.
+- <strong>URL webhook-nya wajib publik</strong> → siapa pun yang tau bisa kirim "pembayaran masuk".</p>
+<p>Mitigasi wajib: <strong>secret yang panjang dan acak</strong>, hash, <strong>tambahkan timestamp ke payload</strong>,
+tolak request yang lebih tua dari beberapa menit, dan <strong>rate-limit endpoint-nya</strong>.
+Ini bukan paranoid — ini karena URL lo ada di internet.</p>
+<p><strong>4. Dia beneran bisa berhenti, dan lo baru tau pas ada yang komplain.</strong>
+- HP kena <strong>optimasi baterai</strong> → app listener dibunuh sistem → nggak ada notifikasi masuk
+  → nggak ada webhook → top-up user ngambang.
+- HP restart → app nggak auto-start.
+- Notifikasi disenyapkan (mode DND, notif dimatikan) → <strong>tetap nggak ada event</strong>.
+- Sinyal putus / HP di-charge di kabel rusak.</p>
+<p><strong>Heartbeat itu wajib.</strong> Listener harus kirim sinyal "gue masih hidup" setiap beberapa
+menit. Kalau hilang lebih dari N menit: matikan kanal QRIS, tampilkan ke user
+"pembayaran otomatis sedang gangguan, pakai manual", dan <strong>bangunin lo</strong>.</p>
+<div class="warning-box"><p>🚨 <strong>Aturan yang nggak boleh dilanggar:</strong> listener <strong>cuma boleh auto-credit kalau
+dia sehat</strong> (heartbeat segar). Plus selalu ada <strong>tombol manual</strong>: user kirim bukti
+transfer → admin approve. Kanal otomatis dan kanal manual <strong>bukan pilihan</strong>,
+dua-duanya wajib. Bukan karena lo nggak yakin — tapi karena HP itu mati.</p></div>
+<h3 id="513-anatomi-masalah-kripto">5.1.3 Anatomi masalah kripto</h3>
+<p>Kripto kelihatan seperti jalan keluar: tanpa chargeback, lintas negara, tanpa KYC berat.
+Benar. Tapi dia tukar satu set masalah dengan set masalah lain:</p>
+<div class="table-wrap"><table class="data-table">
+<thead>
+<tr>
+<th>Masalah</th>
+<th>Kenapa berbahaya</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Rate harus dikunci per order</strong></td>
+<td>Harga kripto gerak tiap detik. Kalau lo kunci "Rp 1.000 = 1 USDT" saat order dibuat, dan pembeli baru bayar 20 menit kemudian, lo bisa rugi beberapa persen. Kunci rate + <strong>expiry pendek</strong> (10–30 menit), dan tolak pembayaran di luar itu</td>
+</tr>
+<tr>
+<td><strong>Nominal coin nggak persis</strong></td>
+<td>Wallet lo terima <code>9,97 USDT</code> padahal order-nya <code>10 USDT</code> — sisa potong fee jaringan. Kalau logika lo butuh <strong>pas</strong>, semua order bakal ngambang. Butuh <strong>toleransi</strong> (misal ±1–2%) dan aturan eksplisit: ulang bawah = tolak, ulang atas = kredit tanpa lebihan</td>
+</tr>
+<tr>
+<td><strong>Alamat unik vs alamat bersama</strong></td>
+<td>Alamat unik per order paling bersih, tapi butuh gateway yang generate-nya. Kalau lo pakai satu alamat buat semua orang, lo balik ke masalah nominal unik + harus baca memo/tag</td>
+</tr>
+<tr>
+<td><strong>Konfirmasi blokir bukan final</strong></td>
+<td>Deposit masih bisa <strong>reorg</strong> sebelum beberapa konfirmasi. Kalau lo kredit di 0 konfirmasi, lo kredit atas dasar harapan. Untuk stablecoin: tunggu minimal <strong>1–3 konfirmasi</strong> (TRC20 cepat, ERC20 lebih lama)</td>
+</tr>
+<tr>
+<td><strong>Jaringan yang salah = duit hilang</strong></td>
+<td>Kirim USDT ke alamat TRC20 lewat BEP20 → duit ngambang, nggak bisa ditarik sendiri. <strong>Tampilkan jaringan dengan berani</strong>, jangan cuma alamatnya</td>
+</tr>
+<tr>
+<td><strong>Arah konversi harus jelas di muka</strong></td>
+<td>Lo jual saldo dalam Rupiah, tapi terima USDT. Siapa yang nanggung selisih kurs? Tulis di depan: "dikredit Rp X berdasarkan rate saat settlement", bukan saat order</td>
+</tr>
+<tr>
+<td><strong>Jejak audit &amp; pajak</strong></td>
+<td>Dompet kripto lo itu dompet bisnis. Kalau lo nggak catat siapa bayar berapa untuk order apa, lo nggak punya pembukuan — dan nggak bisa jawab kalau ada yang nanya</td>
+</tr>
+<tr>
+<td><strong>Regulasi aset kripto di Indonesia</strong></td>
+<td>Aset kripto di Indonesia <strong>bukan alat pembayaran yang sah</strong> — dia diperlakukan sebagai komoditas, dan transaksinya harus lewat penyedia yang terdaftar. Menerima kripto sebagai pembayaran itu area abu-abu; pastikan lo ngerti posisinya sebelum jadikan itu kanal utama, bukan cuma tambahan</td>
+</tr>
+</tbody>
+</table></div>
+<p>Praktisnya: pakai <strong>gateway kripto yang udah beres</strong> (bikin invoice, generate alamat,
+callback, konversi) daripada bikin sendiri. Yang lo tulis sendiri itu: <strong>pencatatan
+rate, toleransi, dan ledger</strong>-nya.</p>
+<h3 id="514-dan-sekarang-balik-ke-yang-emang-ngeri">5.1.4 Dan sekarang balik ke yang emang ngeri</h3>
+<p>Sisi baiknya QRIS dan kripto sudah dijelaskan. Tapi ini <strong>tetap</strong> berlaku, dan ini
+bagian di mana lo bisa kehilangan uang beneran:</p>
+<div class="warning-box"><p>Kalau lo kredit saldo user berdasarkan callback/webhook yang <strong>nggak lo verifikasi</strong>,
 lo baru saja bikin mesin cetak uang gratis. Siapa pun yang tau URL webhook lo bisa
-kirim "pembayaran sukses" palsu. Satu request = satu saldo gratis.</p></div>
-<p>Yang wajib ada, <strong>tanpa pengecualian</strong>:
-1. Verifikasi signature sebelum nyentuh database
-2. <strong>Idempotensi</strong> — webhook yang sama datang dua kali = saldo naik <strong>sekali</strong>
+kirim "pembayaran sukses" palsu. Satu request = satu saldo gratis.</p>
+<p>Dan di kripto ini lebih gila lagi: orang bisa bikin <strong>transaksi on-chain beneran</strong>,
+biarkan lo kredit saldo, lalu <strong>membatalkannya lewat reorg / double-spend</strong> sebelum
+konfirmasi selesai. Bukan hacker jenius — cuma orang yang tau lo kredit tanpa
+nunggu konfirmasi.</p></div>
+<p>Yang wajib ada, <strong>tanpa pengecualian</strong>, di kanal mana pun:
+1. Verifikasi signature/hash sebelum nyentuh database
+2. <strong>Idempotensi</strong> — event yang sama datang dua kali = saldo naik <strong>sekali</strong>
 3. Ledger terpisah: uang masuk vs saldo user
-4. <strong>Rekonsiliasi berkala</strong> buat nangkep webhook yang ilang</p>
-<p><strong>Dan mulai dari yang paling nggak berisiko:</strong> transfer bank manual + tombol approve
-di admin panel. Lo udah punya tombolnya. Itu MVP-nya. Gateway otomatis dipasang
-<strong>setelah</strong> lo punya volume dan bukti kategorinya diterima.</p>
+4. <strong>Toleransi nominal eksplisit</strong> (kripto: fee jaringan; QRIS: pembulatan)
+5. <strong>Rekonsiliasi berkala</strong> buat nangkep webhook yang ilang dan pembayaran nyangkut
+6. <strong>Kanal manual sebagai jaring pengaman</strong> — selalu ada jalur approve admin</p>
+<p><strong>Urutan mulai yang jujur:</strong> kanal manual dulu (transfer + approve admin). Pasang QRIS
+otomatis setelah lo siap ngurus listener/nya. Pasang kripto setelah lo ngerti
+rate + konfirmasi + ledger-nya. Bukan karena takut — karena QRIS dan kripto itu
+kanal yang <strong>nggak bisa lo rollback</strong>, jadi lo mau ngerti dulu sebelum nyala.</p>
 <h3 id="52-uang-lewat-tapi-bukan-punya-lo">5.2 Uang lewat, tapi bukan punya lo</h3>
 <p>Saldo user itu <strong>utang</strong>, bukan pendapatan. Uang yang lo pegang adalah kewajiban
 ngasih layanan. Kalau layanan lo mati dan lo nggak bisa lanjut, itu bukan "bisnis gagal",
@@ -688,12 +826,23 @@ skill — masalah selera.</p>
         <h2><span class="step">6</span>PART 6 — YANG WAJIB LO SIMPAN (JANGAN DIHAPUS)</h2>
 
 <p>Ini bukan fitur. Ini asuransi.</p>
-<p><strong>Log usage dan log akses adalah bukti hukum saat chargeback.</strong></p>
-<p>Di jaringan kartu, bukti yang diakui buat barang digital adalah: bukti produknya
-dipakai — <strong>log pemakaian, timestamp login, IP</strong> — plus riwayat transaksi yang nggak
-pernah dipersengketakan dari akun yang sama.</p>
+<p><strong>Log usage dan log akses adalah bukti saat ada sengketa.</strong></p>
+<p>Kalau lo pakai kartu, ini bukti resmi yang diakui jaringan kartu saat chargeback.
+Kalau lo pakai QRIS atau kripto, <strong>sengketa tetap ada</strong> — cuma bentuknya beda:
+pelanggan bilang "gue udah transfer kok saldo gue nggak masuk", atau "ini bukan
+transaksi gue". Dan bukti yang bisa lo tunjuk tetap sama:</p>
+<ul>
+<li>bukti produknya dipakai — <strong>log pemakaian, timestamp login, IP</strong></li>
+<li>riwayat transaksi yang nggak pernah dipersengketakan dari akun yang sama</li>
+<li>catatan pembayaran yang bisa dicocokkan ke order (nominal, waktu, ID transaksi)</li>
+</ul>
+<div class="warning-box"><p>📌 <strong>Konsekuensi langsung buat kanal QRIS dan kripto:</strong> karena lo nggak punya
+sistem "dispute" yang rapi, <strong>log-lah pengadilan lo.</strong> Kalau user ngaku udah bayar
+dan lo nggak punya catatan nominal unik + waktu + ID order-nya, lo nggak bisa
+membuktikan apa pun — dan pilihan lo cuma dua: kredit dia (rugi) atau tolak dia
+(dia kecewa dan ngomong di mana-mana). Dua-duanya gara-gara lo nggak nyatet.</p></div>
 <p>Artinya tabel <code>usage_records</code> yang lo bangun buat billing ternyata <strong>fungsi ganda</strong>
-sebagai pertahanan hukum. Simpan lebih lama dari yang lo kira perlu. Jangan pernah
+sebagai pertahanan. Simpan lebih lama dari yang lo kira perlu. Jangan pernah
 "bersihin database biar ringan".</p>
 <hr />
 
@@ -715,11 +864,18 @@ BACKEND
 [ ] Request gagal TIDAK motong saldo
 
 PEMBAYARAN
-[ ] Mulai dari transfer manual + approve admin
-[ ] Signature webhook diverifikasi
+[ ] Kanal manual (transfer + approve admin) SELALU ada sebagai jaring pengaman
+[ ] QRIS: kode unik dicek tabrakan, bukan random
+[ ] QRIS: listener punya HEARTBEAT + auto-credit dimatikan kalau heartbeat basi
+[ ] QRIS: webhook pakai secret acak panjang + timestamp + rate-limit
+[ ] Kripto: rate dikunci per order + expiry pendek
+[ ] Kripto: toleransi nominal fee jaringan ditulis eksplisit (kelebihan/kurang)
+[ ] Kripto: tunggu N konfirmasi sebelum kredit (jangan 0)
+[ ] Kripto: jaringan ditampilkan jelas (TRC20/BEP20/ERC20)
+[ ] Signature webhook diverifikasi (QRIS maupun kripto)
 [ ] Webhook dikirim 2× → saldo naik 1× (INI GERBANG RILIS)
-[ ] Rekonsiliasi berkala + alert
-[ ] ToS: refund, kadaluarsa saldo, batas tanggung jawab
+[ ] Rekonsiliasi berkala + alert kalau kanal otomatis mati
+[ ] ToS: refund, kadaluarsa saldo, batas tanggung jawab, kebijakan reversal
 
 OPERASIONAL
 [ ] Log usage disimpan jangka panjang
@@ -744,6 +900,14 @@ pas orang komplain.</p>
 <strong>layanan yang dihormati.</strong></p>
 <p>Kalau lo punya dua itu, lo bisa jalan di tier murah dan tetep tidur nyenyak.
 Kalau nggak punya dua itu, tier resmi pun nggak bakal nyelametin lo.</p>
+<p><strong>Dan penutup soal duit:</strong> lo bakal nerima bayaran lewat QRIS dan kripto, dan kedua
+kanal itu <strong>nggak bisa lo batalkan</strong>. Nggak ada chargeback artinya nggak ada yang
+bisa nyabut duit lo balik — tapi artinya juga <strong>nggak ada yang bisa nolongin lo
+kalau lo salah kredit</strong>. Di sistem kartu, salah kredit bisa disengketakan. Di QRIS
+dan kripto, salah kredit itu <strong>selesai</strong> — duit user nambah, lo tinggal ikhlas.</p>
+<p>Makanya nilai tukar sebenarnya bukan "kanal mana yang paling murah". Nilainya adalah
+<strong>berapa disiplin lo di dua tempat</strong>: pencatatan order, dan gerbang verifikasi.
+Dua itu doang yang misahin platform dari tempat pembuangan uang.</p>
 <hr />
 <p><em>Ditulis dari pengalaman nyata. Semua identitas — IP, domain internal, email,
 kredensial, ID customer, prefix API key — sudah dihapus. Bebas dibagikan.</em></p>
