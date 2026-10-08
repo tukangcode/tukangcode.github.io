@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Install Hermes CLI di Windows (PowerShell) — Step by Step | Tukang Code</title>
+    <meta name="description" content="Panduan bergambar install Hermes Agent versi CLI di Windows: buka PowerShell, jalankan perintah irm, konfigurasi via Nous Portal, sampai Hermes jalan di terminal.">
+    <meta name="color-scheme" content="dark">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../style.css">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+<header class="site-header">
+    <div class="header-inner">
+        <a href="../../../index.html" class="logo"><span class="logo-icon">&lt;/&gt;</span><span class="logo-text">Tukang Code</span></a>
+        <nav class="main-nav">
+            <a href="../../../blog/index.html" class="nav-link">Blog</a>
+            <a href="../../index.html" class="nav-link active">Panduan Induk</a>
+            <a href="../../../portfolio.html" class="nav-link">Portfolio</a>
+        </nav>
+    </div>
+</header>
+
+<section class="pi-hero" style="padding-bottom:1.2rem">
+    <div class="pi-hero-inner">
+        <a href="../index.html" class="back-link">&larr; Kembali ke Panduan Install Hermes</a>
+        <span class="pi-kicker">PANDUAN INDUK &bull; INSTALL &bull; WINDOWS</span>
+        <h1>Install Hermes CLI<br>di Windows</h1>
+        <p class="pi-sub">Versi Command Line &mdash; paling ringan dan paling cepat. Ikuti langkahnya satu-satu, tiap langkah ada screenshot aslinya.</p>
+        <div class="hero-tags" style="justify-content:center; margin-top:1rem">
+            <span class="tag">Hermes</span><span class="tag">Windows</span><span class="tag">CLI</span><span class="tag">Screenshot Asli</span>
+        </div>
+    </div>
+</section>
+
+<nav class="toc" id="toc">
+    <div class="toc-inner">
+        <span class="toc-label">Daftar Isi</span>
+        <div class="toc-links">
+            <a href="#syarat">Syarat</a>
+            <a href="#langkah">Langkah-langkah</a>
+            <a href="#selesai">Selesai &amp; Tes</a>
+            <a href="#macet">Kalau Macet</a>
+        </div>
+    </div>
+</nav>
+
+<main class="container">
+
+    <div class="warning-box">
+        <strong>&#9888;&#65039; Disclaimer.</strong>
+        Tutorial ini gabungan tulisan manusia + bantuan AI buat desain halamannya, jadi bisa saja ada salah tulis atau langkah yang kurang pas.
+        Selalu <strong>backup data</strong> dulu sebelum install atau ubah apa pun, dan cocokkan dengan
+        <a href="https://hermes-agent.nousresearch.com/docs" target="_blank" rel="noopener">dokumentasi resmi</a>.
+    </div>
+
+    <section id="syarat" class="card pi-highlight">
+        <h2><span class="step">1</span> Sebelum Mulai &mdash; Cek Syaratnya</h2>
+        <p class="section-desc">Nggak perlu PC mahal. Yang penting OS-nya masih didukung dan ada ruang disk.</p>
+        <div class="summary-table">
+            <div class="summary-row head"><span>Komponen</span><span>Minimal</span><span>Catatan</span></div>
+            <div class="summary-row"><span><strong>Windows</strong></span><span>10 LTSC &ndash; 11 (versi terbaru)</span><span>Semua edisi jalan: Home, Pro, LTSC</span></div>
+            <div class="summary-row"><span><strong>Disk</strong></span><span>2 GB + 3 GB ekstra</span><span>2 GB buat Hermes, 3 GB buat tool &amp; dependensi</span></div>
+            <div class="summary-row"><span><strong>RAM</strong></span><span>4 GB (CLI) / 8 GB (Desktop)</span><span>4 GB masih bisa buat Desktop, tapi proses build lama</span></div>
+            <div class="summary-row"><span><strong>Jaringan</strong></span><span>VPN atau Cloudflare WARP</span><span>Buat ngatasin throttle GitHub (dibahas di bawah)</span></div>
+        </div>
+        <p class="muted-sm">Selama PC-nya nggak terlalu tua &mdash; misal i3-2100 &mdash; dan masih bisa jalanin Windows 10, Hermes harusnya bisa dipasang dan dipakai.</p>
+        <div class="warning-box">
+            <strong>&#128274; Cuma install dari sumber resmi.</strong><br>
+            <code>https://hermes-agent.nousresearch.com</code> atau GitHub resmi <code>https://github.com/NousResearch/hermes-agent</code>.
+            Di luar itu bukan tempat resmi &mdash; berisiko kena malware.
+        </div>
+    </section>
+
+    <section id="langkah" class="card">
+        <h2><span class="step">2</span> Langkah demi Langkah</h2>
+        <p class="section-desc">Total 15 langkah, dari nol sampai bisa ngobrol sama Hermes. Screenshot diambil langsung dari proses install yang sebenarnya.</p>
+        <div class="step-block">
+            <h3><span class="step-num">1</span> Buka situs resmi Nous Research</h3>
+            <p>Hermes Agent dikembangkan oleh Nous Research. Buka situs resminya di <code>https://hermes-agent.nousresearch.com/</code> &mdash; dari sini kamu bakal ambil perintah install-nya. Ingat: <strong>hanya</strong> situs ini atau GitHub resmi <code>github.com/NousResearch/hermes-agent</code>. Di luar itu bukan tempat resmi dan berisiko malware.</p>
+<figure class="shot"><span class="shot-num">Langkah 1</span><img src="images/01-situs-resmi.png" alt="Buka situs resmi Nous Research" loading="lazy"><figcaption>Halaman resmi Hermes Agent di situs Nous Research.</figcaption></figure>        </div>
+        <div class="step-block">
+            <h3><span class="step-num">2</span> Buka PowerShell</h3>
+            <p>Buka <strong>CMD</strong> dulu, lalu ketik <code>powershell</code> dan tekan Enter &mdash; atau lebih simpel: klik Start Menu, ketik <code>powershell</code>, lalu klik <strong>Windows PowerShell</strong>. Install Hermes CLI <strong>wajib</strong> lewat PowerShell, bukan CMD.</p>
+<figure class="shot"><span class="shot-num">Langkah 2</span><img src="images/02-buka-powershell.png" alt="Buka PowerShell" loading="lazy"><figcaption>Windows PowerShell terbuka dari Start Menu.</figcaption></figure>        </div>
+        <div class="step-block">
+            <h3><span class="step-num">3</span> Copy perintah <code>irm</code> dari situs</h3>
+            <p>Balik ke situs Nous Research, lalu copy perintah <code>irm</code> buat install Hermes. Perintahnya satu baris aja: <code>iex (irm https://hermes-agent.nousresearch.com/install.ps1)</code></p>
+<figure class="shot"><span class="shot-num">Langkah 3</span><img src="images/03-copy-command-irm.png" alt="Copy perintah <code>irm</code> dari situs" loading="lazy"><figcaption>Tombol copy perintah install di situs resmi.</figcaption></figure>        </div>
+        <div class="step-block">
+            <h3><span class="step-num">4</span> Kalau muncul peringatan clickfix</h3>
+            <p>Kalau kamu pakai adblock, kadang tombol copy-nya ke-blokir dan muncul peringatan soal <em>clickfix attack</em>. Nggak apa-apa &mdash; klik copy sekali lagi, atau blok manual perintahnya.</p>
+<figure class="shot"><span class="shot-num">Langkah 4</span><img src="images/04-peringatan-clickfix.png" alt="Kalau muncul peringatan clickfix" loading="lazy"><figcaption>Peringatan clickfix karena adblock memblokir fungsi copy.</figcaption></figure>        </div>
+        <div class="step-block">
+            <h3><span class="step-num">5</span> Paste di terminal, tekan Enter</h3>
+            <p>Di jendela PowerShell, <strong>klik kanan</strong> buat paste perintah tadi, lalu tekan <strong>Enter</strong>. Proses install akan langsung mulai.</p>
+<figure class="shot"><span class="shot-num">Langkah 5</span><img src="images/05-paste-di-terminal.png" alt="Paste di terminal, tekan Enter" loading="lazy"><figcaption>Perintah sudah di-paste dan siap dijalankan.</figcaption></figure>        </div>
+        <div class="step-block">
+            <h3><span class="step-num">6</span> Proses install jalan</h3>
+            <p>Pertama, installer akan mengunduh script install resmi Hermes, lalu mulai memasang dependensi dan komponen Hermes. Tunggu aja sampai selesai &mdash; jangan tutup jendelanya.</p>
+<figure class="shot"><span class="shot-num">Langkah 6</span><img src="images/06-mulai-install.png" alt="Proses install jalan" loading="lazy"><figcaption>Installer sedang mengunduh script dan dependensi.</figcaption></figure>        </div>
+        <div class="step-block">
+            <h3><span class="step-num">7</span> Sabar &mdash; di IndiHome bisa lambat</h3>
+            <p>Proses ini bisa makan waktu lumayan lama, terutama di jaringan IndiHome, karena download dari GitHub di-throttle. Kalau berasa stuck, nyalain <strong>VPN</strong> atau <strong>Cloudflare WARP (1.1.1.1)</strong> &mdash; biasanya langsung ngebut lagi.</p>
+<figure class="shot"><span class="shot-num">Langkah 7</span><img src="images/07-proses-lama-throttle.png" alt="Sabar &mdash; di IndiHome bisa lambat" loading="lazy"><figcaption>Proses download dependensi yang lambat karena throttle GitHub.</figcaption></figure>        </div>
+        <div class="step-block">
+            <h3><span class="step-num">8</span> Pilih opsi konfigurasi</h3>
+            <p>Setelah install sukses, kamu dikasih opsi buat mengonfigurasi Hermes: pasang API key sendiri, atau pakai <strong>Nous Portal</strong> buat akses model AI gratis secara instan. Buat sekarang pilih <strong>1</strong>, lalu Enter.</p>
+<figure class="shot"><span class="shot-num">Langkah 8</span><img src="images/08-opsi-konfigurasi.png" alt="Pilih opsi konfigurasi" loading="lazy"><figcaption>Pilihan konfigurasi setelah install selesai — pilih 1.</figcaption></figure>        </div>
+        <div class="step-block">
+            <h3><span class="step-num">9</span> Browser terbuka ke portal Nous</h3>
+            <p>Browser default kamu akan otomatis membuka halaman portal Nous. Di situ ada proses verifikasi, pemilihan paket tier, dan login.</p>
+<figure class="shot"><span class="shot-num">Langkah 9</span><img src="images/09-portal-nous.png" alt="Browser terbuka ke portal Nous" loading="lazy"><figcaption>Halaman portal Nous terbuka di browser.</figcaption></figure>        </div>
+        <div class="step-block">
+            <h3><span class="step-num">10</span> Pilih paket Free, lalu Sign in</h3>
+            <p>Pilih paket <strong>Free</strong> &mdash; cukup buat nyoba dan pakai sehari-hari &mdash; lalu klik <strong>Sign in</strong>.</p>
+<figure class="shot"><span class="shot-num">Langkah 10</span><img src="images/10-pilih-free-signin.png" alt="Pilih paket Free, lalu Sign in" loading="lazy"><figcaption>Pilih paket Free lalu klik Sign in.</figcaption></figure>        </div>
+        <div class="step-block">
+            <h3><span class="step-num">11</span> Pilih metode login</h3>
+            <p>Pilih cara login kamu: GitHub, Outlook, atau Gmail &mdash; kurang lebih sama saja. Kamu bakal diminta mengizinkan portal melihat informasi umum dan publik akun kamu, buat keperluan install. Kalau login pakai ChatGPT, kamu akan diminta menghubungkan akun ChatGPT-mu ke Nous Hermes.</p>
+<figure class="shot"><span class="shot-num">Langkah 11</span><img src="images/11-pilih-metode-login.png" alt="Pilih metode login" loading="lazy"><figcaption>Pilihan metode login — GitHub, Outlook, atau Gmail.</figcaption></figure>        </div>
+        <div class="step-block">
+            <h3><span class="step-num">12</span> Klik Connect</h3>
+            <p>Setelah login berhasil, kamu diminta mengonfirmasi sekali lagi supaya akunmu terhubung ke Hermes Portal. Klik <strong>Connect</strong>.</p>
+<figure class="shot"><span class="shot-num">Langkah 12</span><img src="images/12-konfirmasi-connect.png" alt="Klik Connect" loading="lazy"><figcaption>Konfirmasi menghubungkan akun ke Hermes Portal.</figcaption></figure>        </div>
+        <div class="step-block">
+            <h3><span class="step-num">13</span> Sukses terhubung</h3>
+            <p>Kalau tampilannya seperti ini, berarti akunmu sudah terhubung dan Hermes sudah punya akses model. Balik lagi ke jendela PowerShell.</p>
+<figure class="shot"><span class="shot-num">Langkah 13</span><img src="images/13-sukses-terhubung.png" alt="Sukses terhubung" loading="lazy"><figcaption>Akun berhasil terhubung ke Hermes Portal.</figcaption></figure>        </div>
+        <div class="step-block">
+            <h3><span class="step-num">14</span> Set reasoning level</h3>
+            <p>Di terminal, secara bawaan model AI akan dipasang otomatis &mdash; pakai model yang tersedia saat itu. Kamu juga ditanya soal <strong>reasoning level</strong>. Tekan <strong>3</strong> lalu Enter buat pakai setting bawaan (medium). Detail model &amp; provider kita atur di tutorial terpisah.</p>
+<figure class="shot"><span class="shot-num">Langkah 14</span><img src="images/14-reasoning-level.png" alt="Set reasoning level" loading="lazy"><figcaption>Pemilihan reasoning level — tekan 3 untuk default (medium).</figcaption></figure>        </div>
+        <div class="step-block">
+            <h3><span class="step-num">15</span> Jalankan Hermes</h3>
+            <p>Konfigurasi selesai. Sekarang ketik <code>hermes</code> di terminal buat mulai mode Hermes Agent CLI. Selamat &mdash; kamu berhasil install dan mengonfigurasi dasar Hermes!</p>
+<figure class="shot"><span class="shot-num">Langkah 15</span><img src="images/15-hermes-siap.png" alt="Jalankan Hermes" loading="lazy"><figcaption>Hermes CLI siap dipakai.</figcaption></figure>        </div>
+    </section>
+
+    <section id="selesai" class="card pi-highlight">
+        <h2><span class="step">&#10003;</span> Selesai &mdash; Waktunya Pakai</h2>
+        <p>Hermes sudah terpasang dan terhubung. Tinggal jalankan:</p>
+        <div class="code-block">
+            <div class="code-head"><span>PowerShell</span><button class="copy-btn" data-copy="hermes">Copy</button></div>
+            <code>hermes</code>
+        </div>
+        <p class="muted-sm">Perintah itu buka mode chat Hermes di terminal. Keluar kapan saja dengan <code>Ctrl + C</code> atau perintah <code>/exit</code>.</p>
+
+        <h3>Lanjut ke mana?</h3>
+        <div class="cols-2">
+            <a href="../index.html" class="btn-primary sm">&larr; Semua cara install</a>
+            <a href="../windows-desktop/index.html" class="btn-ghost sm">Hermes Desktop &rarr;</a>
+            <a href="../../agentic/apa-itu-agent/index.html" class="btn-ghost sm">Apa itu Agent? &rarr;</a>
+            <a href="../../index.html" class="btn-ghost sm">Panduan Induk</a>
+        </div>
+        <div class="note-box">Mau versi yang ada jendela dan tombolnya? Lihat <a href="../windows-desktop/index.html">Install Hermes Desktop di Windows</a>. Dua-duanya pakai config yang sama, jadi nggak perlu setup ulang.</div>
+    </section>
+
+    <section id="macet" class="card">
+        <h2><span class="step">!</span> Kalau Macet</h2>
+
+        <h3>Tombol copy nggak jalan / ada peringatan clickfix</h3>
+        <p>Kalau kamu pakai adblock, kadang tombol copy di situs ke-blokir dan muncul peringatan soal <em>clickfix attack</em>.
+        Aman &mdash; tinggal klik copy sekali lagi, atau blok manual perintahnya.</p>
+
+        <h3>Download terasa lambat / stuck di GitHub</h3>
+        <p>Ini biasa terjadi di jaringan IndiHome/Telkom, karena download dari GitHub di-throttle.
+        Nyalain <strong>VPN</strong> atau <strong>Cloudflare WARP (1.1.1.1)</strong> &mdash; biasanya langsung ngebut lagi.</p>
+
+        <h3>Perintah <code>hermes</code> nggak dikenali</h3>
+        <p>Hermes ditaruh di <code>C:\Users\NAMAKAMU\AppData\Local\hermes\bin</code> dan baru kebaca di window baru.
+        <strong>Tutup PowerShell, buka lagi yang baru</strong>, lalu coba <code>hermes --help</code>.
+        Masih gagal? Panggil langsung: <code>&amp; "$env:LOCALAPPDATA\hermes\bin\hermes.exe"</code></p>
+
+        <div class="tip-box">&#128161; Proses install memang bisa lama &mdash; terutama di Desktop. Jangan di-cancel di tengah jalan, biarin sampai kelar.</div>
+    </section>
+
+    <section class="support-box">
+        <p>Panduan ini bantu? Support riset biar bisa bikin tutorial lanjutan.</p>
+        <a href="https://trakteer.id/tukangcode" target="_blank" class="btn-link support-btn">&#9749; Trakteer di Trakteer.id</a>
+    </section>
+
+</main>
+
+<footer>
+    <div class="footer-inner">
+        <p class="footer-credit">Code by Sena</p>
+        <p class="footer-year">2026 &bull; <a href="../../../blog/index.html">Blog</a> &bull; <a href="../../index.html">Panduan Induk</a></p>
+    </div>
+</footer>
+
+<button class="scroll-top" id="scrollTop" aria-label="Scroll to top">&uarr;</button>
+<script src="../script.js"></script>
+</body>
+</html>

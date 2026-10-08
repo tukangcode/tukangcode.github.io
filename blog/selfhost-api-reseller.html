@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Self-Host API Reseller — Versi Indonesia | Blog Tukang Code</title>
-    <meta name="description" content="Bongkar isi perut bisnis jual API: cara kerja rantainya, bedah 10 backend (One API, New API, TokenPanel, GPT-Load, Kong, dst), soal keran dan bansos, sampai kenapa payment gateway itu neraka. Kasar, jujur, apa adanya.">
+    <meta name="description" content="Bongkar isi perut bisnis jual API: cara kerja rantainya, bedah 10 backend (One API, New API, TokenPanel, GPT-Load, Kong, dst), soal keran dan bansos, sampai kenapa pembayaran QRIS + kripto itu neraka versi lo sendiri.">
     <meta name="color-scheme" content="dark">
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -22,12 +22,8 @@
         var(--bg-primary);
     position: relative;
 }
-.hero-overlay {
-    display: none;
-}
-.hero-content {
-    padding: 0 2rem 1rem;
-}
+.hero-overlay { display: none; }
+.hero-content { padding: 0 2rem 1rem; }
 
 /* ===== TABLES (not in upstream style.css) ===== */
 .table-wrap {
@@ -59,10 +55,7 @@
 .data-table code { white-space: nowrap; }
 
 /* ===== CODE BLOCKS (multi-line) ===== */
-.code-block pre {
-    margin: 0;
-    overflow-x: auto;
-}
+.code-block pre { margin: 0; overflow-x: auto; }
 .code-block pre code {
     white-space: pre;
     color: var(--text-primary);
@@ -89,11 +82,7 @@ p code, li code, td code {
 .tag.tag-warn { border-color: rgba(251,191,36,0.45); color: var(--warning); background: rgba(251,191,36,0.12); }
 .tag.tag-ok { border-color: rgba(74,222,128,0.45); color: var(--success); background: rgba(74,222,128,0.12); }
 
-hr {
-    border: none;
-    border-top: 1px solid var(--border);
-    margin: 2.5rem 0;
-}
+hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
 </style>
 </head>
 <body>
@@ -137,12 +126,14 @@ hr {
     <main class="container">
 
         <section class="intro">
-            <p>Bongkar isi perut bisnis jual API: cara kerja rantainya, bedah 10 backend (One API, New API, TokenPanel, GPT-Load, Kong, dst), soal keran dan bansos, sampai kenapa payment gateway itu neraka. Kasar, jujur, apa adanya.</p>
+            <p>Ini laporan lapangan, bukan tutorial suci. Ditulis dari pengalaman beneran bikin
+satu platform dan ngeliatin sendiri di mana bagian yang bikin lo kaya dan mana yang
+bikin lo nangis. Isinya kasar, ada dark humor, dan beberapa bagian emang nggak
+nyaman dibaca.</p>
         </section>
 
-<section class="card disclaimer-card">
-        <div class="disclaimer-icon">⚠️</div>
-        <h2 style="justify-content:center">PART 0 — BACA DULU</h2>
+<section id="part-0-baca-dulu" class="card">
+        <h2><span class="step">0</span>PART 0 — BACA DULU</h2>
 
 <p>Gue bukan pengacara, gue bukan vendor, gue bukan orang yang lo harus percaya. Gue cuma
 orang yang udah ngejalanin dan nulis apa yang terjadi.</p>

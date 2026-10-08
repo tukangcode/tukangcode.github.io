@@ -1,0 +1,5 @@
+/* apa-itu-agent — extends ../../style.css */
+
+.diagram{margin:1.4rem 0;padding:1rem;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.diagram svg{width:100%;height:auto;display:block;}
+@media(max-width:768px){.diagram{padding:.5rem;}}

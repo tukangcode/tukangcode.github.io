@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panduan Induk — Hermes Agent & Agentic | Tukang Code</title>
+    <meta name="description" content="Panduan induk (megathread) Hermes Agent, sistem agentic, tutorial, dan sumber daya — satu tempat, semua tautan.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header class="site-header">
+        <div class="header-inner">
+            <a href="../index.html" class="logo">
+                <span class="logo-icon">&lt;/&gt;</span>
+                <span class="logo-text">Tukang Code</span>
+            </a>
+            <nav class="main-nav">
+                <a href="../blog/index.html" class="nav-link">Blog</a>
+                <a href="index.html" class="nav-link active">Panduan Induk</a>
+                <a href="../portfolio.html" class="nav-link">Portfolio</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="pi-hero">
+        <div class="pi-hero-inner">
+            <span class="pi-kicker">MEGATHREAD • PANDUAN INDUK</span>
+            <h1>Panduan Induk</h1>
+            <p class="pi-sub">Satu halaman, semua panduan tentang <strong>Hermes Agent</strong>, sistem <strong>agentic</strong> pada umumnya, dan sumber daya terkait. Bookmark halaman ini — update berkala.</p>
+            <div class="pi-actions">
+                <a href="#daftar-isi" class="btn-primary">Lihat Daftar Isi ↓</a>
+                <a href="../blog/index.html" class="btn-ghost">← Kembali ke Blog</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- TOC STICKY -->
+    <nav class="toc" id="toc">
+        <div class="toc-inner">
+            <span class="toc-label">Daftar Isi</span>
+            <div class="toc-links">
+                <a href="#apa-itu">Apa Itu?</a>
+                <a href="agentic/apa-itu-agent/index.html">Apa itu Agent?</a>
+                <a href="#mulai-cepat">Mulai Cepat</a>
+                <a href="#hermes-agent">Hermes Agent</a>
+                <a href="#agentic-umum">Agentic Umum</a>
+                <a href="#stb-armbian">STB + Armbian</a>
+                <a href="#sumber-daya">Sumber Daya</a>
+                <a href="#faq">FAQ</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+
+        <!-- APA ITU -->
+        <section id="apa-itu" class="card pi-intro">
+            <h2><span class="step">?</span> Apa itu Panduan Induk?</h2>
+            <p><strong>Panduan Induk</strong> = istilah Indonesia untuk <em>megathread</em>. Satu utas/halaman yang menghimpun semua tautan, tutorial, dan sumber daya tentang satu topik — biar tidak tercerai-berai.</p>
+            <p>Halaman ini menghimpun:</p>
+            <ul class="check-list">
+                <li><a href="install-hermes-agent/index.html">Tutorial Hermes Agent</a> — install, config, skill, cron, gateway</li>
+                <li><a href="agentic/apa-itu-agent/index.html">Konsep agentic pada umumnya</a> — agent, tool use, memory, planning</li>
+                <li><a href="../blog/blogpost1.html">Tutorial STB + Armbian</a> — home server Hermes murah</li>
+                <li><a href="#sumber-daya">Sumber daya eksternal</a> — docs resmi, repo, tools, komunitas</li>
+            </ul>
+            <div class="tip-box">💡 <strong>Tips:</strong> Tekan <code>Ctrl + D</code> untuk bookmark. Halaman ini update tanpa ganti URL — cukup refresh.</div>
+        </section>
+
+        <!-- MULAI CEPAT -->
+        <section id="mulai-cepat" class="card">
+            <h2><span class="step">⚡</span> Mulai Cepat — Jalur Belajar</h2>
+            <p>Baru kenal Hermes / agentic? Ikuti urutan ini:</p>
+            <div class="steps-list">
+                <div class="step-item">
+                    <span class="step-num">1</span>
+                    <p><strong>Baca dulu:</strong> <a href="agentic/apa-itu-agent/index.html">Apa itu agent &amp; agentic?</a> — paham konsepnya 5 menit, ada ilustrasinya juga.</p>
+                </div>
+                <div class="step-item">
+                    <span class="step-num">2</span>
+                    <p><strong>Install Hermes</strong> di laptop/PC — buka <a href="install-hermes-agent/index.html">Panduan Install Hermes Agent</a>, pilih Windows / macOS / Linux.</p>
+                </div>
+                <div class="step-item">
+                    <span class="step-num">3</span>
+                    <p><strong>Windows?</strong> Langsung ke yang bergambar: <a href="install-hermes-agent/windows-cli/index.html">Hermes CLI (15 langkah)</a> atau <a href="install-hermes-agent/windows-desktop/index.html">Hermes Desktop (8 langkah)</a>.</p>
+                </div>
+                <div class="step-item">
+                    <span class="step-num">4</span>
+                    <p><strong>Atur model &amp; mulai pakai</strong> — <a href="install-hermes-agent/index.html#config-cli">lihat bagian Config CLI</a>.</p>
+                </div>
+                <div class="step-item">
+                    <span class="step-num">5</span>
+                    <p><strong>Opsional:</strong> pindah ke <a href="../blog/blogpost1.html">STB + Armbian</a> biar server jalan 24 jam murah.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- HERMES AGENT -->
+        <section id="hermes-agent" class="card">
+            <h2><span class="step">◉</span> Hermes Agent</h2>
+            <p class="section-desc">Kumpulan tutorial & tautan khusus Hermes Agent.</p>
+
+            <div class="pi-grid">
+                <a class="pi-card" href="https://hermes-agent.nousresearch.com/docs" target="_blank" rel="noopener">
+                    <div class="pi-card-head">
+                        <span class="pi-badge docs">DOCS</span>
+                        <span class="pi-ext">↗</span>
+                    </div>
+                    <h3>Dokumentasi Resmi Hermes</h3>
+                    <p>Sumber utama — install, config, gateway, skill, cron. Selalu cek sini dulu.</p>
+                    <span class="pi-link">hermes-agent.nousresearch.com/docs →</span>
+                </a>
+
+                <a class="pi-card" href="https://github.com/NousResearch/hermes" target="_blank" rel="noopener">
+                    <div class="pi-card-head">
+                        <span class="pi-badge github">GITHUB</span>
+                        <span class="pi-ext">↗</span>
+                    </div>
+                    <h3>Repo Hermes (GitHub)</h3>
+                    <p>Source, issue, release, dan contoh config terbaru.</p>
+                    <span class="pi-link">github.com/NousResearch/hermes →</span>
+                </a>
+
+                <a class="pi-card" href="install-hermes-agent/index.html">
+                    <div class="pi-card-head">
+                        <span class="pi-badge docs">BARU</span>
+                        <span class="pi-ext">→</span>
+                    </div>
+                    <h3>Panduan Install Hermes Agent</h3>
+                    <p>Pilih platform (Windows/macOS/Linux/STB), CLI vs Desktop, curl satu baris, sampai config API key.</p>
+                    <span class="pi-link">Buka panduan →</span>
+                </a>
+
+                <a class="pi-card" href="install-hermes-agent/windows-cli/index.html">
+                    <div class="pi-card-head">
+                        <span class="pi-badge docs">WINDOWS</span>
+                        <span class="pi-ext">→</span>
+                    </div>
+                    <h3>Install Hermes CLI di Windows</h3>
+                    <p>15 langkah bergambar: buka PowerShell, jalankan perintah <code>irm</code>, konfigurasi via Nous Portal, sampai Hermes jalan di terminal.</p>
+                    <span class="pi-link">Buka panduan →</span>
+                </a>
+
+                <a class="pi-card" href="install-hermes-agent/windows-desktop/index.html">
+                    <div class="pi-card-head">
+                        <span class="pi-badge docs">WINDOWS</span>
+                        <span class="pi-ext">→</span>
+                    </div>
+                    <h3>Install Hermes Desktop di Windows</h3>
+                    <p>8 langkah bergambar: download installer resmi, jalankan, pantau log lewat Show Detail, sampai aplikasi jalan.</p>
+                    <span class="pi-link">Buka panduan →</span>
+                </a>
+
+                <div class="pi-card pi-card-soon">
+                    <div class="pi-card-head">
+                        <span class="pi-badge wip">SEGERA</span>
+                    </div>
+                    <h3>Skill, Cron & Gateway — Praktik</h3>
+                    <p>Bikin skill custom, jadwal cron, dan expose gateway biar Hermes bisa diakses remote.</p>
+                    <span class="pi-link muted">Coming soon</span>
+                </div>
+
+                <div class="pi-card pi-card-soon">
+                    <div class="pi-card-head">
+                        <span class="pi-badge wip">SEGERA</span>
+                    </div>
+                    <h3>Hermes di STB (Armbian)</h3>
+                    <p>Install Hermes di STB bekas yang sudah jalan Armbian — lanjut dari tutorial STB.</p>
+                    <span class="pi-link muted">Coming soon — sementara lihat <a href="../blog/blogpost1.html">Tutorial STB + Armbian</a></span>
+                </div>
+
+                <div class="pi-card pi-card-soon">
+                    <div class="pi-card-head">
+                        <span class="pi-badge wip">SEGERA</span>
+                    </div>
+                    <h3>Troubleshooting Hermes</h3>
+                    <p>Error umum, log, dan cara baca output agent saat nyangkut.</p>
+                    <span class="pi-link muted">Coming soon</span>
+                </div>
+            </div>
+
+            <div class="note-box">Semua kartu “Segera” akan jadi tautan aktif begitu artikelnya terbit — URL tetap di <code>/panduan-induk/</code>, jadi bookmark aman.</div>
+        </section>
+
+        <!-- AGENTIC UMUM -->
+        <section id="agentic-umum" class="card">
+            <h2><span class="step">◎</span> Agentic pada Umumnya</h2>
+            <p class="section-desc">Konsep dasar sistem agentic — berlaku bukan cuma Hermes, tapi semua agent framework.</p>
+
+            <div class="pi-grid">
+                <a class="pi-card" href="agentic/apa-itu-agent/index.html">
+                    <div class="pi-card-head"><span class="pi-badge docs">BARU</span><span class="pi-ext">→</span></div>
+                    <h3>Apa itu Agent? (5 Menit Paham)</h3>
+                    <p>Agent vs chatbot vs workflow — bedanya di mana, kapan butuh agent. Dijelaskan gaya ELI5 + ilustrasi SVG.</p>
+                    <span class="pi-link">Baca penjelasan →</span>
+                </a>
+                <a class="pi-card" href="agentic/tool-use/index.html">
+                    <div class="pi-card-head"><span class="pi-badge docs">BARU</span><span class="pi-ext">&rarr;</span></div>
+                    <h3>Tool Use &amp; Function Calling</h3>
+                    <p>Gimana agent panggil tool, baca hasilnya, dan kenapa model lemah bisa bikin hasil rusak tanpa disadari.</p>
+                    <span class="pi-link">Baca &rarr;</span>
+                </a>
+                <a class="pi-card" href="agentic/memory-context-planning/index.html">
+                    <div class="pi-card-head"><span class="pi-badge docs">BARU</span><span class="pi-ext">&rarr;</span></div>
+                    <h3>Memory, Context &amp; Planning</h3>
+                    <p>Meja kerja vs buku catatan, kenapa agent bisa &quot;lupa&quot;, dan gimana dia bikin rencana.</p>
+                    <span class="pi-link">Baca &rarr;</span>
+                </a>
+                <a class="pi-card" href="agentic/evaluasi-batasan/index.html">
+                    <div class="pi-card-head"><span class="pi-badge docs">BARU</span><span class="pi-ext">&rarr;</span></div>
+                    <h3>Evaluasi &amp; Batasan Agent</h3>
+                    <p>Apa yang bisa, nggak bisa, kapan agent &quot;halu&quot;, dan soal jailbreak &mdash; manfaat &amp; risiko.</p>
+                    <span class="pi-link">Baca &rarr;</span>
+                </a>
+            </div>
+
+            <h3 style="margin-top:1.5rem">Bacaan luar (kurasi)</h3>
+            <ul class="link-list">
+                <li><a href="https://platform.openai.com/docs/guides/function-calling" target="_blank" rel="noopener">OpenAI — Function Calling Guide ↗</a> <span class="link-note">— fondasi tool use modern</span></li>
+                <li><a href="https://docs.anthropic.com/en/docs/build-with-claude/tool-use" target="_blank" rel="noopener">Anthropic — Tool Use ↗</a> <span class="link-note">— pattern tool use Claude</span></li>
+                <li><a href="https://www.promptingguide.ai/" target="_blank" rel="noopener">Prompting Guide ↗</a> <span class="link-note">— prompting untuk agent</span></li>
+            </ul>
+        </section>
+
+        <!-- STB + ARMBIAN -->
+        <section id="stb-armbian" class="card pi-highlight">
+            <h2><span class="step">▣</span> STB + Armbian — Home Server Murah</h2>
+            <p class="section-desc">Jalanin Hermes 24 jam tanpa sewa VPS — pakai STB bekas + Armbian.</p>
+
+            <div class="pi-feature">
+                <div class="pi-feature-main">
+                    <span class="pi-badge success">TUTORIAL LENGKAP</span>
+                    <h3>Home Server dari STB Bekas — Tutorial Armbian + Hermes</h3>
+                    <p>Step-by-step: flash Armbian ke SD card, boot STB, setup SSH, sampai Hermes jalan. Biaya ~Rp 600rb total. Tested di HG680-P (S905X).</p>
+                    <a href="../blog/blogpost1.html" class="btn-primary">Baca Tutorial →</a>
+                </div>
+                <ul class="check-list compact">
+                    <li>HG680-P tested ✓</li>
+                    <li>B860H / HG680V info</li>
+                    <li>Rufus flash guide</li>
+                    <li>SSH + Hermes install</li>
+                </ul>
+            </div>
+
+            <div class="warning-box">⚠️ <strong>Prasyarat:</strong> STB harus sudah di-root & support dual boot. Cek chip ARM di <a href="https://github.com/ophub/amlogic-s9xxx-armbian" target="_blank" rel="noopener">ophub/amlogic-s9xxx-armbian ↗</a> sebelum flash.</div>
+        </section>
+
+        <!-- SUMBER DAYA -->
+        <section id="sumber-daya" class="card">
+            <h2><span class="step">⬢</span> Sumber Daya</h2>
+            <div class="resource-grid">
+                <div class="resource-col">
+                    <h4>📚 Dokumentasi</h4>
+                    <ul class="link-list">
+                        <li><a href="https://hermes-agent.nousresearch.com/docs" target="_blank" rel="noopener">Hermes Docs ↗</a></li>
+                        <li><a href="https://github.com/ophub/amlogic-s9xxx-armbian" target="_blank" rel="noopener">Armbian Amlogic (ophub) ↗</a></li>
+                    </ul>
+                </div>
+                <div class="resource-col">
+                    <h4>🛠️ Tools</h4>
+                    <ul class="link-list">
+                        <li><a href="https://rufus.ie/" target="_blank" rel="noopener">Rufus (flash SD card) ↗</a></li>
+                        <li><a href="https://termux.com/" target="_blank" rel="noopener">Termux (Android terminal) ↗</a></li>
+                    </ul>
+                </div>
+                <div class="resource-col">
+                    <h4>💬 Komunitas</h4>
+                    <ul class="link-list">
+                        <li><a href="https://github.com/tukangcode" target="_blank" rel="noopener">GitHub — tukangcode ↗</a></li>
+                        <li><a href="https://trakteer.id/tukangcode" target="_blank" rel="noopener">Trakteer — dukung riset ↗</a></li>
+                    </ul>
+                </div>
+            </div>
+            <p class="muted-sm">Punya sumber bagus yang belum ada di sini? DM via <a href="https://x.com/SenaQifrey" target="_blank" rel="noopener">X</a> / <a href="https://www.reddit.com/user/Merchant_Lawrence/" target="_blank" rel="noopener">Reddit</a> — nanti ditambah ke daftar.</p>
+        </section>
+
+        <!-- DAFTAR ISI LENGKAP -->
+        <section id="daftar-isi" class="card">
+            <h2><span class="step">≡</span> Daftar Isi Lengkap</h2>
+            <p class="section-desc">Semua tautan di halaman ini dalam satu daftar — enak buat Ctrl+F.</p>
+            <ol class="toc-list">
+                <li><a href="#apa-itu">Apa itu Panduan Induk?</a></li>
+                <li><a href="#mulai-cepat">Mulai Cepat — Jalur Belajar</a></li>
+                <li><strong>Hermes Agent</strong>
+                    <ul>
+                        <li><a href="install-hermes-agent/index.html">Panduan Install Hermes Agent</a> — pilih platform</li>
+                        <li><a href="install-hermes-agent/windows-cli/index.html">Install Hermes CLI di Windows</a> — 15 langkah bergambar</li>
+                        <li><a href="install-hermes-agent/windows-desktop/index.html">Install Hermes Desktop di Windows</a> — 8 langkah bergambar</li>
+                        <li><a href="install-hermes-agent/index.html#macos">Install di macOS</a> / <a href="install-hermes-agent/index.html#linux">Linux</a></li>
+                        <li><a href="install-hermes-agent/index.html#config-cli">Config CLI</a> / <a href="install-hermes-agent/index.html#config-desktop">Config Desktop</a></li>
+                        <li><a href="install-hermes-agent/index.html#catatan">Catatan penting &amp; troubleshooting</a></li>
+                    </ul>
+                </li>
+                <li><strong>Agentic Umum</strong>
+                    <ul>
+                        <li><a href="agentic/apa-itu-agent/index.html">Apa itu Agent &amp; Agentic?</a> — penjelasan simpel bergambar</li>
+                        <li><a href="agentic/tool-use/index.html">Tool Use &amp; Function Calling</a> — gimana agent pakai alat, studi kasus nyata</li>
+                        <li><a href="agentic/memory-context-planning/index.html">Memory, Context &amp; Planning</a> — meja kerja vs buku catatan</li>
+                        <li><a href="agentic/evaluasi-batasan/index.html">Evaluasi &amp; Batasan Agent</a> — bisa/nggak bisa, hallucination, jailbreak</li>
+                        <li><a href="#agentic-umum">Konsep lain &amp; bacaan luar</a></li>
+                    </ul>
+                </li>
+                <li><a href="../blog/blogpost1.html">STB + Armbian — Tutorial lengkap</a></li>
+                <li><a href="#sumber-daya">Sumber Daya — Docs / Tools / Komunitas</a></li>
+                <li><a href="#faq">FAQ</a></li>
+            </ol>
+        </section>
+
+        <!-- FAQ -->
+        <section id="faq" class="card">
+            <h2><span class="step">?</span> FAQ</h2>
+            <details class="faq-item" open>
+                <summary>Apa beda Hermes Agent dengan chatbot biasa?</summary>
+                <p>Chatbot jawab lalu selesai. Agent bisa <em>putuskan</em> panggil tool, baca hasilnya, lanjut reasoning, sampai tugas kelar — loop, bukan sekali jawab. Penjelasan lengkapnya (pakai gambar) ada di <a href="agentic/apa-itu-agent/index.html">Apa itu Agent &amp; Agentic?</a></p>
+            </details>
+            <details class="faq-item">
+                <summary>Perlu spek tinggi untuk jalanin Hermes?</summary>
+                <p>Tidak. Hermes jalan di laptop biasa, bahkan STB 2GB RAM (lihat <a href="../blog/blogpost1.html">STB + Armbian</a>). Yang penting ada Node/Python dan koneksi internet.</p>
+            </details>
+            <details class="faq-item">
+                <summary>Halaman ini bakal update?</summary>
+                <p>Ya. Tiap ada tutorial baru, kartu “Segera” di atas akan jadi tautan aktif. Yang sudah jadi sekarang: <a href="install-hermes-agent/index.html">Install Hermes Agent</a>, <a href="install-hermes-agent/windows-cli/index.html">Windows CLI</a>, <a href="install-hermes-agent/windows-desktop/index.html">Windows Desktop</a>, dan <a href="agentic/apa-itu-agent/index.html">Apa itu Agent</a>. Bookmark URL ini — tidak ganti path.</p>
+            </details>
+            <details class="faq-item">
+                <summary>Mau kontribusi / koreksi?</summary>
+                <p>Hubungi via <a href="https://github.com/tukangcode/tukangcode.github.io" target="_blank" rel="noopener">GitHub tukangcode.github.io</a> atau DM X/Reddit di footer.</p>
+            </details>
+        </section>
+
+        <!-- SUPPORT -->
+        <section class="support-box">
+            <p>Kalau panduan induk ini bantu, support riset biar bisa beli alat & resource buat tutorial selanjutnya.</p>
+            <a href="https://trakteer.id/tukangcode" target="_blank" class="btn-link support-btn">☕ Trakteer di Trakteer.id</a>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-inner">
+            <p class="footer-credit">Code by Sena</p>
+            <p class="footer-year">2026 • <a href="../blog/index.html">Blog</a> • <a href="index.html">Panduan Induk</a></p>
+        </div>
+    </footer>
+
+    <button class="scroll-top" id="scrollTop" aria-label="Scroll to top">↑</button>
+    <script src="script.js"></script>
+</body>
+</html>

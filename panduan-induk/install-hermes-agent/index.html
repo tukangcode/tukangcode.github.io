@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panduan Install Hermes Agent — Panduan Induk | Tukang Code</title>
+    <meta name="description" content="Panduan lengkap install Hermes Agent: pilih platform, Windows/Mac/Linux, CLI vs Desktop, curl satu baris, sampai config API key.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site-header">
+    <div class="header-inner">
+        <a href="../../index.html" class="logo"><span class="logo-icon">&lt;/&gt;</span><span class="logo-text">Tukang Code</span></a>
+        <nav class="main-nav">
+            <a href="../../blog/index.html" class="nav-link">Blog</a>
+            <a href="../index.html" class="nav-link active">Panduan Induk</a>
+            <a href="../../portfolio.html" class="nav-link">Portfolio</a>
+        </nav>
+    </div>
+</header>
+
+<!-- HERO -->
+<section class="pi-hero" style="padding-bottom:1.2rem">
+    <div class="pi-hero-inner">
+        <a href="../index.html" class="back-link">← Kembali ke Panduan Induk</a>
+        <span class="pi-kicker">PANDUAN INDUK • INSTALL</span>
+        <h1>Panduan Install<br>Hermes Agent</h1>
+        <p class="pi-sub">Pilih perangkat kamu, pilih cara install, lalu ikuti langkahnya pelan-pelan. Dijelaskan dengan bahasa santai buat pemula.</p>
+        <div class="hero-tags" style="justify-content:center; margin-top:1rem">
+            <span class="tag">Hermes</span><span class="tag">Install</span><span class="tag">Windows</span><span class="tag">macOS</span><span class="tag">Linux</span>
+        </div>
+        <p class="muted-sm" style="margin-top:1rem;text-align:center">Baru kenal agent? Baca dulu <a href="../agentic/apa-itu-agent/index.html">Apa itu Agent &amp; Agentic?</a> — 5 menit, pakai gambar.</p>
+    </div>
+</section>
+
+<!-- STICKY TOC -->
+<nav class="toc" id="toc">
+    <div class="toc-inner">
+        <span class="toc-label">Daftar Isi</span>
+        <div class="toc-links">
+            <a href="#platform">Platform</a>
+            <a href="#mode">CLI vs Desktop</a>
+            <a href="#windows">Windows</a>
+            <a href="#macos">macOS</a>
+            <a href="#linux">Linux</a>
+            <a href="#config-cli">Config</a>
+            <a href="#catatan">Catatan</a>
+        </div>
+    </div>
+</nav>
+
+<main class="container">
+
+    <!-- QUICK GUIDE / PLATFORM PICKER -->
+    <section id="platform" class="card">
+        <h2><span class="step">1</span> Tentukan Platform</h2>
+        <p class="section-desc">Mau install di mana? Klik kartunya, nanti langsung lompat ke panduannya.</p>
+
+        <div class="platform-grid">
+            <a href="#windows" class="platform-card active">
+                <div class="pc-icon">🪟</div>
+                <h3>PC / Laptop</h3>
+                <p>Windows, macOS, Linux</p>
+                <span class="pc-cta">Windows: CLI &amp; Desktop ↓</span>
+            </a>
+            <div class="platform-card muted">
+                <div class="pc-icon">🍓</div>
+                <h3>Raspberry Pi</h3>
+                <p>Coming soon</p>
+                <span class="pc-badge">Segera</span>
+            </div>
+            <div class="platform-card muted">
+                <div class="pc-icon">🔌</div>
+                <h3>ESP32 / Arduino</h3>
+                <p>Coming soon</p>
+                <span class="pc-badge">Segera</span>
+            </div>
+            <a href="../../blog/blogpost1.html" class="platform-card highlight">
+                <div class="pc-icon">📺</div>
+                <h3>STB</h3>
+                <p>Armbian — sudah ada tutorial</p>
+                <span class="pc-cta">Baca tutorial →</span>
+            </a>
+            <div class="platform-card warn">
+                <div class="pc-icon">📱</div>
+                <h3>Android</h3>
+                <p>Termux — installer rusak</p>
+                <span class="pc-badge warn">Bermasalah</span>
+            </div>
+        </div>
+
+        <div class="warning-box">
+            ⚠️ <strong>Android (Termux):</strong> installer Android via Termux saat ini <strong>bermasalah dan rusak</strong>.
+            Harap menunggu sampai fix resmi datang dari Nous Hermes GitHub.
+        </div>
+
+        <h3 style="margin-top:1.8rem">Pilih OS (PC/Laptop)</h3>
+        <div class="os-grid">
+            <a href="#windows" class="os-card"><span class="os-icon">🪟</span><strong>Windows</strong><small>10 / 11 (semua edisi, LTSC ok) • harus PowerShell</small></a>
+            <a href="#macos" class="os-card"><span class="os-icon">🍎</span><strong>macOS</strong><small>Intel & Apple Silicon</small></a>
+            <a href="#linux" class="os-card"><span class="os-icon">🐧</span><strong>Linux</strong><small>Ubuntu / Debian / Arch</small></a>
+        </div>
+    </section>
+
+    <!-- CLI vs DESKTOP -->
+    <section id="mode" class="card">
+        <h2><span class="step">2</span> Pilih Mode: CLI vs Desktop</h2>
+        <p class="section-desc">Hermes bisa dipakai dua cara. Santai, kita bahas satu-satu biar kamu bisa pilih yang paling cocok.</p>
+        <div class="compare-grid">
+            <div class="compare-card cli">
+                <div class="compare-head">
+                    <span class="compare-icon">⌨️</span>
+                    <h3>CLI</h3>
+                    <span class="badge-cli">Command Line</span>
+                </div>
+                <p class="compare-desc">Kamu ketik perintah di terminal (layar hitam), lalu Hermes jalanin tugasnya di situ.</p>
+                <ul class="compare-list">
+                    <li class="pro">Ringan, cepat, minim resource</li>
+                    <li class="pro">Install paling cepat — satu baris <code>curl</code> / <code>irm</code></li>
+                    <li class="pro">Cocok buat VPS, STB, server</li>
+                    <li class="con">Tidak noob-friendly — harus nyaman dengan terminal</li>
+                    <li class="con">Tanpa UI, semua via ketik</li>
+                </ul>
+                <a href="#windows" class="btn-ghost sm">Cara install CLI ↓</a>
+            </div>
+            <div class="compare-card desktop">
+                <div class="compare-head">
+                    <span class="compare-icon">🖥️</span>
+                    <h3>Desktop</h3>
+                    <span class="badge-desktop">GUI App</span>
+                </div>
+                <p class="compare-desc">Bentuknya aplikasi biasa — ada jendela, tombol, dan menu. Tinggal klik-klik, nggak perlu ngoding.</p>
+                <ul class="compare-list">
+                    <li class="pro">User-friendly — noob-friendly, tinggal klik</li>
+                    <li class="pro">Ada dashboard, chat, settings visual</li>
+                    <li class="con">Berat — makan storage ~3 GB + dependensi</li>
+                    <li class="con">Install lebih lama (banyak dependensi, build step)</li>
+                    <li class="con">Butuh spek sedikit lebih tinggi</li>
+                </ul>
+                <a href="#windows" class="btn-ghost sm">Cara install Desktop ↓</a>
+            </div>
+        </div>
+        <div class="jump-row" style="margin-top:1rem;display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center">
+            <a href="#windows" class="btn-primary sm">🪟 Install di Windows →</a>
+            <a href="#macos" class="btn-ghost sm">🍎 Install di macOS →</a>
+            <a href="#linux" class="btn-ghost sm">🐧 Install di Linux →</a>
+        </div>
+
+        <div class="note-box">Dua-duanya pakai <strong>agent yang sama</strong>, cuma beda cara pakainya aja. Mau lewat ketikan (CLI) atau lewat klik-klik (Desktop), datanya tetap kesimpan di tempat yang sama — CLI via terminal, Desktop via GUI. Datanya tetap kesimpan di tempat yang sama — di <code>~/.hermes</code> (Linux/macOS) atau <code>C:\Users\NAMAKAMU\AppData\Local\hermes</code> (Windows). Bagian <code>NAMAKAMU</code> itu nama user Windows kamu, lalu masuk ke folder <code>AppData\Local\hermes</code>.</div>
+    </section>
+
+    <!-- WINDOWS -->
+    <section id="windows" class="card pi-highlight">
+        <h2><span class="step">🪟</span> Windows</h2>
+        <p class="section-desc">Pilih salah satu: versi <strong>CLI</strong> yang ringan lewat PowerShell, atau <strong>Desktop</strong> yang tinggal klik-klik. Dua-duanya punya panduan bergambar sendiri.</p>
+
+        <div class="tip-box" style="margin:.6rem 0 1rem">🖥️ <strong>Syarat Windows:</strong> cukup <strong>Windows 10 atau 11</strong> &mdash; semua edisi jalan (Home/Pro/LTSC). Nggak ada syarat versi tambahan, nggak ada syarat build khusus. <strong>Wajib pakai PowerShell</strong> untuk install CLI (jangan pakai CMD).</div>
+
+        <div class="mode-picker">
+            <a href="windows-cli/index.html" class="mode-card cli">
+                <div class="mc-head">
+                    <span class="mc-icon">⌨️</span>
+                    <h3>Hermes CLI</h3>
+                    <span class="badge-cli">15 Langkah</span>
+                </div>
+                <p class="mc-desc">Install lewat <strong>PowerShell</strong> — cukup satu baris perintah <code>irm</code>, lalu konfigurasi via Nous Portal.</p>
+                <ul class="mc-list">
+                    <li>Paling ringan &amp; paling cepat</li>
+                    <li>Screenshot asli tiap langkah</li>
+                    <li>Dari buka situs resmi sampai <code>hermes</code> jalan</li>
+                </ul>
+                <span class="mc-cta">Buka panduan CLI →</span>
+            </a>
+
+            <a href="windows-desktop/index.html" class="mode-card desktop">
+                <div class="mc-head">
+                    <span class="mc-icon">🖥️</span>
+                    <h3>Hermes Desktop</h3>
+                    <span class="badge-desktop">8 Langkah</span>
+                </div>
+                <p class="mc-desc">Download <strong>installer resmi</strong>, jalankan, pantau log lewat <em>Show Detail</em> sampai aplikasi terbuka.</p>
+                <ul class="mc-list">
+                    <li>Ada jendela, tombol, dan menu</li>
+                    <li>Screenshot asli tiap langkah</li>
+                    <li>Proses build lebih lama — sabar aja</li>
+                </ul>
+                <span class="mc-cta">Buka panduan Desktop →</span>
+            </a>
+        </div>
+
+        <div class="note-box">Bingung pilih yang mana? Kalau baru pertama kali, mulai dari <strong>CLI</strong> &mdash; lebih cepat dan lebih kecil. Dua-duanya pakai config yang sama, jadi nggak perlu setup ulang kalau nanti mau pindah.</div>
+    </section>
+
+    <!-- macOS -->
+    <section id="macos" class="card">
+        <h2><span class="step">🍎</span> macOS</h2>
+        <p class="section-desc">Butuh macOS 12 ke atas. Apple Silicon (M1/M2/M3) didukung penuh. Intel Mac juga bisa, tapi Desktop harus build manual pakai <code>hermes desktop</code>.</p>
+
+        <div class="tabs" data-tabs="mac">
+            <div class="tab-bar">
+                <button class="tab-btn active" data-tab="mac-cli">CLI — Satu Baris</button>
+                <button class="tab-btn" data-tab="mac-desktop">Desktop — DMG</button>
+            </div>
+
+            <div class="tab-panel active" id="mac-cli">
+                <h3>CLI — curl satu baris</h3>
+                <div class="code-block">
+                    <div class="code-head"><span>Terminal</span><button class="copy-btn" data-copy="curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash">Copy</button></div>
+                    <code>curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash</code>
+                </div>
+                <p>Yang kamu butuhin cuma <code>git</code> (coba ketik <code>git --version</code> di Terminal buat cek). Sisanya biar installer yang urus — Python, Node, dan lainnya bakal didownload otomatis kalau belum ada.</p>
+                <div class="code-block"><code>source ~/.zshrc</code> <span class="code-comment"># atau source ~/.bashrc</span></div>
+                <p class="muted-sm">Butuh tanpa interaksi? Tambah <code>--non-interactive</code>. Mau sekalian Desktop dari source? Tambah <code>--include-desktop</code> (butuh <code>build-essential</code> toolchain).</p>
+                <a href="windows-cli/index.html" class="btn-primary sm">Buka panduan CLI →</a>
+            </div>
+
+            <div class="tab-panel" id="mac-desktop">
+                <h3>Desktop — DMG</h3>
+                <ol class="steps-compact">
+                    <li>Download <strong>DMG</strong> dari <a href="https://hermes-agent.nousresearch.com/docs/getting-started/installation" target="_blank" rel="noopener">halaman Installation ↗</a> (atau ZIP).</li>
+                    <li>Buka DMG → drag <code>Hermes.app</code> ke <code>Applications</code>.</li>
+                    <li>Buka Hermes dari Launchpad / Spotlight. Auto-updater ikut di dalam ZIP/DMG.</li>
+                </ol>
+                <div class="tip-box">Sudah ada CLI? Jalankan <code>hermes desktop</code> untuk build Desktop dari source tanpa download DMG.</div>
+                <a href="windows-desktop/index.html" class="btn-primary sm">Buka panduan Desktop →</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- LINUX -->
+    <section id="linux" class="card">
+        <h2><span class="step">🐧</span> Linux</h2>
+        <p class="section-desc">Caranya hampir sama kayak di macOS — cukup satu baris juga. Sudah dicoba di Ubuntu, Debian, dan Arch.</p>
+
+        <h3>CLI — curl satu baris</h3>
+        <div class="code-block">
+            <div class="code-head"><span>Terminal</span><button class="copy-btn" data-copy="curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash">Copy</button></div>
+            <code>curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash</code>
+        </div>
+
+        <h4>Prasyarat</h4>
+        <div class="code-block">
+            <code>sudo apt install git curl xz-utils build-essential</code> <span class="code-comment"># Debian/Ubuntu</span>
+        </div>
+        <p class="muted-sm"><code>git</code> wajib, <code>curl</code> + <code>xz-utils</code> untuk download Node (.tar.xz), <code>build-essential</code> / <code>g++</code> kalau mau build Desktop.</p>
+
+        <div class="code-block"><code>source ~/.bashrc</code></div>
+
+        <h3>Desktop di Linux</h3>
+        <p>Belum ada DMG/MSIX seperti macOS/Windows. Build dari source:</p>
+        <div class="code-block"><code>curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash -s -- --include-desktop</code></div>
+        <p class="muted-sm">Atau kalau CLI sudah terpasang: <code>hermes desktop</code></p>
+
+        <div class="cols-2">
+            <a href="#config-cli" class="btn-primary sm">Config →</a>
+            <a href="#catatan" class="btn-ghost sm">Catatan →</a>
+        </div>
+    </section>
+
+    <!-- CONFIG CLI -->
+    <section id="config-cli" class="card pi-highlight">
+        <h2><span class="step">&#9881;&#65039;</span> Config &mdash; CLI (Cara Paling Cepat)</h2>
+        <p class="section-desc">Nggak perlu hadapi wizard panjang dan pesan-pesan config yang bikin bingung. Cukup atur <strong>model</strong>-nya aja &mdash; sisanya bisa nanti.</p>
+        <div class="tip-box" style="border-left-color: var(--accent); background: rgba(124,92,255,.08)">&#127881; <strong>Belum punya API key? Pakai yang gratis aja:</strong> daftar di <a href="https://portal.nousresearch.com" target="_blank" rel="noopener">Nous Hermes Portal</a> &rarr; pilih <strong>Tier / Package: Free</strong> &rarr; kalau diminta <strong>kode verifikasi</strong>, cek terminal dan masukkan kodenya. Nggak perlu ambil key manual.</div>
+
+        <div class="steps-list">
+            <div class="step-item">
+                <span class="step-num">1</span>
+                <div>
+                    <strong>Atur model &amp; provider</strong>
+                    <div class="code-block">
+                        <div class="code-head"><span>PowerShell / Terminal</span><button class="copy-btn" data-copy="hermes setup model">Copy</button></div>
+                        <code>hermes setup model</code>
+                    </div>
+                    <p class="muted-sm">Perintah ini <strong>cuma</strong> buka bagian model &mdash; jadi kamu nggak perlu hadapi wizard setup lengkap beserta pesan-pesan config lainnya. Pilih provider, isi key kalau perlu, pilih model, beres.</p>
+                    <ul class="check-list compact" style="margin:.4rem 0">
+                        <li><strong>Mau coba gratis?</strong> &rarr; daftar di <a href="https://portal.nousresearch.com" target="_blank" rel="noopener">Nous Hermes Portal</a> &rarr; pilih <strong>Tier / Package: Free</strong> &rarr; kalau diminta, <strong>verifikasi kode dari terminal</strong>. Nggak perlu ambil key manual.</li>
+                        <li><strong>Sudah punya API key sendiri</strong> (OpenAI, Anthropic, Ollama lokal, dll) &rarr; pilih providernya di wizard, lalu paste key-nya. Key disimpan di komputermu sendiri &mdash; di <code>~/.hermes/</code> (Linux/macOS) atau <code>C:\Users\NAMAKAMU\AppData\Local\hermes</code> (Windows).</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="step-item">
+                <span class="step-num">2</span>
+                <div>
+                    <strong>Pilih / ganti model dari dalam Hermes</strong>
+                    <p>Nggak perlu keluar dari chat. Jalankan <code>hermes</code>, lalu di dalam sesi chat ketik:</p>
+                    <div class="code-block">
+                        <div class="code-head"><span>Di dalam chat Hermes</span><button class="copy-btn" data-copy="/model">Copy</button></div>
+                        <code>/model</code> <span class="code-comment"># buka daftar model</span>
+                    </div>
+                    <p class="muted-sm">Tanpa argumen, dia buka pemilih model &mdash; tinggal pilih dari daftar. Mau langsung pindah tanpa picker? <code>/model &lt;nama-model&gt; --provider &lt;provider&gt;</code></p>
+                </div>
+            </div>
+            <div class="step-item">
+                <span class="step-num">3</span>
+                <div>
+                    <strong>Cek sehat &amp; tes ngobrol</strong>
+                    <div class="code-block"><code>hermes status</code> <span class="code-comment"># ringkasan komponen</span><br><code>hermes chat</code> <span class="code-comment"># tes ngobrol</span></div>
+                    <p class="muted-sm">Kalau ada yang aneh, <code>hermes doctor</code> buat cek config &amp; dependensi.</p>
+                </div>
+            </div>
+            <div class="step-item">
+                <span class="step-num">4</span>
+                <div>
+                    <strong>Gateway (opsional &mdash; biar bisa chat dari Telegram/Discord/dll)</strong>
+                    <div class="code-block"><code>hermes gateway</code></div>
+                    <p class="muted-sm">Gateway itu biar Hermes bisa kamu chat dari Telegram, Discord, dan 20+ platform lain. Tiap platform butuh token bot-nya masing-masing &mdash; lihat <a href="https://hermes-agent.nousresearch.com/docs" target="_blank" rel="noopener">Docs &#8599;</a>.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="tip-box">&#128161; <strong>Ulang config kapan saja:</strong> <code>hermes setup model</code> kalau cuma mau atur model, atau <code>hermes setup</code> kalau memang mau wizard lengkap. File config-nya ada di <code>~/.hermes/config.yaml</code> (Linux/macOS) atau <code>C:\Users\NAMAKAMU\AppData\Local\hermes\config.yaml</code> (Windows).</div>
+    </section>
+
+    <!-- CONFIG DESKTOP -->
+    <section id="config-desktop" class="card pi-highlight">
+        <h2><span class="step">🖥️</span> Config — Desktop (API Key)</h2>
+        <p class="section-desc">Kalau kamu install lewat Desktop (yang ada jendelanya), ngaturnya lewat klik-klik aja, nggak perlu ketik di terminal.</p>
+
+        <div class="steps-list">
+            <div class="step-item">
+                <span class="step-num">1</span>
+                <div>
+                    <strong>Buka Hermes Desktop</strong>
+                    <p>Cari <strong>Hermes</strong> di Start Menu (Windows) atau Applications / Spotlight (macOS), lalu buka aplikasinya.</p>
+                </div>
+            </div>
+            <div class="step-item">
+                <span class="step-num">2</span>
+                <div>
+                    <strong>Masuk ke Settings / Configuration</strong>
+                    <p>Klik ikon <strong>Settings</strong> (⚙️) → cari bagian <strong>Providers / Models</strong>.</p>
+                </div>
+            </div>
+            <div class="step-item">
+                <span class="step-num">3</span>
+                <div>
+                    <strong>Atur Provider</strong>
+                    <p>Ada dua jalur, pilih salah satu:</p>
+                    <ul class="check-list compact" style="margin:.4rem 0">
+                        <li><strong>Provider ada di list resmi</strong> (OpenAI, Anthropic, dll) → klik providernya → paste <strong>API key</strong> di kolom yang disediakan → Save</li>
+                        <li><strong>Provider tidak ada / mau pakai custom endpoint</strong> → pilih <strong>Custom Endpoint</strong> → isi <strong>Nama Provider</strong>, <strong>Nama ID</strong>, <strong>Endpoint</strong>, <strong>Model List</strong>, <strong>API Key</strong> → <strong>Test</strong> → <strong>Save New Endpoint</strong></li>
+                        <li><strong>Mau coba gratis / pakai layanan Nous?</strong> → daftar di <a href="https://portal.nousresearch.com" target="_blank" rel="noopener">Nous Hermes Portal</a> → pilih <strong>Free</strong> → verifikasi kode dari terminal kalau diminta (nggak perlu ambil key manual)</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="step-item">
+                <span class="step-num">4</span>
+                <div>
+                    <strong>Tes chat</strong>
+                    <p>Balik ke halaman chat utama, coba kirim pesan. Kalau dibalas sama model, berarti sudah beres!</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="note-box">Desktop dan CLI itu pakai <strong>config yang sama</strong>. Jadi kamu cukup atur sekali aja — ganti di Desktop, otomatis kebaca di CLI juga, begitu sebaliknya.</div>
+    </section>
+
+    <!-- CATATAN PENTING -->
+    <section id="catatan" class="card">
+        <h2><span class="step">!</span> Catatan Penting</h2>
+
+        <div class="warning-box">
+            <strong>⏳ Installer bisa lama — ini normal.</strong><br>
+            Baik CLI maupun Desktop memang bisa agak lama, soalnya banyak yang didownload. <strong>Desktop biasanya lebih lama</strong> karena lebih banyak yang harus dipasang. Santai aja, jangan di-cancel di tengah jalan — biarin sampai selesai.
+        </div>
+
+        <div class="warning-box" style="border-left-color: var(--warning); background: rgba(251,191,36,.08)">
+            <strong>🐢 GitHub di-throttle IndiHome/Telkom?</strong><br>
+            Kalau download berasa lambat atau stuck pas ambil dari GitHub, coba nyalain <strong>VPN</strong> atau <strong>Cloudflare WARP (1.1.1.1)</strong>. Di jaringan IndiHome/Telkom kadang GitHub memang agak pelan — pakai WARP/VPN biasanya langsung ngebut lagi.
+        </div>
+
+        <h3>Ringkasan cepat</h3>
+        <div class="summary-table">
+            <div class="summary-row head"><span>OS</span><span>CLI</span><span>Desktop</span></div>
+            <div class="summary-row"><span><strong>Windows</strong></span><span><code>irm → iex</code> (PowerShell)</span><span>Installer resmi — cukup Win 10/11</span></div>
+            <div class="summary-row"><span><strong>macOS</strong></span><span><code>curl | bash</code></span><span>DMG → Hermes.app</span></div>
+            <div class="summary-row"><span><strong>Linux</strong></span><span><code>curl | bash</code></span><span><code>--include-desktop</code> / <code>hermes desktop</code></span></div>
+        </div>
+
+        <h3>Done — tinggal gunakan</h3>
+        <p>Jalankan:</p>
+        <div class="code-block"><code>hermes chat</code> <span class="code-comment"># CLI</span></div>
+        <p>atau buka <strong>Hermes Desktop</strong> dari Start Menu / Applications. Selamat pakai Hermes! 🎉</p>
+
+        <div class="cols-2" style="margin-top:1.2rem">
+            <a href="https://hermes-agent.nousresearch.com/docs" target="_blank" rel="noopener" class="btn-primary">Buka Docs Resmi →</a>
+            <a href="../index.html" class="btn-ghost">← Kembali ke Panduan Induk</a>
+        </div>
+    </section>
+
+    <!-- SUPPORT -->
+    <section class="support-box">
+        <p>Panduan ini bantu? Support riset biar bisa bikin tutorial lanjutan.</p>
+        <a href="https://trakteer.id/tukangcode" target="_blank" class="btn-link support-btn">☕ Trakteer di Trakteer.id</a>
+    </section>
+
+</main>
+
+<footer>
+    <div class="footer-inner">
+        <p class="footer-credit">Code by Sena</p>
+        <p class="footer-year">2026 • <a href="../../blog/index.html">Blog</a> • <a href="../index.html">Panduan Induk</a></p>
+    </div>
+</footer>
+
+<button class="scroll-top" id="scrollTop" aria-label="Scroll to top">↑</button>
+<script src="../script.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

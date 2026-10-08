@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluasi &amp; Batasan Agent — Penjelasan Simpel | Tukang Code</title>
+    <meta name="description" content="Penjelasan ELI5: apa yang AI agent bisa dan nggak bisa lakuin, kapan agent hallucinate, kapan butuh manusia, dan soal jailbreak — manfaat, risiko, dan kerugian. Pakai SVG.">
+    <meta name="color-scheme" content="dark">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../style.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site-header">
+    <div class="header-inner">
+        <a href="../../../index.html" class="logo"><span class="logo-icon">&lt;/&gt;</span><span class="logo-text">Tukang Code</span></a>
+        <nav class="main-nav">
+            <a href="../../../blog/index.html" class="nav-link">Blog</a>
+            <a href="../../index.html" class="nav-link active">Panduan Induk</a>
+            <a href="../../../portfolio.html" class="nav-link">Portfolio</a>
+        </nav>
+    </div>
+</header>
+
+<section class="pi-hero" style="padding-bottom:1.2rem">
+    <div class="pi-hero-inner">
+        <a href="../apa-itu-agent/index.html" class="back-link">&larr; Apa itu Agent?</a>
+        <span class="pi-kicker">PANDUAN INDUK &bull; AGENTIC UMUM</span>
+        <h1>Evaluasi &amp;<br>Batasan Agent</h1>
+        <p class="pi-sub">Apa yang agent bisa, apa yang nggak bisa, kapan dia &quot;halu&quot;, dan soal jailbreak &mdash; manfaat, risiko, dan kerugian. Dijelasin simpel.</p>
+        <div class="hero-tags" style="justify-content:center; margin-top:1rem">
+            <span class="tag">Batasan</span><span class="tag">Hallucination</span><span class="tag">Jailbreak</span><span class="tag">ELI5</span>
+        </div>
+    </div>
+</section>
+
+<nav class="toc" id="toc">
+    <div class="toc-inner">
+        <span class="toc-label">Daftar Isi</span>
+        <div class="toc-links">
+            <a href="#bisa">Bisa vs Nggak Bisa</a>
+            <a href="#halu">Hallucination</a>
+            <a href="#manusia">Kapan Butuh Manusia</a>
+            <a href="#jailbreak">Jailbreak</a>
+            <a href="#lanjut">Lanjut</a>
+        </div>
+    </div>
+</nav>
+
+<main class="container">
+
+    <section class="card pi-intro">
+        <h2><span class="step">?</span> Versi 30 Detik</h2>
+        <p>Agent itu kayak pekerja yang sangat rajin tapi <strong>nggak selalu benar</strong>. Dia bisa ngerjain banyak hal, tapi punya batasan &mdash; dan kalau nggak diawasi, bisa bikin masalah.</p>
+        <div class="tip-box">&#128161; <strong>Aturan emas:</strong> agent itu alat, bukan bos. Kamu yang pegang kendali. Kalau dia salah, itu salah kamu juga &mdash; karena kamu nggak cek.</div>
+    </section>
+
+    <section id="bisa" class="card pi-highlight">
+        <h2><span class="step">1</span> Bisa vs Nggak Bisa</h2>
+        <div class="diagram">
+<svg viewBox="0 0 800 340" role="img" aria-label="Yang bisa dan tidak bisa dilakukan agent" xmlns="http://www.w3.org/2000/svg">
+<title>Yang bisa dan tidak bisa dilakukan agent</title>
+<rect x="24" y="20" width="352" height="300" rx="14" fill="#1e1e2e" stroke="rgba(74,222,128,.35)"/>
+<text x="200" y="48" text-anchor="middle" font-family="Inter, sans-serif" font-size="15" font-weight="700" fill="#4ade80">BISA</text>
+<rect x="56" y="64" width="288" height="32" rx="8" fill="#12121a" stroke="#2a2a3a"/>
+<text x="200" y="85" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#e4e4ef">&#10003; Baca &amp; tulis file di komputermu</text>
+<rect x="56" y="102" width="288" height="32" rx="8" fill="#12121a" stroke="#2a2a3a"/>
+<text x="200" y="123" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#e4e4ef">&#10003; Jalanin perintah di terminal / shell</text>
+<rect x="56" y="140" width="288" height="32" rx="8" fill="#12121a" stroke="#2a2a3a"/>
+<text x="200" y="161" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#e4e4ef">&#10003; Cari info di internet</text>
+<rect x="56" y="178" width="288" height="32" rx="8" fill="#12121a" stroke="#2a2a3a"/>
+<text x="200" y="199" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#e4e4ef">&#10003; Bikin kode, nulis dokumen, edit file</text>
+<rect x="56" y="216" width="288" height="32" rx="8" fill="#12121a" stroke="#2a2a3a"/>
+<text x="200" y="237" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#e4e4ef">&#10003; Ingat info penting antar sesi</text>
+<rect x="56" y="254" width="288" height="32" rx="8" fill="#12121a" stroke="#2a2a3a"/>
+<text x="200" y="275" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#e4e4ef">&#10003; Kerjain tugas bertahap (multi-step)</text>
+<text x="200" y="305" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#5e5e72">tapi semua ini tetap butuh diawasi</text>
+<rect x="424" y="20" width="352" height="300" rx="14" fill="#1e1e2e" stroke="rgba(248,113,113,.35)"/>
+<text x="600" y="48" text-anchor="middle" font-family="Inter, sans-serif" font-size="15" font-weight="700" fill="#f87171">NGGAK BISA</text>
+<rect x="456" y="64" width="288" height="32" rx="8" fill="#12121a" stroke="#2a2a3a"/>
+<text x="600" y="85" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#e4e4ef">&#10007; Ngarang fakta yang nggak dia tahu</text>
+<rect x="456" y="102" width="288" height="32" rx="8" fill="#12121a" stroke="#2a2a3a"/>
+<text x="600" y="123" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#e4e4ef">&#10007; Memastikan hasilnya 100% benar</text>
+<rect x="456" y="140" width="288" height="32" rx="8" fill="#12121a" stroke="#2a2a3a"/>
+<text x="600" y="161" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#e4e4ef">&#10007; Merasakan / punya perasaan</text>
+<rect x="456" y="178" width="288" height="32" rx="8" fill="#12121a" stroke="#2a2a3a"/>
+<text x="600" y="199" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#e4e4ef">&#10007; Ambil keputusan moral sendiri</text>
+<rect x="456" y="216" width="288" height="32" rx="8" fill="#12121a" stroke="#2a2a3a"/>
+<text x="600" y="237" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#e4e4ef">&#10007; Tahu kalau dia sedang salah (tanpa cek)</text>
+<rect x="456" y="254" width="288" height="32" rx="8" fill="#12121a" stroke="#2a2a3a"/>
+<text x="600" y="275" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#e4e4ef">&#10007; Jalan tanpa listrik / internet (model online)</text>
+<text x="600" y="305" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#5e5e72">kalau model jalan di server, internet putus = agent mati</text>
+</svg>
+        </div>
+        <p class="muted-sm">Agent bisa banyak hal, tapi dia <strong>nggak bisa mengecek dirinya sendiri</strong>. Dia nggak tahu kalau dia salah, kecuali kamu kasih feedback atau dia punya tool buat verifikasi.</p>
+    </section>
+
+    <section id="halu" class="card">
+        <h2><span class="step">2</span> Hallucination &mdash; Ngarang Yakin</h2>
+        <p><strong>Hallucination</strong> = agent jawab sesuatu yang <em>salah</em>, tapi dengan <strong>yakin banget</strong> seolah-olah itu bener. Kayak teman yang ngarang cerita tapi dibikin meyakinkan.</p>
+        <div class="diagram">
+<svg viewBox="0 0 800 200" role="img" aria-label="Hallucination" xmlns="http://www.w3.org/2000/svg">
+<title>Hallucination: agent jawab salah tapi yakin</title>
+<rect x="20" y="20" width="340" height="60" rx="12" fill="#1e1e2e" stroke="#2a2a3a"/>
+<text x="190" y="42" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#e4e4ef">"File config ada di mana?"</text>
+<text x="190" y="60" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" fill="#5e5e72">kamu tanya</text>
+<rect x="440" y="20" width="340" height="60" rx="12" fill="rgba(248,113,113,.08)" stroke="rgba(248,113,113,.3)"/>
+<text x="610" y="42" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#e4e4ef">"Ada di ~/.config/hermes.yaml"</text>
+<text x="610" y="60" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" fill="#f87171">jawab yakin &#8594; padahal file itu nggak ada</text>
+<rect x="180" y="100" width="440" height="40" rx="10" fill="rgba(251,191,36,.08)" stroke="rgba(251,191,36,.3)"/>
+<text x="400" y="125" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#fbbf24">&#9888; Dia nggak bohong &mdash; dia beneran "merasa" itu benar.</text>
+<text x="400" y="160" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#5e5e72">Model AI cuma tebak pola kata. Kalau polanya mirip yang benar, dia jawab yakin &#8594; walau salah.</text>
+<text x="400" y="182" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#5e5e72">Makanya: <tspan fill="#7c5cff" font-weight="700">selalu verifikasi</tspan> &#8594; cek file-nya beneran ada atau nggak.</text>
+</svg>
+        </div>
+        <div class="note-box">Cara ngatasin: suruh agent <strong>pakai tool buat cek</strong> sebelum jawab. Bukan &quot;di mana file-nya?&quot; tapi &quot;cari file <code>config.yaml</code> di komputer ini, lalu kasih tau path-nya&quot;. Tool yang verifikasi, bukan cuma otaknya.</div>
+    </section>
+
+    <section id="manusia" class="card pi-highlight">
+        <h2><span class="step">3</span> Kapan Butuh Manusia (Human-in-the-Loop)</h2>
+        <p>Agent mandiri itu enak, tapi ada saat di mana <strong>manusia harus ikut campur</strong>:</p>
+        <div class="diagram">
+<svg viewBox="0 0 800 280" role="img" aria-label="Kapan butuh manusia" xmlns="http://www.w3.org/2000/svg">
+<title>Kapan agent butuh intervensi manusia</title>
+<rect x="24" y="20" width="240" height="50" rx="10" fill="rgba(248,113,113,.08)" stroke="rgba(248,113,113,.3)"/>
+<text x="144" y="42" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="700" fill="#e4e4ef">&#10007; Hapus file penting</text>
+<text x="144" y="58" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" fill="#f87171">WAJIB konfirmasi dulu</text>
+<rect x="280" y="20" width="240" height="50" rx="10" fill="rgba(251,191,36,.08)" stroke="rgba(251,191,36,.3)"/>
+<text x="400" y="42" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="700" fill="#e4e4ef">&#9888; Kirim uang / email</text>
+<text x="400" y="58" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" fill="#fbbf24">cek dulu sebelum kirim</text>
+<rect x="536" y="20" width="240" height="50" rx="10" fill="rgba(251,191,36,.08)" stroke="rgba(251,191,36,.3)"/>
+<text x="656" y="42" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="700" fill="#e4e4ef">&#9888; Install / uninstall</text>
+<text x="656" y="58" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" fill="#fbbf24">konfirmasi dulu</text>
+<rect x="24" y="90" width="240" height="50" rx="10" fill="rgba(251,191,36,.08)" stroke="rgba(251,191,36,.3)"/>
+<text x="144" y="112" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="700" fill="#e4e4ef">&#9888; Ubah config sistem</text>
+<text x="144" y="128" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" fill="#fbbf24">review dulu</text>
+<rect x="280" y="90" width="240" height="50" rx="10" fill="rgba(74,222,128,.08)" stroke="rgba(74,222,128,.3)"/>
+<text x="400" y="112" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="700" fill="#e4e4ef">&#10003; Baca file</text>
+<text x="400" y="128" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" fill="#4ade80">aman, biarin jalan</text>
+<rect x="536" y="90" width="240" height="50" rx="10" fill="rgba(74,222,128,.08)" stroke="rgba(74,222,128,.3)"/>
+<text x="656" y="112" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="700" fill="#e4e4ef">&#10003; Bikin file baru</text>
+<text x="656" y="128" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" fill="#4ade80">aman, biarin jalan</text>
+<rect x="100" y="170" width="600" height="50" rx="12" fill="rgba(124,92,255,.1)" stroke="rgba(124,92,255,.3)"/>
+<text x="400" y="195" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" font-weight="700" fill="#e4e4ef">Hermes punya sistem approval</text>
+<text x="400" y="212" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#9494a8">Agent minta izin kamu dulu sebelum eksekusi perintah berisiko. Kamu approve atau tolak.</text>
+<text x="400" y="250" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#5e5e72">Merah = wajib konfirmasi. Kuning = sebaiknya cek. Hijau = biarin jalan.</text>
+</svg>
+        </div>
+    </section>
+
+    <section id="jailbreak" class="card pi-highlight">
+        <h2><span class="step">4</span> Jailbreak &mdash; Apa, Manfaat, Risiko</h2>
+        <p><strong>Jailbreak</strong> = &quot;bobol penjara&quot;. Maksudnya: bikin AI ngerjain atau ngomong hal yang tadinya <em>dilarang</em> oleh pembuatnya. Kayak anak yang ngakalin aturan sekolah.</p>
+
+        <div class="diagram">
+<svg viewBox="0 0 800 320" role="img" aria-label="Jailbreak: manfaat dan risiko" xmlns="http://www.w3.org/2000/svg">
+<title>Jailbreak: manfaat dan risiko</title>
+<rect x="24" y="20" width="352" height="280" rx="14" fill="#1e1e2e" stroke="rgba(74,222,128,.35)"/>
+<text x="200" y="48" text-anchor="middle" font-family="Inter, sans-serif" font-size="15" font-weight="700" fill="#4ade80">Manfaat</text>
+<rect x="56" y="64" width="288" height="36" rx="8" fill="rgba(74,222,128,.08)" stroke="rgba(74,222,128,.25)"/>
+<text x="200" y="87" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#e4e4ef">&#10003; Bebas nanya hal teknis apapun</text>
+<rect x="56" y="108" width="288" height="36" rx="8" fill="rgba(74,222,128,.08)" stroke="rgba(74,222,128,.25)"/>
+<text x="200" y="131" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#e4e4ef">&#10003; Dapat jawaban lengkap, nggak dipotong</text>
+<rect x="56" y="152" width="288" height="36" rx="8" fill="rgba(74,222,128,.08)" stroke="rgba(74,222,128,.25)"/>
+<text x="200" y="175" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#e4e4ef">&#10003; Bikin tool / kode tanpa batas filter</text>
+<rect x="56" y="196" width="288" height="36" rx="8" fill="rgba(74,222,128,.08)" stroke="rgba(74,222,128,.25)"/>
+<text x="200" y="219" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#e4e4ef">&#10003; Debug masalah yang AI biasa tolak</text>
+<text x="200" y="265" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#5e5e72">Buat riset teknis &mdash; jadi AI bantu tanpa</text>
+<text x="200" y="282" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#5e5e72">memotong jawaban karena &quot;kebijakan&quot;</text>
+<rect x="424" y="20" width="352" height="280" rx="14" fill="#1e1e2e" stroke="rgba(248,113,113,.35)"/>
+<text x="600" y="48" text-anchor="middle" font-family="Inter, sans-serif" font-size="15" font-weight="700" fill="#f87171">Risiko &amp; Kerugian</text>
+<rect x="456" y="64" width="288" height="36" rx="8" fill="rgba(248,113,113,.08)" stroke="rgba(248,113,113,.25)"/>
+<text x="600" y="87" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#e4e4ef">&#10007; AI jadi nggak ada rem</text>
+<rect x="456" y="108" width="288" height="36" rx="8" fill="rgba(248,113,113,.08)" stroke="rgba(248,113,113,.25)"/>
+<text x="600" y="131" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#e4e4ef">&#10007; Bisa dikasih instruksi berbahaya</text>
+<rect x="456" y="152" width="288" height="36" rx="8" fill="rgba(248,113,113,.08)" stroke="rgba(248,113,113,.25)"/>
+<text x="600" y="175" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#e4e4ef">&#10007; Nggak ada safety net dari pabrik</text>
+<rect x="456" y="196" width="288" height="36" rx="8" fill="rgba(248,113,113,.08)" stroke="rgba(248,113,113,.25)"/>
+<text x="600" y="219" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#e4e4ef">&#10007; Salah instruksi &#8594; salah eksekusi parah</text>
+<text x="600" y="265" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#5e5e72">Filter pabrik itu sabuk pengaman.</text>
+<text x="600" y="282" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#5e5e72">Dilepas = kamu tanggung jawab sendiri.</text>
+</svg>
+        </div>
+
+        <div class="warning-box">
+            <strong>&#9888;&#65039; Intinya simpel:</strong><br>
+            Jailbreak itu kayak buka sabuk pengaman mobil. Di jalan lurus yang kamu kenal &mdash; enak, bebas. Tapi kalau tabrakan, nggak ada yang melindungi. <strong>Pakai kalau kamu tahu risikonya dan tanggung jawab sendiri.</strong>
+        </div>
+
+        <details class="faq-item">
+            <summary>Di Hermes, jailbreak gimana?</summary>
+            <p>Hermes jalan di komputermu sendiri. Model yang kamu pakai bisa jadi punya filter pabrik, bisa nggak. Hermes sendiri nggak nambah atau ngurang filter &mdash; itu tergantung model/provider yang kamu pilih. Kamu yang kontrol.</p>
+        </details>
+        <details class="faq-item">
+            <summary>Apakah jailbreak bikin agent jadi lebih pinter?</summary>
+            <p><strong>Tidak.</strong> Jailbreak cuma ngilangin batasan &quot;apa yang boleh dibahas&quot;, bukan nambah kepintaran. Model yang sama, cuma filternya dilepas. Kalau modelnya lemah, jailbreak nggak bikin dia jadi kuat &mdash; cuma bikin dia lebih berani ngarang.</p>
+        </details>
+    </section>
+
+    <section id="lanjut" class="card">
+        <h2><span class="step">&#8594;</span> Lanjut ke Mana?</h2>
+        <div class="pi-grid">
+            <a class="pi-card" href="../apa-itu-agent/index.html">
+                <div class="pi-card-head"><span class="pi-badge docs">DASAR</span><span class="pi-ext">&rarr;</span></div>
+                <h3>Apa itu Agent &amp; Agentic?</h3>
+                <p>Belum baca? Mulai dari sini.</p>
+                <span class="pi-link">Baca &rarr;</span>
+            </a>
+            <a class="pi-card" href="../tool-use/index.html">
+                <div class="pi-card-head"><span class="pi-badge docs">LANJUT</span><span class="pi-ext">&rarr;</span></div>
+                <h3>Tool Use &amp; Function Calling</h3>
+                <p>Gimana agent manggil alat, dan kapan dia salah pilih.</p>
+                <span class="pi-link">Baca &rarr;</span>
+            </a>
+            <a class="pi-card" href="../memory-context-planning/index.html">
+                <div class="pi-card-head"><span class="pi-badge docs">LANJUT</span><span class="pi-ext">&rarr;</span></div>
+                <h3>Memory, Context &amp; Planning</h3>
+                <p>Meja kerja vs buku catatan, dan gimana agent bikin rencana.</p>
+                <span class="pi-link">Baca &rarr;</span>
+            </a>
+            <a class="pi-card" href="../../install-hermes-agent/index.html">
+                <div class="pi-card-head"><span class="pi-badge docs">PRAKTIK</span><span class="pi-ext">&rarr;</span></div>
+                <h3>Install Hermes Agent</h3>
+                <p>Siap coba sendiri? Install dulu.</p>
+                <span class="pi-link">Buka &rarr;</span>
+            </a>
+        </div>
+    </section>
+
+    <section class="support-box">
+        <p>Panduan ini bantu? Support riset biar bisa bikin tutorial lanjutan.</p>
+        <a href="https://trakteer.id/tukangcode" target="_blank" class="btn-link support-btn">&#9749; Trakteer di Trakteer.id</a>
+    </section>
+
+</main>
+
+<footer>
+    <div class="footer-inner">
+        <p class="footer-credit">Code by Sena</p>
+        <p class="footer-year">2026 &bull; <a href="../../../blog/index.html">Blog</a> &bull; <a href="../../index.html">Panduan Induk</a></p>
+    </div>
+</footer>
+
+<button class="scroll-top" id="scrollTop" aria-label="Scroll to top">&uarr;</button>
+<script src="../../script.js"></script>
+</body>
+</html>

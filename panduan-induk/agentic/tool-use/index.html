@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tool Use &amp; Function Calling — Penjelasan Simpel | Tukang Code</title>
+    <meta name="description" content="Penjelasan ELI5: gimana AI agent manggil tool/function, baca hasilnya, dan kenapa model lemah bisa bikin hasil rusak tanpa disadari. Studi kasus nyata.">
+    <meta name="color-scheme" content="dark">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../style.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site-header">
+    <div class="header-inner">
+        <a href="../../../index.html" class="logo"><span class="logo-icon">&lt;/&gt;</span><span class="logo-text">Tukang Code</span></a>
+        <nav class="main-nav">
+            <a href="../../../blog/index.html" class="nav-link">Blog</a>
+            <a href="../../index.html" class="nav-link active">Panduan Induk</a>
+            <a href="../../../portfolio.html" class="nav-link">Portfolio</a>
+        </nav>
+    </div>
+</header>
+
+<section class="pi-hero" style="padding-bottom:1.2rem">
+    <div class="pi-hero-inner">
+        <a href="../apa-itu-agent/index.html" class="back-link">&larr; Apa itu Agent?</a>
+        <span class="pi-kicker">PANDUAN INDUK &bull; AGENTIC UMUM</span>
+        <h1>Tool Use &amp;<br>Function Calling</h1>
+        <p class="pi-sub">Gimana agent manggil &quot;perkakas&quot; untuk ngerjain tugas &mdash; dan kenapa model yang lemah bisa bikin hasil yang <em>kelihatannya benar</em> tapi sebenarnya rusak.</p>
+        <div class="hero-tags" style="justify-content:center; margin-top:1rem">
+            <span class="tag">Tool</span><span class="tag">Function Calling</span><span class="tag">Studi Kasus</span><span class="tag">ELI5</span>
+        </div>
+    </div>
+</section>
+
+<nav class="toc" id="toc">
+    <div class="toc-inner">
+        <span class="toc-label">Daftar Isi</span>
+        <div class="toc-links">
+            <a href="#analogi">Analogi</a>
+            <a href="#alur">Alur</a>
+            <a href="#studi-kasus">Studi Kasus</a>
+            <a href="#tanda">Tanda Model Lemah</a>
+            <a href="#cara-aman">Cara Aman</a>
+            <a href="#lanjut">Lanjut</a>
+        </div>
+    </div>
+</nav>
+
+<main class="container">
+
+    <section class="card pi-intro">
+        <h2><span class="step">?</span> Versi 30 Detik</h2>
+        <p><strong>Function calling</strong> = agent bilang &quot;saya mau pakai alat ini&quot; dalam bahasa yang komputer bisa langsung eksekusi. Bukan kalimat manusia, tapi kode.</p>
+        <p><strong>Tool use</strong> = proses lengkapnya: pilih alat &rarr; pakai &rarr; baca hasil &rarr; mikir lagi. Dua-duanya istilah yang sama, cuma beda sudut pandang.</p>
+        <div class="tip-box">&#128161; Bayangin kamu suruh montir &quot;perbaiki ban&quot;. Montir nggak cuma bilang &quot;oke&quot; &mdash; dia ambil kunci, buka ban, tambal, pasang balik, tes. <strong>Tool use itu gerakan montir itu.</strong> Otaknya cuma tahu &quot;harus tambal&quot;, tapi tangannya yang kerja.</div>
+    </section>
+
+    <section id="analogi" class="card">
+        <h2><span class="step">1</span> Analogi Sederhana</h2>
+        <p>Bayangin kamu di dapur. Kamu mau masak mie. Otakmu bilang: &quot;rebus air dulu&quot;. Tapi otakmu nggak bisa nyalain kompor sendiri &mdash; kamu harus pakai <strong>tangan</strong> untuk ambil panci, isi air, nyalain kompor.</p>
+        <p>Nah, di agent:</p>
+        <ul class="check-list">
+            <li><strong>Otak = model AI</strong> &mdash; dia tahu <em>apa yang harus dikerjain</em>, tapi nggak bisa ngapa-ngapain sendiri.</li>
+            <li><strong>Tangan = tool / function</strong> &mdash; alat yang bikin agent bisa &quot;pegang&quot; sesuatu: baca file, buka web, jalanin kode.</li>
+            <li><strong>Resep = instruksi kamu</strong> &mdash; kalau nggak jelas, hasilnya nggak jelas.</li>
+        </ul>
+    </section>
+
+    <section id="alur" class="card pi-highlight">
+        <h2><span class="step">2</span> Alurnya Gimana?</h2>
+        <p>Lihat gambar di bawah. Agent nggak sekali jawab &mdash; dia <strong>putar balik</strong> ke otaknya setelah pakai tool, baca hasilnya, terus mikir lagi.</p>
+        <div class="diagram">
+<svg viewBox="0 0 800 360" role="img" aria-label="Alur tool use" xmlns="http://www.w3.org/2000/svg">
+<title>Alur tool use: minta, pilih tool, panggil, baca hasil, jawab</title>
+<defs>
+<marker id="at1" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#7c5cff"/></marker>
+<marker id="at1b" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#4ade80"/></marker>
+</defs>
+<rect x="20" y="30" width="150" height="54" rx="12" fill="#1e1e2e" stroke="#2a2a3a"/>
+<text x="95" y="72" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#e4e4ef">Kamu minta sesuatu</text>
+<line x1="170" y1="57" x2="228" y2="57" stroke="#5e5e72" stroke-width="1.5" marker-end="url(#at1)"/>
+<rect x="232" y="22" width="180" height="72" rx="14" fill="rgba(124,92,255,.1)" stroke="rgba(124,92,255,.4)"/>
+<text x="322" y="68" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" font-weight="700" fill="#e4e4ef">Otak (model AI)</text>
+<text x="322" y="84" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#9494a8">mikir: "aku butuh tool apa?"</text>
+<line x1="322" y1="94" x2="322" y2="124" stroke="#7c5cff" stroke-width="2" marker-end="url(#at1)"/>
+<text x="340" y="114" font-family="JetBrains Mono, monospace" font-size="9" fill="#7c5cff">function call</text>
+<rect x="120" y="128" width="560" height="68" rx="12" fill="#1e1e2e" stroke="#2a2a3a"/>
+<text x="400" y="150" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#9494a8">Pilih tool mana yang cocok:</text>
+<rect x="140" y="158" width="120" height="28" rx="8" fill="rgba(124,92,255,.12)" stroke="rgba(124,92,255,.3)"/>
+<text x="200" y="176" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#e4e4ef">read_file()</text>
+<rect x="280" y="158" width="120" height="28" rx="8" fill="rgba(74,222,128,.1)" stroke="rgba(74,222,128,.3)"/>
+<text x="340" y="176" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#e4e4ef">web_search()</text>
+<rect x="420" y="158" width="120" height="28" rx="8" fill="rgba(255,107,157,.1)" stroke="rgba(255,107,157,.3)"/>
+<text x="480" y="176" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#e4e4ef">run_code()</text>
+<rect x="560" y="158" width="120" height="28" rx="8" fill="rgba(251,191,36,.1)" stroke="rgba(251,191,36,.3)"/>
+<text x="620" y="176" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#e4e4ef">send_msg()</text>
+<line x1="400" y1="196" x2="400" y2="224" stroke="#4ade80" stroke-width="2" marker-end="url(#at1b)"/>
+<rect x="232" y="228" width="336" height="56" rx="12" fill="rgba(74,222,128,.08)" stroke="rgba(74,222,128,.3)"/>
+<text x="400" y="250" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#e4e4ef">hasil: temperature=28, humidity=75</text>
+<text x="400" y="270" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#4ade80">data mentah dari tool</text>
+<path d="M322 256 Q 180 200 322 94" fill="none" stroke="#7c5cff" stroke-width="1.5" stroke-dasharray="5 5" marker-end="url(#at1)"/>
+<text x="155" y="180" font-family="JetBrains Mono, monospace" font-size="9" fill="#7c5cff">baca hasil, mikir lagi</text>
+<line x1="412" y1="57" x2="628" y2="57" stroke="#5e5e72" stroke-width="1.5" marker-end="url(#at1b)"/>
+<rect x="632" y="30" width="148" height="54" rx="12" fill="#1e1e2e" stroke="#2a2a3a"/>
+<text x="706" y="72" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#e4e4ef">Jawaban final</text>
+<text x="400" y="340" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" fill="#9494a8">Agent baca hasil tool &#8594; mikir lagi &#8594; jawab. Ini yang bikin dia <tspan fill="#7c5cff" font-weight="700">bisa kerja</tspan>, bukan cuma ngomong.</text>
+</svg>
+        </div>
+        <p class="muted-sm">Tiap panah = satu langkah. Agent bisa muter ini berkali-kali sampai tugasnya beneran selesai.</p>
+    </section>
+
+    <section id="studi-kasus" class="card pi-highlight">
+        <h2><span class="step">3</span> Studi Kasus Nyata: deepseek-flash vs GLM 5.3</h2>
+        <p class="section-desc">Ini bukan teori &mdash; ini kejadian <strong>beneran</strong> pas tutorial Hermes di halaman ini dibikun.</p>
+
+        <div class="warning-box">
+            <strong>&#9888;&#65039; Apa yang terjadi?</strong><br>
+            deepseek-flash dipakai buat nulis kode HTML. Dia &quot;berhasil&quot; bikin semua halaman, semua link, semua struktur. Tapi waktu dibuka: <strong>link nggak nyambung</strong> &mdash; buka malah muncul <em>directory listing</em>, bukan halaman yang dituju.
+        </div>
+
+        <p>Kenapa? deepseek-flash nulis <code>href="../apa-itu-agent/index.html"</code> &mdash; path folder tanpa <code>index.html</code>. Di web server ini jalan. Tapi dibuka lewat <code>file:///</code> di Windows, browser buka directory listing, bukan halaman HTML.</p>
+
+        <p>Model yang lebih kuat (GLM 5.3) dipanggil buat fix. Dia langsung tahu: tulis <code>href="../apa-itu-agent/index.html"</code> &mdash; eksplisit, jalan di mana aja.</p>
+
+        <div class="diagram">
+<svg viewBox="0 0 800 330" role="img" aria-label="Perbandingan model lemah vs model bagus" xmlns="http://www.w3.org/2000/svg">
+<title>Perbandingan model lemah vs model bagus saat pakai tool</title>
+<rect x="24" y="24" width="352" height="292" rx="14" fill="#1e1e2e" stroke="rgba(248,113,113,.35)"/>
+<text x="200" y="52" text-anchor="middle" font-family="Inter, sans-serif" font-size="15" font-weight="700" fill="#e4e4ef">Model lemah</text>
+<text x="200" y="72" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#f87171">kapabilitas tool use kurang</text>
+<rect x="56" y="90" width="288" height="34" rx="8" fill="#12121a" stroke="#2a2a3a"/>
+<text x="200" y="112" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#e4e4ef">"bikin halaman web"</text>
+<rect x="56" y="134" width="288" height="40" rx="8" fill="rgba(248,113,113,.08)" stroke="rgba(248,113,113,.25)"/>
+<text x="200" y="159" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#f87171">&#10060; pilih tool salah / panggil nggak jelas</text>
+<rect x="56" y="184" width="288" height="40" rx="8" fill="rgba(248,113,113,.08)" stroke="rgba(248,113,113,.25)"/>
+<text x="200" y="209" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#f87171">&#10060; bikin link tapi href kosong / path folder</text>
+<rect x="56" y="234" width="288" height="40" rx="8" fill="rgba(248,113,113,.08)" stroke="rgba(248,113,113,.25)"/>
+<text x="200" y="259" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#f87171">&#10060; hasil "kelihatannya jadi" tapi rusak</text>
+<text x="200" y="296" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#5e5e72">Contoh nyata: deepseek-flash bikin href folder</text>
+<rect x="424" y="24" width="352" height="292" rx="14" fill="#1e1e2e" stroke="rgba(74,222,128,.35)"/>
+<text x="600" y="52" text-anchor="middle" font-family="Inter, sans-serif" font-size="15" font-weight="700" fill="#e4e4ef">Model bagus</text>
+<text x="600" y="72" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#4ade80">tool use akurat</text>
+<rect x="456" y="90" width="288" height="34" rx="8" fill="#12121a" stroke="#2a2a3a"/>
+<text x="600" y="112" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#e4e4ef">"bikin halaman web"</text>
+<rect x="456" y="134" width="288" height="40" rx="8" fill="rgba(74,222,128,.08)" stroke="rgba(74,222,128,.25)"/>
+<text x="600" y="159" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#4ade80">&#10003; pilih tool yang tepat</text>
+<rect x="456" y="184" width="288" height="40" rx="8" fill="rgba(74,222,128,.08)" stroke="rgba(74,222,128,.25)"/>
+<text x="600" y="209" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#4ade80">&#10003; tulis href lengkap &#8594; link jalan</text>
+<rect x="456" y="234" width="288" height="40" rx="8" fill="rgba(74,222,128,.08)" stroke="rgba(74,222,128,.25)"/>
+<text x="600" y="259" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#4ade80">&#10003; verifikasi &#8594; perbaiki kalau salah</text>
+<text x="600" y="296" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#5e5e72">Contoh nyata: GLM 5.3 fix href &#8594; jalan</text>
+</svg>
+        </div>
+
+        <div class="note-box">
+            <strong>Pelajaran:</strong> model lemah nggak akan bilang &quot;saya nggak yakin&quot;. Dia bikin hasil yang <em>kelihatannya benar</em> &mdash; struktur HTML bagus, kodenya rapi, tapi ada bug halus yang <strong>nggak kelihatan sampai dibuka beneran</strong>. Ini yang bahaya.
+        </div>
+    </section>
+
+    <section id="tanda" class="card">
+        <h2><span class="step">!</span> Tanda Model Lemah saat Pakai Tool</h2>
+        <details class="faq-item" open>
+            <summary>1. Hasilnya &quot;kelihatannya benar&quot; tapi rusak waktu dijalankan</summary>
+            <p>HTML bagus, kode rapi, struktur bener &mdash; tapi ada detail halus yang salah: path file, format argument, nama function yang nggak ada. Model nggak tahu dia salah karena dia nggak <em>menjalankan</em> hasilnya.</p>
+        </details>
+        <details class="faq-item">
+            <summary>2. Panggil tool tapi argumennya nggak lengkap / salah format</summary>
+            <p>Contoh: manggil <code>read_file()</code> tapi path-nya cuma nama folder, bukan nama file lengkap. Atau <code>web_search()</code> tapi query-nya kosong. Tool-nya bener, tapi &quot;bahan&quot; yang dikasih salah.</p>
+        </details>
+        <details class="faq-item">
+            <summary>3. Pilih tool yang nggak relevan</summary>
+            <p>Disuruh &quot;baca file config&quot; tapi yang dipanggil <code>web_search()</code>. Atau disuruh &quot;cari di internet&quot; tapi yang dipanggil <code>read_file()</code>. Otaknya bingung milih alat.</p>
+        </details>
+        <details class="faq-item">
+            <summary>4. Nggak baca hasil tool &mdash; langsung jawab ngasal</summary>
+            <p>Tool sudah jalan, sudah kasih data, tapi model nggak baca datanya dan malah jawab pakai &quot;pengetahuan&quot; sendiri yang bisa jadi salah. Hasil tool dibuang sia-sia.</p>
+        </details>
+        <details class="faq-item">
+            <summary>5. Muter di tempat &mdash; panggil tool yang sama berkali-kali</summary>
+            <p>Tool error, model coba lagi dengan argumen yang sama persis, error lagi, coba lagi... nggak sadar harus ganti cara. Ini tanda model nggak bisa &quot;mikir keluar dari kotak&quot;.</p>
+        </details>
+    </section>
+
+    <section id="cara-aman" class="card pi-highlight">
+        <h2><span class="step">&#10003;</span> Cara Aman Pakai Tool dengan Model Lemah</h2>
+        <div class="steps-list">
+            <div class="step-item">
+                <span class="step-num">1</span>
+                <div><strong>Selalu verifikasi hasil</strong>
+                <p class="muted-sm">Jangan percaya output begitu saja. Buka file yang dibikin, klik link-nya, jalanin kodenya. Kalau rusak, pakai model yang lebih kuat buat fix.</p></div>
+            </div>
+            <div class="step-item">
+                <span class="step-num">2</span>
+                <div><strong>Kasih instruksi yang sangat spesifik</strong>
+                <p class="muted-sm">Bukan &quot;bikin link ke halaman agent&quot; tapi &quot;tulis href lengkap ke <code>agentic/apa-itu-agent/index.html</code>, jangan cuma nama folder&quot;. Model lemah butuh instruksi yang sangat jelas.</p></div>
+            </div>
+            <div class="step-item">
+                <span class="step-num">3</span>
+                <div><strong>Pisah tugas jadi langkah kecil</strong>
+                <p class="muted-sm">Jangan sekali minta &quot;bikin web lengkap&quot;. Pecah jadi: 1) bikin struktur, 2) isi konten, 3) fix link. Tiap langkah bisa dicek sendiri.</p></div>
+            </div>
+            <div class="step-item">
+                <span class="step-num">4</span>
+                <div><strong>Pakai model yang tepat untuk tugas yang tepat</strong>
+                <p class="muted-sm">Model kecil buat tugas sederhana (nulis teks, jawab pertanyaan). Model besar buat tugas yang butuh tool use kompleks (ngoding, multi-step, file ops). Jangan maksa model kecil bikin sistem kompleks.</p></div>
+            </div>
+        </div>
+        <div class="tip-box">&#128161; <strong>Aturan praktis:</strong> kalau hasilnya penting dan butuh presisi, pakai model yang lebih kuat. Kalau cuma butuh draft cepat, model kecil boleh &mdash; tapi tetap cek hasilnya.</div>
+    </section>
+
+    <section id="lanjut" class="card">
+        <h2><span class="step">&#8594;</span> Lanjut ke Mana?</h2>
+        <div class="pi-grid">
+            <a class="pi-card" href="../apa-itu-agent/index.html">
+                <div class="pi-card-head"><span class="pi-badge docs">DASAR</span><span class="pi-ext">&rarr;</span></div>
+                <h3>Apa itu Agent &amp; Agentic?</h3>
+                <p>Belum baca? Mulai dari sini &mdash; pondasi semuanya.</p>
+                <span class="pi-link">Baca &rarr;</span>
+            </a>
+            <a class="pi-card" href="../memory-context-planning/index.html">
+                <div class="pi-card-head"><span class="pi-badge docs">LANJUT</span><span class="pi-ext">&rarr;</span></div>
+                <h3>Memory, Context &amp; Planning</h3>
+                <p>Meja kerja vs buku catatan, dan gimana agent bikin rencana.</p>
+                <span class="pi-link">Baca &rarr;</span>
+            </a>
+            <a class="pi-card" href="../evaluasi-batasan/index.html">
+                <div class="pi-card-head"><span class="pi-badge docs">LANJUT</span><span class="pi-ext">&rarr;</span></div>
+                <h3>Evaluasi &amp; Batasan Agent</h3>
+                <p>Apa yang bisa, nggak bisa, dan soal jailbreak.</p>
+                <span class="pi-link">Baca &rarr;</span>
+            </a>
+            <a class="pi-card" href="../../install-hermes-agent/index.html">
+                <div class="pi-card-head"><span class="pi-badge docs">PRAKTIK</span><span class="pi-ext">&rarr;</span></div>
+                <h3>Install Hermes Agent</h3>
+                <p>Siap coba sendiri? Install dulu di komputermu.</p>
+                <span class="pi-link">Buka &rarr;</span>
+            </a>
+        </div>
+    </section>
+
+    <section class="support-box">
+        <p>Panduan ini bantu? Support riset biar bisa bikin tutorial lanjutan.</p>
+        <a href="https://trakteer.id/tukangcode" target="_blank" class="btn-link support-btn">&#9749; Trakteer di Trakteer.id</a>
+    </section>
+
+</main>
+
+<footer>
+    <div class="footer-inner">
+        <p class="footer-credit">Code by Sena</p>
+        <p class="footer-year">2026 &bull; <a href="../../../blog/index.html">Blog</a> &bull; <a href="../../index.html">Panduan Induk</a></p>
+    </div>
+</footer>
+
+<button class="scroll-top" id="scrollTop" aria-label="Scroll to top">&uarr;</button>
+<script src="../../script.js"></script>
+</body>
+</html>
